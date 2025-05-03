@@ -11,8 +11,18 @@
 # include "lexer.h"
 # include "parse.h"
 
-// char	token_maker(char *input);
+typedef struct s_shell
+{
+    char *line;
+    char **args;
+}   t_shell;
+
+// utils utils.c
 int		ft_atoll(const char *str);
+// utils free.c
+void	free_double(t_shell *minishell);
+void	free_struct(t_shell *minishell);
+
 void	exit_error(char *arg, char *err_msg, char *type);
 void	built(char **args, char *input);
 int		array_len(char **args);

@@ -1,22 +1,41 @@
 #include "inc/minishell.h"
+#include <stdio.h>
 
-int main(int argc, char **argv, char **env)
+void    write_args(char **args)
 {
-    char	*input;
-    char    **args;
-    (void)argc;
+    int i;
+    i = 0;
+    while (args[i])
+    {
+        printf("%s\n", args[i]);
+        i++;
+    }
+}
+
+static void ft_init_shell(t_shell *minishell)
+{
+    ft_memset(minishell, 0, sizeof(t_shell));
+
+}
+
+int main(int ac, char **av, char **env)
+{
+    t_shell *minishell;
+    minishell = malloc(sizeof(t_shell));
+    ft_init_shell(minishell);
+    (void)ac;
     (void)env;
-    (void)argv;
-    // input = ft_strdup(argv[1]);
+    (void)av;
     while (1)
     {
-        input = readline("minishell> ");
-        args = ft_split(input, ' ');
-        built(args, input);
+        minishell->line = readline("minishell> ");
+        minishell->args = ft_split(minishell->line, ' ');
+        built(minishell->args, minishell->line);
         // pars(input, env);
         //execute
-        ft_free_tab(args);
-        free(input);
+        free_double(minishell);
+        free(minishell->line);
     }
+    free_struct(minishell);
     return (0);
 }

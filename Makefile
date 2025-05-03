@@ -14,7 +14,11 @@ LIBFT_PATH = "libft"
 BUILT_IN = built_in/built.c \
 			built_in/built_utils.c 
 
-UTILS = utils/utils.c 
+UTILS = utils/utils.c \
+		utils/free.c
+
+# LEXER = lexer/tokenize.c \
+# 		lexer/tokenize_utils.c 
 
 PARSE = parse/parse_utils.c \
 		parse/parser.c 
