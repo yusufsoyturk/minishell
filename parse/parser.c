@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../inc/parse.h"
 
 // char	*pars(char *input, char **env) //şu an bi sike yaramıyor
 // {

@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../inc/parse.h"
 
 void	ft_free_tab(char **tab)
 {

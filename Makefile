@@ -1,27 +1,38 @@
 NAME = minishell
 
 CC = cc -g
+
 RM = rm -f
+
 CFLAGS = -Wall -Wextra -Werror -I.
+
 LDFLAGS = -lreadline -lncurses
 
-SRCS =	src/minishell.c \
-		src/pars/parser.c \
-		src/pars/pars_utils.c \
-		src/built_in/built.c \
-		src/built_in/built_utils.c \
-		src/utils/utils.c \
-		libft/libft.a \
+LIBFT = libft.a
+LIBFT_PATH = "libft"
+
+BUILT_IN = built_in/built.c \
+			built_in/built_utils.c 
+
+UTILS = utils/utils.c 
+
+PARSE = parse/parse_utils.c \
+		parse/parser.c 
+
+SRCS = $(BUILT_IN) \
+		$(PARSE) \
+		$(UTILS) \
+		main.c
 
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(NAME): libft/libft.a $(OBJS)
-	$(CC) -o $(NAME) $(OBJS) $(LDFLAGS)
+$(LIBFT):
+	@make -C $(LIBFT_PATH)
 
-libft/libft.a:
-	make -C libft
+$(NAME): $(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(LIBFT_PATH) -lft $(LDFLAGS)
 
 clean:
 	make clean -C libft
