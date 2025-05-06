@@ -17,7 +17,7 @@ BUILT_IN = built_in/built.c \
 UTILS = utils/utils.c \
 		utils/free.c
 
-# LEXER = lexer/tokenize.c \
+LEXER = lexer/tokenize.c \
 # 		lexer/tokenize_utils.c 
 
 PARSE = parse/parse_utils.c \
@@ -26,6 +26,7 @@ PARSE = parse/parse_utils.c \
 SRCS = $(BUILT_IN) \
 		$(PARSE) \
 		$(UTILS) \
+		$(LEXER) \
 		main.c
 
 OBJS = $(SRCS:.c=.o)

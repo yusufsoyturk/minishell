@@ -10,12 +10,16 @@
 # include "../libft/libft.h"
 # include "lexer.h"
 # include "parse.h"
+# include <stdio.h>
 
 typedef struct s_shell
 {
     char *line;
     char **args;
 }   t_shell;
+
+// tokenize.c
+void	write_line(t_shell *minishell);
 
 // utils utils.c
 int		ft_atoll(const char *str);

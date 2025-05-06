@@ -15,7 +15,6 @@ void    write_args(char **args)
 static void ft_init_shell(t_shell *minishell)
 {
     ft_memset(minishell, 0, sizeof(t_shell));
-
 }
 
 int main(int ac, char **av, char **env)
@@ -29,6 +28,7 @@ int main(int ac, char **av, char **env)
     while (1)
     {
         minishell->line = readline("minishell> ");
+        write_line(minishell);
         minishell->args = ft_split(minishell->line, ' ');
         built(minishell->args, minishell->line);
         // pars(input, env);
