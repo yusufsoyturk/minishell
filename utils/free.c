@@ -10,7 +10,6 @@ void	free_double(t_shell *minishell)
 		free(minishell->args[i]);
 		i++;
 	}
-	free(minishell->args);
 }
 
 void	free_struct(t_shell *minishell)

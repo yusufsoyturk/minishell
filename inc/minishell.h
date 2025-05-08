@@ -1,22 +1,25 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <stdio.h>
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <stdio.h>
 # include "../libft/libft.h"
 # include "lexer.h"
 # include "parse.h"
-# include <stdio.h>
 
 typedef struct s_shell
 {
     char *line;
     char **args;
 }   t_shell;
+
+// tokenize_utils.c
+void	error_message(t_shell *minishell, char *err_msg);
+void	missing_quotes(t_shell *minishell);
 
 // tokenize.c
 void	write_line(t_shell *minishell);

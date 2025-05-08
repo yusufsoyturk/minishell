@@ -18,7 +18,9 @@ UTILS = utils/utils.c \
 		utils/free.c
 
 LEXER = lexer/tokenize.c \
-# 		lexer/tokenize_utils.c 
+		lexer/tokenize_utils.c \
+		lexer/tokenize_quotes.c \
+		lexer/tokenize_func.c 
 
 PARSE = parse/parse_utils.c \
 		parse/parser.c 
