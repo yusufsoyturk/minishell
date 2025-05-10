@@ -2,7 +2,8 @@
 
 void	error_message(t_shell *minishell, char *err_msg)
 {
-	free_struct(minishell);
+	if (minishell != NULL)
+		free_struct(minishell);
 	ft_putendl_fd(err_msg, 2);
 	exit(EXIT_FAILURE);
 }
@@ -27,4 +28,19 @@ void	missing_quotes(t_shell *minishell)
 	}
 	if ((count_double % 2 != 0) || (count_single % 2 != 0))
 		error_message(minishell, "Missing Quote");
+}
+
+void	ft_tknadd_back(t_token **lst, t_token *new)
+{
+	t_token	*tmp;
+
+	if (!*lst)
+	{
+		*lst = new;
+		return ;
+	}
+	tmp = *lst;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
 }

@@ -1,7 +1,7 @@
 # include "../inc/minishell.h"
 
 // zaten başlangıç değerim double quotes
-static int	double_quotes_len(char *line)
+int	double_quotes_len(char *line)
 {
 	int	i;
 	int	end;
@@ -40,7 +40,7 @@ char	*in_double_quotes(char *line)
 	return (token);
 }
 
-static int	single_quote_len(char *line)
+int	single_quote_len(char *line)
 {
 	int	i;
 	int	end;

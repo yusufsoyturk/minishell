@@ -22,7 +22,7 @@ void	error_message(t_shell *minishell, char *err_msg);
 void	missing_quotes(t_shell *minishell);
 
 // tokenize.c
-void	write_line(t_shell *minishell);
+int	ft_token(t_shell *minishell);
 
 // utils utils.c
 int		ft_atoll(const char *str);

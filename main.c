@@ -22,18 +22,22 @@ int main(int ac, char **av, char **env)
     minishell = malloc(sizeof(t_shell));
     ft_init_shell(minishell);
     (void)env;
-    while (ac == 1 && av[0])
+    if (ac == 1 && av[0])
     {
-        minishell->line = readline("minishell>");
-        printf("%s\n", new_word(minishell->line));
-        // printf("%s\n", minishell->line);
-        minishell->args = ft_split(minishell->line, ' ');
-        built(minishell->args, minishell->line);
-        // pars(input, env);
-        //execute
-        free_double(minishell);
-        free(minishell->line);
+        while (1)
+        {
+            minishell->line = readline("minishell> ");
+            ft_token(minishell);
+            minishell->args = ft_split(minishell->line, ' ');
+            built(minishell->args, minishell->line);
+            // pars(input, env);
+            //execute
+            free_double(minishell);
+            free(minishell->line);
+        }
+        free_struct(minishell);
     }
-    free_struct(minishell);
+    else 
+        error_message(minishell, "Invalid arguments");
     return (0);
 }

@@ -5,13 +5,13 @@
 
 
 typedef enum s_token_type{
-    T_WORD,  
-    T_PIPE,
-    T_REDIR_IN,
-    T_REDIR_OUT,
-    T_REDIR_APPEND,
-    T_REDIR_HEREDOC,
-    T_ENV_VAR
+	T_WORD,  
+	T_PIPE,
+	T_REDIR_IN,
+	T_REDIR_OUT,
+	T_REDIR_APPEND,
+	T_REDIR_HEREDOC,
+	T_ENV_VAR
 } t_token_type;
 
 typedef struct s_token
@@ -22,9 +22,23 @@ typedef struct s_token
 } t_token;
 
 // tokenize_quotes.c
+int		double_quotes_len(char *line);
 char	*in_double_quotes(char *line);
+int		single_quote_len(char *line);
 char	*in_single_quote(char *line);
-// tokenize_func.c 
+
+// tokenize_func.c
+int		word_len(char *line);
 char	*new_word(char *line);
+t_token_type	find_type(char *line);
+char	*find_value(char *line, int *i);
+t_token	*new_token(t_token *token, char *value);
+
+// tokenize.c
+void	make_token(char *line, t_token *head);
+
+// tokenize_utils.c
+void	ft_tknadd_back(t_token **lst, t_token *new);
+
 
 #endif
