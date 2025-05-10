@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/07 13:20:42 by ktoraman          #+#    #+#             */
-/*   Updated: 2024/10/21 17:50:55 by ktoraman         ###   ########.fr       */
+/*   Created: 2024/10/17 17:12:19 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/10/30 21:05:01 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_isdigit(int a)
 {
-	if (a >= '0' && a <= '9')
+	if (a >= 48 && a <= 57)
 		return (1);
-	else
-		return (0);
+	return (0);
 }

@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*   ft_lstlast_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/17 18:14:22 by ysoyturk          #+#    #+#             */
-/*   Updated: 2024/11/01 17:54:24 by ysoyturk         ###   ########.fr       */
+/*   Created: 2024/10/31 14:13:33 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:56:23 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_tolower(int a)
+#include "libft.h"
+
+t_list	*ft_lstlast(t_list *lst)
 {
-	if (a >= 65 && a <= 90)
-		a += 32;
-	return (a);
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
 }

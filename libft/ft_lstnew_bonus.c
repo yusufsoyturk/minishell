@@ -1,18 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*   ft_lstnew_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/17 18:14:22 by ysoyturk          #+#    #+#             */
-/*   Updated: 2024/11/01 17:54:24 by ysoyturk         ###   ########.fr       */
+/*   Created: 2024/10/29 21:11:54 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:56:13 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_tolower(int a)
+#include "libft.h"
+
+t_list	*ft_lstnew(void *content)
 {
-	if (a >= 65 && a <= 90)
-		a += 32;
-	return (a);
+	t_list	*new;
+
+	new = malloc(sizeof(t_list));
+	if (new == NULL)
+		return (0);
+	new->content = content;
+	new->next = NULL;
+	return (new);
 }

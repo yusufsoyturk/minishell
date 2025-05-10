@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 13:03:48 by ktoraman          #+#    #+#             */
-/*   Updated: 2024/10/25 17:03:52 by ktoraman         ###   ########.fr       */
+/*   Created: 2024/10/24 18:30:50 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:55:03 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,26 @@
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	char			*src1;
-	char			*src2;
-	char			*ptr;
-	unsigned int	i;
-	unsigned int	j;
+	size_t	i;
+	size_t	j;
+	char	*str;
 
-	ptr = (char *)malloc((ft_strlen(s1) + ft_strlen(s2)) * sizeof(char) + 1);
-	if (!ptr)
+	str = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1);
+	if (!s1 || !s2 || str == NULL)
 		return (NULL);
-	src1 = (char *)s1;
-	src2 = (char *)s2;
 	i = 0;
 	j = 0;
-	while (src1[i])
+	while (s1[i])
 	{
-		ptr[i] = src1[i];
+		str[i] = s1[i];
 		i++;
 	}
-	while (src2[j])
+	while (s2[j])
 	{
-		ptr[i + j] = src2[j];
+		str[i] = s2[j];
 		j++;
+		i++;
 	}
-	ptr[i + j] = '\0';
-	return (ptr);
+	str[i] = '\0';
+	return (str);
 }

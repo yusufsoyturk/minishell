@@ -1,29 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/19 18:24:28 by ysoyturk          #+#    #+#             */
-/*   Updated: 2024/11/01 19:11:12 by ysoyturk         ###   ########.fr       */
+/*   Created: 2024/11/01 13:52:38 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:56:17 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <string.h>
 
-char	*ft_strchr(const char *s, int a)
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	int	i;
+	t_list	*head;
+	t_list	*new;
+	void	*mapped;
 
-	i = 0;
-	while (s[i])
+	head = NULL;
+	if (!lst || !f || !del)
+		return (NULL);
+	while (lst)
 	{
-		if (s[i] == (char)a)
-			return ((char *)(s + i));
-		i++;
+		mapped = (*f)(lst->content);
+		new = ft_lstnew(mapped);
+		if (!new)
+		{
+			(*del)(mapped);
+			ft_lstclear(&head, del);
+			return (NULL);
+		}
+		ft_lstadd_back(&head, new);
+		lst = lst->next;
 	}
-	if (s[i] == (char)a)
-		return ((char *)(s + i));
-	return (NULL);
+	return (head);
 }

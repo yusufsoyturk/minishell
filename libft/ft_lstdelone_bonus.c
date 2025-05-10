@@ -1,18 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*   ft_lstdelone_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/17 18:14:22 by ysoyturk          #+#    #+#             */
-/*   Updated: 2024/11/01 17:54:24 by ysoyturk         ###   ########.fr       */
+/*   Created: 2024/10/31 19:27:21 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/03 21:34:21 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_tolower(int a)
+#include "libft.h"
+
+void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
-	if (a >= 65 && a <= 90)
-		a += 32;
-	return (a);
+	if (!lst || !del)
+		return ;
+	(*del)(lst->content);
+	free(lst);
 }

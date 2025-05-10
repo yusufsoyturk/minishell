@@ -3,18 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isalnum.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/07 13:25:51 by ktoraman          #+#    #+#             */
-/*   Updated: 2024/10/21 16:38:22 by ktoraman         ###   ########.fr       */
+/*   Created: 2024/10/17 17:18:08 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/10/30 21:04:33 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_isalnum(int a)
 {
-	if ((a <= 'Z' && a >= 'A') || (a <= 'z' && a >= 'a') || (a >= '0'
-			&& a <= '9'))
+	if ((a >= 48 && a <= 57) || (a >= 65 && a <= 90) || (a >= 97 && a <= 122))
 		return (1);
-	else
-		return (0);
+	return (0);
 }

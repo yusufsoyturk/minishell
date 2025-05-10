@@ -1,18 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/17 18:14:22 by ysoyturk          #+#    #+#             */
-/*   Updated: 2024/11/01 17:54:24 by ysoyturk         ###   ########.fr       */
+/*   Created: 2024/10/31 20:21:48 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:56:32 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_tolower(int a)
+#include "libft.h"
+
+void	ft_lstclear(t_list **lst, void (*del)(void *))
 {
-	if (a >= 65 && a <= 90)
-		a += 32;
-	return (a);
+	t_list	*head;
+	t_list	*tmp;
+
+	if (!lst || !del)
+		return ;
+	head = *lst;
+	while (head)
+	{
+		tmp = head->next;
+		(*del)(head->content);
+		free(head);
+		head = tmp;
+	}
+	*lst = NULL;
 }

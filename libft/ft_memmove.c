@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/10 09:31:32 by ktoraman          #+#    #+#             */
-/*   Updated: 2024/10/22 20:03:13 by ktoraman         ###   ########.fr       */
+/*   Created: 2024/10/18 16:47:10 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:55:36 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,22 @@
 
 void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	int	i;
+	unsigned char		*ptr1;
+	const unsigned char	*ptr2;
 
+	ptr1 = (unsigned char *)dst;
+	ptr2 = (unsigned char *)src;
 	if (!dst && !src)
 		return (NULL);
-	if (dst > src)
+	if (ptr2 < ptr1)
 	{
-		i = (int)len - 1;
-		while (i >= 0)
-		{
-			*(char *)(dst + i) = *(char *)(src + i);
-			i--;
-		}
+		while (len-- > 0)
+			ptr1[len] = ptr2[len];
 	}
 	else
 	{
-		i = 0;
-		while (i < (int)len)
-		{
-			*(char *)(dst + i) = *(char *)(src + i);
-			i++;
-		}
+		while (len-- > 0)
+			*(ptr1++) = *(ptr2++);
 	}
 	return (dst);
 }

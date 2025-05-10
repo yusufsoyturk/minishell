@@ -3,37 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/14 18:54:47 by ktoraman          #+#    #+#             */
-/*   Updated: 2024/10/25 16:49:55 by ktoraman         ###   ########.fr       */
+/*   Created: 2024/10/24 17:35:16 by ysoyturk          #+#    #+#             */
+/*   Updated: 2024/11/01 17:54:28 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	size_t	count;
+	char	*subst;
 	size_t	size;
-	char	*tab;
 
 	if (!s)
 		return (NULL);
-	if ((unsigned int)ft_strlen(s) < start)
+	if (start >= ft_strlen(s))
 		return (ft_strdup(""));
 	size = ft_strlen(s + start);
 	if (size < len)
 		len = size;
-	tab = (char *)malloc((len + 1) * sizeof(char));
-	if (!tab)
+	subst = (char *)malloc(sizeof(char) * (len + 1));
+	if (!subst)
 		return (NULL);
-	count = 0;
-	while (count < len)
-	{
-		tab[count] = s[start + count];
-		count++;
-	}
-	tab[count] = '\0';
-	return (tab);
+	ft_strlcpy(subst, s + start, len + 1);
+	return (subst);
 }
