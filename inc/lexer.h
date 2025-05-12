@@ -5,7 +5,7 @@
 
 
 typedef enum s_token_type{
-	T_WORD,  
+	T_WORD, 
 	T_PIPE,
 	T_REDIR_IN,
 	T_REDIR_OUT,
@@ -16,9 +16,9 @@ typedef enum s_token_type{
 
 typedef struct s_token
 {
-	char *value;
-	t_token_type type;
-	struct s_token *next;
+	char			*value;
+	t_token_type	type;
+	struct s_token	*next;
 } t_token;
 
 // tokenize_quotes.c
@@ -35,7 +35,7 @@ char	*find_value(char *line, int *i);
 t_token	*new_token(t_token *token, char *value);
 
 // tokenize.c
-void	make_token(char *line, t_token *head);
+t_token	*make_token(char *line, t_token *head);
 
 // tokenize_utils.c
 void	ft_tknadd_back(t_token **lst, t_token *new);

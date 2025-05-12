@@ -1,6 +1,6 @@
 # include "../inc/minishell.h"
 
-void	make_token(char *line, t_token *head)
+t_token	*make_token(char *line, t_token *head)
 {
 	int		j;
 	int		*i;
@@ -14,21 +14,22 @@ void	make_token(char *line, t_token *head)
 			(*i)++;
 		else
 		{
+
 			token = find_value(line, i);
 			head = new_token(head, token);
 			free(token);
 		}
 	}
+	return (head);
 }
 
 int	ft_token(t_shell *minishell)
 {
 	char	*line;
-	t_token	*token_head;
 
-	token_head = NULL;
-	token_head = malloc(sizeof(t_token));
+	// minishell->token = malloc(sizeof(t_token));
+	minishell->token = NULL;
 	line = minishell->line;
-	make_token(line, token_head);
-	return 0;
+	minishell->token = make_token(line, minishell->token);
+	return (0);
 }

@@ -10,10 +10,13 @@ void	free_double(t_shell *minishell)
 		free(minishell->args[i]);
 		i++;
 	}
+	free(minishell->args);
 }
 
 void	free_struct(t_shell *minishell)
 {
-	ft_memset(minishell, 0, sizeof(t_shell));
+	free(minishell->line);
+	free_double(minishell);
+	// free_token(minishell->token);
 	free(minishell);
 }
