@@ -73,3 +73,4 @@ int main(int ac, char **av, char **env)
 		error_message(minishell, "Invalid arguments");
 	return (0);
 }
+//deneme 1 2
