@@ -99,6 +99,4 @@ void	built(char **args, char *input)
 	// 	builtin_unset(args);
 	else if (args[0] && ft_strncmp(args[0], "pwd", 3) == 0 && args[0][3] == '\0')
 		builtin_pwd();
-	// else if (args[0] && ft_strncmp(args[0], "echo", 4) == 0 && args[0][4] == '\0')
-	//  	builtin_echo(args);
 }
