@@ -11,11 +11,15 @@ LDFLAGS = -lreadline -lncurses
 LIBFT = libft.a
 LIBFT_PATH = "libft"
 
-BUILT_IN = built_in/built.c \
-			built_in/built_utils.c 
+BUILT_IN =	built_in/built.c \
+			built_in/built_utils.c \
+			built_in/built_func.c \
+			built_in/built_export.c \
+			built_in/built_export_func.c
 
 UTILS = utils/utils.c \
-		utils/free.c
+		utils/free.c \
+		utils/init.c
 
 LEXER = lexer/tokenize.c \
 		lexer/tokenize_utils.c \
@@ -39,7 +43,7 @@ $(LIBFT):
 	@make -C $(LIBFT_PATH)
 
 $(NAME): $(LIBFT) $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(LIBFT_PATH) -lft $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(LIBFT_PATH) -lft $(LDFLAGS) 
 
 clean:
 	make clean -C libft

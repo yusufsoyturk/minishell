@@ -18,6 +18,15 @@ typedef struct s_shell
 	t_token	*token;
 }	t_shell;
 
+//çevre değişkenlerini tutuyor
+typedef struct s_env
+{
+	char	*key;
+	char	*value;
+	int		exported;
+	struct s_env *next;
+}				t_env;
+
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg);
 void	missing_quotes(t_shell *minishell);
@@ -30,11 +39,24 @@ int		ft_atoll(const char *str);
 // utils free.c
 void	free_double(t_shell *minishell);
 void	free_struct(t_shell *minishell);
+// utils init.c
+void init_env(char **env, t_env **env_list);
 
-
+//random utils
 void	exit_error(char *arg, char *err_msg, char *type);
-void	built(char **args, char *input);
 int		array_len(char **args);
+int		ft_strcmp(const char *s1, const char *s2);
+
+//built
+void	built(char **args, char *input, t_env **env);
+void	builtin_unset(const char *key, t_env **env_list);
+void	builtin_export(char **args, t_env **env_list);
+void	builtin_env(t_env *env_list);
+t_env	*find_env_node(t_env *env, const char *key);
+void	append_env(t_env **env_list, t_env *new);
+t_env	**env_to_array(t_env *env);
+void	sort_env_array(t_env **arr);
+
 
 void	free_token(t_token *token);
 
