@@ -19,15 +19,21 @@ void append_env(t_env **env_list, t_env *new)
 {
     t_env *current;
 
+    if (!new)
+    {
+        ft_putendl_fd("Error: new node is NULL", 2);
+        return ;
+    }
     if (!*env_list)
     {
         *env_list = new;
-        return;
+        return ;
     }
     current = *env_list;
     while (current->next)
         current = current->next;
     current->next = new;
+    new->next = NULL; // Ensure the new node's next pointer is initialized
 }
 
 int	env_size(t_env *env)

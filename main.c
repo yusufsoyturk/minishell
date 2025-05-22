@@ -45,9 +45,9 @@ int main(int ac, char **av, char **env)
 	t_env    *env_list;//daha sonra export komutuyla değişebileceği için çevre değişkenlerini kopyalıyor
 
 	minishell = malloc(sizeof(t_shell));
+	env_list = NULL;
 	ft_init_shell(minishell);
 	init_env(env, &env_list);//burda initialize oluyo çevre değişkenleri
-	(void)env;
 	if (ac == 1 && av[0])
 	{
 		while (1)

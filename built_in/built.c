@@ -34,6 +34,7 @@ static void	builtin_cd(char **args)
 			return ;
 		exit_error(args[1], "No such file or directory", "cd");
 	}
+	free(cwd);
 }
 static void	builtin_pwd(void)
 {
