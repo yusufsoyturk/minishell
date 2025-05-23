@@ -29,7 +29,7 @@ typedef struct s_env
 
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg);
-void	missing_quotes(t_shell *minishell);
+void	missing_quotes_double(t_shell *minishell);
 
 // tokenize.c
 int		ft_token(t_shell *minishell);

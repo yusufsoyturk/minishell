@@ -16,13 +16,26 @@ static void ft_init_shell(t_shell *minishell)
 	ft_memset(minishell, 0, sizeof(t_shell));
 }
 
-void write_token(t_shell *minishell)
-{
-	while (minishell->token)
-	{
-		printf("%s %u\n", minishell->token->value, minishell->token->type);
+const char *token_type_to_string(t_token_type type) {
+    switch (type) {
+        case T_WORD: return "T_WORD";
+        case T_PIPE: return "T_PIPE";
+        case T_REDIR_IN: return "T_REDIR_IN";
+        case T_REDIR_OUT: return "T_REDIR_OUT";
+        case T_REDIR_APPEND: return "T_REDIR_APPEND";
+        case T_REDIR_HEREDOC: return "T_REDIR_HEREDOC";
+        case T_ENV_VAR: return "T_ENV_VAR";
+        default: return "T_UNKNOWN";
+    }
+}
 
-		minishell->token = minishell->token->next;
+// Token'ları yazdıran fonksiyon
+void print_tokens(t_token *tokens) 
+{
+    while (tokens)
+	{
+        printf("Type = %s, Value = '%s'\n", token_type_to_string(tokens->type), tokens->value);
+		tokens = tokens->next;
 	}
 }
 
@@ -53,8 +66,9 @@ int main(int ac, char **av, char **env)
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
+			missing_quotes_double(minishell);
 			ft_token(minishell);
-			// write_token(minishell);
+			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
 			if (strcmp(minishell->line, "exit") == 0)// ilerde silcez burayı 
 			{
