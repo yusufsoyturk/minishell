@@ -39,16 +39,16 @@ int		ft_atoll(const char *str);
 // utils free.c
 void	free_double(t_shell *minishell);
 void	free_struct(t_shell *minishell);
+void	free_env_list(t_env *env_list);
 // utils init.c
 void init_env(char **env, t_env **env_list);
 
-//random utils
 void	exit_error(char *arg, char *err_msg, char *type);
 int		array_len(char **args);
-int		ft_strcmp(const char *s1, const char *s2);
 
 //built
-void	built(char **args, char *input, t_env **env);
+void	built(t_shell *minishell, t_env **env);
+int		ft_strcmp(const char *s1, const char *s2);
 void	builtin_unset(const char *key, t_env **env_list);
 void	builtin_export(char **args, t_env **env_list);
 void	builtin_env(t_env *env_list);

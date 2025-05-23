@@ -42,12 +42,12 @@ void	free_token(t_token *token)
 int main(int ac, char **av, char **env)
 {
 	t_shell *minishell;
-	t_env    *env_list;//daha sonra export komutuyla değişebileceği için çevre değişkenlerini kopyalıyor
+	t_env    *env_list;
 
 	minishell = malloc(sizeof(t_shell));
 	env_list = NULL;
 	ft_init_shell(minishell);
-	init_env(env, &env_list);//burda initialize oluyo çevre değişkenleri
+	init_env(env, &env_list);
 	if (ac == 1 && av[0])
 	{
 		while (1)
@@ -56,13 +56,7 @@ int main(int ac, char **av, char **env)
 			ft_token(minishell);
 			// write_token(minishell);
 			minishell->args = ft_split(minishell->line, ' ');
-			if (strcmp(minishell->line, "exit") == 0)// ilerde silcez burayı 
-			{
-			    free_token(minishell->token); // Bu varsa bile tekrar kontrol et
-			    free_struct(minishell);
-				exit(0);
-			}
-			built(minishell->args, minishell->line, &env_list);
+			built(minishell, &env_list);
 			// pars(input, env);
 			//execute
 			free_double(minishell);

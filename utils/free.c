@@ -20,3 +20,17 @@ void	free_struct(t_shell *minishell)
 	// free_token(minishell->token);
 	free(minishell);
 }
+
+void	free_env_list(t_env *env_list)
+{
+    t_env *tmp;
+
+    while (env_list)
+    {
+        tmp = env_list;
+        env_list = env_list->next;
+        free(tmp->key);
+        free(tmp->value);
+        free(tmp);
+    }
+}

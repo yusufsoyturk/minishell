@@ -56,7 +56,7 @@ static void	builtin_pwd(void)
 	free(cwd);
 }
 
-static int	builtin_exit(char **args, char *input)
+static int	builtin_exit(t_shell *minishell, t_env *env_list)
 {
 	int			i;
 	long long	exit_code;
@@ -64,40 +64,41 @@ static int	builtin_exit(char **args, char *input)
 	i = -1;
 	exit_code = 0;
 	write(2, "exit\n", 5);
-	if (args[1])
+	if (minishell->args[1])
 	{
-		while (args[1][++i])
+		while (minishell->args[1][++i])
 		{
-			if (ft_isdigit(args[1][i]) == 0)
+			if (ft_isdigit(minishell->args[1][i]) == 0)
 			{
-				exit_error(args[1], "numeric argument required", "exit");
+				exit_error(minishell->args[1], "numeric argument required", "exit");
 				return (1);
 			}
 		}
-		if (args[2])
+		if (minishell->args[2])
 		{
 			ft_putendl_fd("minishell: exit: too many arguments", 2);
 			return (1);
 		}
-		exit_code = ft_atoll(args[1]) % 256;
+		exit_code = ft_atoll(minishell->args[1]) % 256;
 	}
-	ft_free_tab(args);
-	free(input);
+	free_token(minishell->token);
+	free_struct(minishell);
+	free_env_list(env_list);
 	exit(exit_code);
 }
 
-void	built(char **args, char *input, t_env **env)
+void	built(t_shell *minishell, t_env **env)
 {
-	if (args[0] && ft_strncmp(args[0], "exit", 4) == 0 && args[0][4] == '\0')
-		builtin_exit(args, input);
-	else if (args[0] && ft_strncmp(args[0], "cd", 2) == 0 && args[0][2] == '\0')
-		builtin_cd(args);
-	else if (args[0] && ft_strncmp(args[0], "env", 3) == 0 && args[0][3] == '\0')
+	if (minishell->args[0] && ft_strncmp(minishell->args[0], "exit", 4) == 0 && minishell->args[0][4] == '\0')
+		builtin_exit(minishell, (*env));
+	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "cd", 2) == 0 && minishell->args[0][2] == '\0')
+		builtin_cd(minishell->args);
+	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "env", 3) == 0 && minishell->args[0][3] == '\0')
 		builtin_env((*env));
-	else if (args[0] && ft_strncmp(args[0], "export", 6) == 0 && args[0][6] == '\0')
-		builtin_export(args, env);
-	else if (args[0] && ft_strncmp(args[0], "unset", 5) == 0 && args[0][5] == '\0')
-		builtin_unset(args[1], env);
-	else if (args[0] && ft_strncmp(args[0], "pwd", 3) == 0 && args[0][3] == '\0')
+	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "export", 6) == 0 && minishell->args[0][6] == '\0')
+		builtin_export(minishell->args, env);
+	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "unset", 5) == 0 && minishell->args[0][5] == '\0')
+		builtin_unset(minishell->args[1], env);
+	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "pwd", 3) == 0 && minishell->args[0][3] == '\0')
 		builtin_pwd();
 }
