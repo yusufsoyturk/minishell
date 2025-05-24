@@ -9,36 +9,35 @@ void	error_message(t_shell *minishell, char *err_msg,t_env *env_list)
 }
 // "merhaba 'yusuf" gibi örneklerde hata vermemeli
 //, fonksiyonların içerisinde kullan genel kullanımı hatalı
-void	missing_quotes_double(t_shell *minishell, t_env *env_list)
+void	missing_quotes_double(t_shell *minishell)
 {
 	int	i;
-	int	len;
-	int count_double;
+	int	quote_flag;
+	int	quote_count;
 
-	count_double = 0;
 	i = 0;
-	len = 0;
+	quote_flag = 0;
+	quote_count = 0;
 	while (minishell->line[i])
 	{
-		count_double = 0;
-		if (minishell->line[i] == 34)
+		if ((minishell->line[i] == 34 || minishell->line[i] == 39) && quote_flag == 0)
 		{
-			len++;
-			count_double++;
-			i++;
-			while (minishell->line[i] && minishell->line[i] != 34 && minishell->line[i + 1])
-			{
-				i++;
-				len++;
-			}
 			if (minishell->line[i] == 34)
-				count_double++;
+				quote_flag = 2;
+			if (minishell->line[i] == 39)
+				quote_flag = 1;
+			i++;
 		}
+		if (minishell->line[i] == 34 && quote_flag == 2)
+			quote_flag = 0;
+		if (minishell->line[i] == 39 && quote_flag == 1)
+			quote_flag = 0;
 		i++;
 	}
-	if (count_double % 2 == 1)
-		error_message(minishell , "Missing Quotes", env_list);
+	if (quote_flag != 0)
+		printf("Missing Quotes\n");
 }
+
 
 void	ft_tknadd_back(t_token **lst, t_token *new)
 {

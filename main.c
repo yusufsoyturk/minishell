@@ -73,7 +73,9 @@ int main(int ac, char **av, char **env)
 		{
 			minishell->line = readline("minishell> ");
 			if (minishell->line)
-				missing_quotes_double(minishell, env_list);
+			{
+				missing_quotes_double(minishell);
+			}
 			if (!minishell->line)
 				minishell->line = ft_strdup("exit");
 			else
