@@ -2,16 +2,10 @@
 
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list)
 {
-	if (minishell != NULL)
-	{
-		free(minishell->line);
-		free_token(minishell->token);
-		free(minishell);
-	}
-	if (env_list != NULL)
-		free_env_list(env_list);
+	(void)*env_list;
+	(void)*minishell;
+	(void)*err_msg;
 	ft_putendl_fd(err_msg, 2);
-	exit(EXIT_FAILURE);
 }
 // "merhaba 'yusuf" gibi örneklerde hata vermemeli
 //, fonksiyonların içerisinde kullan genel kullanımı hatalı
