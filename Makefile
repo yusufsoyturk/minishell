@@ -19,7 +19,8 @@ BUILT_IN =	built_in/built.c \
 
 UTILS = utils/utils.c \
 		utils/free.c \
-		utils/init.c
+		utils/init.c \
+		utils/signal.c
 
 LEXER = lexer/tokenize.c \
 		lexer/tokenize_utils.c \

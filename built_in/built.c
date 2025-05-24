@@ -56,7 +56,7 @@ static void	builtin_pwd(void)
 	free(cwd);
 }
 
-static int	builtin_exit(t_shell *minishell, t_env *env_list)
+int	builtin_exit(t_shell *minishell, t_env *env_list)
 {
 	int			i;
 	long long	exit_code;

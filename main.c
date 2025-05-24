@@ -54,9 +54,13 @@ void	free_token(t_token *token)
 
 int main(int ac, char **av, char **env)
 {
-	t_shell *minishell;
-	t_env    *env_list;
+	t_shell				*minishell;
+	t_env				*env_list;
+	struct	sigaction	sa;
 
+	sa.sa_handler = signal_handler;
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
 	minishell = malloc(sizeof(t_shell));
 	env_list = NULL;
 	ft_init_shell(minishell);
@@ -67,7 +71,7 @@ int main(int ac, char **av, char **env)
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
-			missing_quotes_double(minishell, env_list);
+			missing_quotes_double(minishell);
 			ft_token(minishell);
 			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');

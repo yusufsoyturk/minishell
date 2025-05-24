@@ -1,7 +1,9 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# define _POSIX_C_SOURCE 200809L
 # include <stdlib.h>
+# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
@@ -42,6 +44,8 @@ void	free_struct(t_shell *minishell);
 void	free_env_list(t_env *env_list);
 // utils init.c
 void init_env(char **env, t_env **env_list);
+// utils signal.c
+void	signal_handler(int sig);
 
 void	exit_error(char *arg, char *err_msg, char *type);
 int		array_len(char **args);
@@ -51,6 +55,7 @@ void	built(t_shell *minishell, t_env **env);
 int		ft_strcmp(const char *s1, const char *s2);
 void	builtin_unset(const char *key, t_env **env_list);
 void	builtin_export(char **args, t_env **env_list);
+int		builtin_exit(t_shell *minishell, t_env *env_list);
 void	builtin_env(t_env *env_list);
 t_env	*find_env_node(t_env *env, const char *key);
 void	append_env(t_env **env_list, t_env *new);
