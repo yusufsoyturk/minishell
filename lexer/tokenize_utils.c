@@ -21,6 +21,7 @@ void	missing_quotes_double(t_shell *minishell, t_env *env_list)
 	int	len;
 	int count_double;
 
+	count_double = 0;
 	i = 0;
 	len = 0;
 	while (minishell->line[i])
@@ -31,7 +32,7 @@ void	missing_quotes_double(t_shell *minishell, t_env *env_list)
 			len++;
 			count_double++;
 			i++;
-			while (minishell->line[i] != 34 && minishell->line[i + 1])
+			while (minishell->line[i] && minishell->line[i] != 34 && minishell->line[i + 1])
 			{
 				i++;
 				len++;

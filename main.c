@@ -58,6 +58,7 @@ int main(int ac, char **av, char **env)
 	t_env				*env_list;
 	struct	sigaction	sa;
 
+	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = signal_handler;
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
@@ -71,7 +72,12 @@ int main(int ac, char **av, char **env)
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
-			missing_quotes_double(minishell, env_list);
+			if (minishell->line)
+				missing_quotes_double(minishell, env_list);
+			if (!minishell->line)
+				minishell->line = ft_strdup("exit");
+			else
+				add_history(minishell->line);
 			ft_token(minishell);
 			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
