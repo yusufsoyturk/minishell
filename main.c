@@ -60,13 +60,14 @@ int main(int ac, char **av, char **env)
 	minishell = malloc(sizeof(t_shell));
 	env_list = NULL;
 	ft_init_shell(minishell);
+	(void)env;
 	init_env(env, &env_list);
 	if (ac == 1 && av[0])
 	{
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
-			missing_quotes_double(minishell);
+			missing_quotes_double(minishell, env_list);
 			ft_token(minishell);
 			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
@@ -80,6 +81,6 @@ int main(int ac, char **av, char **env)
 		free_struct(minishell);
 	}
 	else 
-		error_message(minishell, "Invalid arguments");
+		error_message(minishell, "Invalid arguments", env_list);
 	return (0);
 }

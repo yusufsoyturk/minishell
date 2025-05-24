@@ -1,20 +1,21 @@
 # include "../inc/minishell.h"
 
-void	error_message(t_shell *minishell, char *err_msg)
+void	error_message(t_shell *minishell, char *err_msg,t_env *env_list)
 {
 	if (minishell != NULL)
 	{
-		printf("%s\n" ,"yusuf");
 		free(minishell->line);
 		free_token(minishell->token);
 		free(minishell);
 	}
+	if (env_list != NULL)
+		free_env_list(env_list);
 	ft_putendl_fd(err_msg, 2);
 	exit(EXIT_FAILURE);
 }
 // "merhaba 'yusuf" gibi örneklerde hata vermemeli
 //, fonksiyonların içerisinde kullan genel kullanımı hatalı
-void	missing_quotes_double(t_shell *minishell)
+void	missing_quotes_double(t_shell *minishell, t_env *env_list)
 {
 	int	i;
 	int	len;
@@ -40,9 +41,8 @@ void	missing_quotes_double(t_shell *minishell)
 		}
 		i++;
 	}
-	printf("%d", len);
 	if (count_double % 2 == 1)
-		error_message(minishell , "Missing Quotes");
+		error_message(minishell , "Missing Quotes", env_list);
 }
 
 void	ft_tknadd_back(t_token **lst, t_token *new)
