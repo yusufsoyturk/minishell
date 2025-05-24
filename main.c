@@ -71,7 +71,7 @@ int main(int ac, char **av, char **env)
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
-			missing_quotes_double(minishell);
+			missing_quotes_double(minishell, env_list);
 			ft_token(minishell);
 			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
