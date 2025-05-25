@@ -17,6 +17,14 @@ int	word_len(char *line)
 			if (line[i] != line[i - 1])
 				break;
 		}
+		if (line[i] == '<' || line[i] == '>')
+		{
+			if (line[i + 1] && (line[i + 1] != line[i]))
+			{
+				len = i;
+				break;
+			}
+		}
 		len = i;
 		i++;
 	}
@@ -94,3 +102,4 @@ t_token	*new_token(t_token *token, char *value)
 	ft_tknadd_back(&token, new);
 	return (token);
 }
+
