@@ -12,6 +12,11 @@ int	word_len(char *line)
 	{
 		if (line[i] == 32)
 			break;
+		if (i > 0 && (line[i] == '>' || line[i] == '<'))
+		{
+			if (line[i] != line[i - 1])
+				break;
+		}
 		len = i;
 		i++;
 	}

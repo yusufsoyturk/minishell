@@ -13,11 +13,9 @@ void	missing_quotes_double(t_shell *minishell)
 {
 	int	i;
 	int	quote_flag;
-	int	quote_count;
 
 	i = 0;
 	quote_flag = 0;
-	quote_count = 0;
 	while (minishell->line[i])
 	{
 		if ((minishell->line[i] == 34 || minishell->line[i] == 39) && quote_flag == 0)
