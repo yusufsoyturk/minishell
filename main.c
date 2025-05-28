@@ -51,11 +51,59 @@ void	free_token(t_token *token)
 		token = tmp;
 	}
 }
+//PRİNT ALANI
+
+void print_redirections(t_redir *redir)
+{
+    while (redir)
+    {
+        printf("    🔁 Redirection: target='%s', flags=%d, fd=%d\n",
+               redir->target, redir->flag, redir->fd);
+        redir = redir->next;
+    }
+}
+
+void print_commands(t_command *cmds)
+{
+    int i = 1;
+    while (cmds)
+    {
+        printf("=== Command %d ===\n", i);
+
+        // Argümanları yazdır
+        if (cmds->args)
+        {
+            printf("  🔹 Args: ");
+            for (int j = 0; cmds->args[j]; j++)
+                printf("'%s' ", cmds->args[j]);
+            printf("\n");
+        }
+        else
+            printf("  🔹 Args: (none)\n");
+
+        // Giriş ve çıkış dosya tanımlayıcıları
+        printf("  🔸 Input FD: %d\n", cmds->input);
+        printf("  🔸 Output FD: %d\n", cmds->output);
+
+        // Redirection varsa
+        if (cmds->redirs)
+            print_redirections(cmds->redirs);
+        else
+            printf("  🔁 No redirections.\n");
+
+        printf("\n");
+        cmds = cmds->next;
+        i++;
+    }
+}
+
+// PRİNT ALANI CAN GPT BABAYA SELAMLAR
 
 int main(int ac, char **av, char **env)
 {
 	t_shell				*minishell;
 	t_env				*env_list;
+	t_command			*commands;
 	struct	sigaction	sa;
 
 	ft_memset(&sa, 0, sizeof(sa));
@@ -65,7 +113,6 @@ int main(int ac, char **av, char **env)
 	minishell = malloc(sizeof(t_shell));
 	env_list = NULL;
 	ft_init_shell(minishell);
-	(void)env;
 	init_env(env, &env_list);
 	if (ac == 1 && av[0])
 	{
@@ -73,19 +120,17 @@ int main(int ac, char **av, char **env)
 		{
 			minishell->line = readline("minishell> ");
 			if (minishell->line)
-			{
 				missing_quotes_double(minishell);
-			}
 			if (!minishell->line)
 				minishell->line = ft_strdup("exit");
 			else
 				add_history(minishell->line);
 			ft_token(minishell);
-			print_tokens(minishell->token);
+			// print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
 			built(minishell, &env_list);
-			// pars(input, env);
-			//execute
+			commands = pars(minishell->token, env_list);
+			print_commands(commands);
 			free_double(minishell);
 			free_token(minishell->token);
 			free(minishell->line);
