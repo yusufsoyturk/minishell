@@ -104,12 +104,8 @@ int main(int ac, char **av, char **env)
 	t_shell				*minishell;
 	t_env				*env_list;
 	t_command			*commands;
-	struct	sigaction	sa;
-
-	ft_memset(&sa, 0, sizeof(sa));
-	sa.sa_handler = signal_handler;
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
+	
+	setup_signals();
 	minishell = malloc(sizeof(t_shell));
 	env_list = NULL;
 	ft_init_shell(minishell);

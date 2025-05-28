@@ -47,6 +47,7 @@ void	free_env_list(t_env *env_list);
 void init_env(char **env, t_env **env_list);
 // utils signal.c
 void	signal_handler(int sig);
+void	setup_signals(void);
 
 void	exit_error(char *arg, char *err_msg, char *type);
 int		array_len(char **args);
