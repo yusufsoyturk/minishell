@@ -29,16 +29,6 @@ const char *token_type_to_string(t_token_type type) {
     }
 }
 
-// Token'ları yazdıran fonksiyon
-void print_tokens(t_token *tokens) 
-{
-    while (tokens)
-	{
-        printf("Type = %s, Value = '%s'\n", token_type_to_string(tokens->type), tokens->value);
-		tokens = tokens->next;
-	}
-}
-
 void	free_token(t_token *token)
 {
 	t_token *tmp;
@@ -52,6 +42,15 @@ void	free_token(t_token *token)
 	}
 }
 //PRİNT ALANI
+
+void print_tokens(t_token *tokens) 
+{
+    while (tokens)
+	{
+        printf("Type = %s, Value = '%s'\n", token_type_to_string(tokens->type), tokens->value);
+		tokens = tokens->next;
+	}
+}
 
 void print_redirections(t_redir *redir)
 {
@@ -122,7 +121,7 @@ int main(int ac, char **av, char **env)
 			else
 				add_history(minishell->line);
 			ft_token(minishell);
-			// print_tokens(minishell->token);
+			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
 			built(minishell, &env_list);
 			commands = pars(minishell->token, env_list);
@@ -133,6 +132,7 @@ int main(int ac, char **av, char **env)
 		}
 		free_struct(minishell);
 	}
+
 	else 
 		error_message(minishell, "Invalid arguments", env_list);
 	return (0);
