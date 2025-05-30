@@ -17,7 +17,7 @@ int	word_len(char *line)
 			if (line[i] != line[i - 1])
 				break;
 		}
-		if (line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == '$')
+		if (line[i] == '<' || line[i] == '>' || line[i] == '|')
 		{
 			if (line[i + 1] && (line[i + 1] != line[i]))
 			{
@@ -54,9 +54,9 @@ t_token_type	find_type(char *line)
 {
 	if (ft_strncmp(line, "|", 1) == 0)
 		return	T_PIPE;
-	else if (ft_strncmp(line, "<<", 2) == 0)
-		return	T_REDIR_APPEND;
 	else if (ft_strncmp(line, ">>", 2) == 0)
+		return	T_REDIR_APPEND;
+	else if (ft_strncmp(line, "<<", 2) == 0)
 		return	T_REDIR_HEREDOC;
 	else if (ft_strncmp(line, "<", 1) == 0)
 		return	T_REDIR_IN;
@@ -77,6 +77,7 @@ char	*find_value(char *line, int *i)
 	{
 		token = in_double_quotes(line + (*i));
 		*i += double_quotes_len(token);
+		// printf("%d %s\n", *i, token);
 	}
 	else if (line[*i] == 39)
 	{
@@ -88,7 +89,7 @@ char	*find_value(char *line, int *i)
 		token = new_word(line + *i);
 		*i += word_len(token);
 	}
-	return token;
+	return (token);
 }
 
 t_token	*new_token(t_token *token, char *value)
