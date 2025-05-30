@@ -98,6 +98,15 @@ void print_commands(t_command *cmds)
 
 // PRİNT ALANI CAN GPT BABAYA SELAMLAR
 
+void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
+{
+	(void)env;
+	free_double(minishell);
+	free_token(minishell->token);
+	free(minishell->line);
+	free_commands(cmd);
+}
+
 int main(int ac, char **av, char **env)
 {
 	t_shell				*minishell;
@@ -126,13 +135,10 @@ int main(int ac, char **av, char **env)
 			built(minishell, &env_list);
 			commands = pars(minishell->token, env_list);
 			print_commands(commands);
-			free_double(minishell);
-			free_token(minishell->token);
-			free(minishell->line);
+			free_max(minishell, env_list, commands);
 		}
 		free_struct(minishell);
 	}
-
 	else 
 		error_message(minishell, "Invalid arguments", env_list);
 	return (0);

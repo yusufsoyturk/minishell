@@ -1,6 +1,8 @@
 #ifndef PARSE_H
 # define PARSE_H
 
+# define R_HEREDOC -42
+
 #include <stdlib.h>
 # include "../libft/libft.h"
 # include "minishell.h"

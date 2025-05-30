@@ -44,6 +44,31 @@ int add_arg_to_command(t_command *cmd, const char *arg)
     return (0);
 }
 
+int	token_check(char *str)
+{
+	char	*prefix;
+	char	*msg;
+	char	*tmp;
+
+	prefix = ft_strdup("minishell: syntax error near unexpected token `");
+	if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0
+		|| ft_strncmp(str, "<<", 1) == 0 || ft_strncmp(str, ">>", 1) == 0
+			|| ft_strncmp(str, "&", 1) == 0 || ft_strncmp(str, "|", 1) == 0
+				|| ft_strncmp(str, "&&", 2) == 0 || ft_strncmp(str, "||", 2) == 0
+					|| ft_strncmp(str, "\n", 1) == 0)
+	{
+		tmp = ft_strjoin(prefix, str);
+		free(prefix);
+		msg = ft_strjoin(tmp, "'");
+		free(tmp);
+		ft_putendl_fd(msg, 2);
+		free(msg);
+		return (1);
+	}
+	free(prefix);
+	return (0);
+}
+
 t_command	*pars(t_token *token, t_env *env)
 {
 	t_command	*head;
@@ -62,18 +87,19 @@ t_command	*pars(t_token *token, t_env *env)
 		}
 		else if (token->type != T_PIPE && token->type != T_WORD)
 		{//BURASI KOMPLE BAŞKA BİR FONKSİYONA ALINABİLİR
-			t_redir	*r;
-			r = malloc(sizeof(t_redir));
+			current->redirs = malloc(sizeof(t_redir));
 			if (token->type == T_REDIR_IN)
-                r->flag = O_RDONLY;
+                current->redirs->flag = O_RDONLY;
             else if (token->type == T_REDIR_OUT)
-                r->flag = O_CREAT | O_WRONLY | O_TRUNC;
+                current->redirs->flag = O_CREAT | O_WRONLY | O_TRUNC;
             else if (token->type == T_REDIR_APPEND)
-                r->flag = O_CREAT | O_WRONLY | O_APPEND;
-			//heredoc problemli bir durum ona sonra bakacağım
+                current->redirs->flag = O_CREAT | O_WRONLY | O_APPEND;
+			else if (token->type == T_REDIR_HEREDOC)
+				current->redirs->flag = R_HEREDOC;
 			token = token->next; //token'da ilerlememizin sebebi redirectionların targete her zaman sağ tarafta olur
-			r->target = ft_strdup(token->value);//sıkıntıyı anladım ama zamanım yok
-			r->next = current->redirs;
+			token_check(token->value);
+			current->redirs->target = ft_strdup(token->value);//sıkıntıyı anladım ama zamanım yok
+			current->redirs->next = NULL;
 			token = token->next;
 		}
 		else

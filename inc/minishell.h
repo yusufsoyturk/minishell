@@ -43,6 +43,7 @@ int		ft_atoll(const char *str);
 void	free_double(t_shell *minishell);
 void	free_struct(t_shell *minishell);
 void	free_env_list(t_env *env_list);
+void	free_commands(t_command *cmd);
 // utils init.c
 void init_env(char **env, t_env **env_list);
 // utils signal.c
