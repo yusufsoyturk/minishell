@@ -27,7 +27,6 @@ int	ft_token(t_shell *minishell)
 {
 	char	*line;
 
-	// minishell->token = malloc(sizeof(t_token));
 	minishell->token = NULL;
 	line = minishell->line;
 	minishell->token = make_token(line, minishell->token);

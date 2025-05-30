@@ -4,20 +4,26 @@
 int	double_quotes_len(char *line)
 {
 	int	i;
-	int	end;
 
 	i = 0;
-	end = 0;
 	while (line[i])
 	{
 		if (line[i] == 34 && i != 0)
 		{
-			end = i;
+			if (line[i + 1] == 34 || line[i + 1] == 39)
+			{
+				while (line[i + 1])
+				{
+					i++;
+					if (line[i + 1] == 34)
+						return (i + 2);
+				}
+			}
 			break ;
 		}
 		i++;
 	}
-	return (end + 1);
+	return (i + 1);
 }
 
 //bu fonksiyondan döndürülen token freelenmeli
@@ -43,20 +49,26 @@ char	*in_double_quotes(char *line)
 int	single_quote_len(char *line)
 {
 	int	i;
-	int	end;
 
 	i = 0;
-	end = 0;
 	while (line[i])
 	{
 		if (line[i] == 39 && i != 0)
 		{
-			end = i;
+			if (line[i + 1] == 39 || line[i + 1])
+			{
+				while (line[i + 1])
+				{
+					i++;
+					if (line[i + 1] == 39)
+						return (i + 2);
+				}
+			}
 			break ;
 		}
 		i++;
 	}
-	return (end + 1);
+	return (i + 1);
 }
 
 char	*in_single_quote(char *line)
