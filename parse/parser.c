@@ -54,8 +54,7 @@ int	token_check(char *str)
 	if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0
 		|| ft_strncmp(str, "<<", 1) == 0 || ft_strncmp(str, ">>", 1) == 0
 			|| ft_strncmp(str, "&", 1) == 0 || ft_strncmp(str, "|", 1) == 0
-				|| ft_strncmp(str, "&&", 2) == 0 || ft_strncmp(str, "||", 2) == 0
-					|| ft_strncmp(str, "\n", 1) == 0)
+				|| ft_strncmp(str, "&&", 2) == 0 || ft_strncmp(str, "||", 2) == 0)
 	{
 		tmp = ft_strjoin(prefix, str);
 		free(prefix);
@@ -84,6 +83,12 @@ t_command	*pars(t_token *token, t_env *env)
 			current->next = init_command();
 			current = current->next;
 			token = token->next;
+			if (!token)
+			{
+				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
+				return (NULL);
+			}
+			token_check(token->value);
 		}
 		else if (token->type != T_PIPE && token->type != T_WORD)
 		{//BURASI KOMPLE BAŞKA BİR FONKSİYONA ALINABİLİR
@@ -96,7 +101,13 @@ t_command	*pars(t_token *token, t_env *env)
                 current->redirs->flag = O_CREAT | O_WRONLY | O_APPEND;
 			else if (token->type == T_REDIR_HEREDOC)
 				current->redirs->flag = R_HEREDOC;
+			current->redirs->fd = -1;
 			token = token->next; //token'da ilerlememizin sebebi redirectionların targete her zaman sağ tarafta olur
+			if (!token)
+			{
+				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
+				return (NULL);
+			}
 			token_check(token->value);
 			current->redirs->target = ft_strdup(token->value);//sıkıntıyı anladım ama zamanım yok
 			current->redirs->next = NULL;
