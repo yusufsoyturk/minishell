@@ -111,7 +111,7 @@ int main(int ac, char **av, char **env)
 {
 	t_shell				*minishell;
 	t_env				*env_list;
-	// t_command			*commands;
+	t_command			*commands;
 	
 	setup_signals();
 	minishell = malloc(sizeof(t_shell));
@@ -134,9 +134,9 @@ int main(int ac, char **av, char **env)
 			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
 			built(minishell, &env_list);
-			// commands = pars(minishell->token, env_list);
-			// print_commands(commands);
-			// free_max(minishell, env_list, commands);
+			commands = pars(minishell->token, env_list);
+			print_commands(commands);
+			free_max(minishell, env_list, commands);
 		}
 		free_struct(minishell);
 	}

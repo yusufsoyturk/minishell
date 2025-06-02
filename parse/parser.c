@@ -43,6 +43,27 @@ int add_arg_to_command(t_command *cmd, const char *arg)
 
     return (0);
 }
+int	token_check_pipe(char *str)
+{
+	char	*prefix;
+	char	*msg;
+	char	*tmp;
+
+	prefix = ft_strdup("minishell: syntax error near unexpected token `");
+	if (ft_strncmp(str, "&", 1) == 0 || ft_strncmp(str, "|", 1) == 0
+				|| ft_strncmp(str, "&&", 2) == 0 || ft_strncmp(str, "||", 2) == 0)
+	{
+		tmp = ft_strjoin(prefix, str);
+		free(prefix);
+		msg = ft_strjoin(tmp, "'");
+		free(tmp);
+		ft_putendl_fd(msg, 2);
+		free(msg);
+		return (1);
+	}
+	free(prefix);
+	return (0);
+}
 
 int	token_check(char *str)
 {
@@ -86,11 +107,12 @@ t_command	*pars(t_token *token, t_env *env)
 			if (!token)
 			{
 				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
-				return (NULL);
+				return (free_commands(head), NULL);
 			}
-			token_check(token->value);
+			if (token_check_pipe(token->value))
+				return (free_commands(head), NULL);
 		}
-		else if (token->type != T_PIPE && token->type != T_WORD)
+		else if (token->type != T_PIPE && token->type != T_WORD && token->type != T_ENV_VAR)
 		{//BURASI KOMPLE BAŞKA BİR FONKSİYONA ALINABİLİR
 			current->redirs = malloc(sizeof(t_redir));
 			if (token->type == T_REDIR_IN)
@@ -105,11 +127,18 @@ t_command	*pars(t_token *token, t_env *env)
 			token = token->next; //token'da ilerlememizin sebebi redirectionların targete her zaman sağ tarafta olur
 			if (!token)
 			{
+				current->redirs->target = NULL;
+				current->redirs->next = NULL;
 				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
-				return (NULL);
+				return (free_commands(head), NULL);
 			}
-			token_check(token->value);
-			current->redirs->target = ft_strdup(token->value);//sıkıntıyı anladım ama zamanım yok
+			if (token_check(token->value))
+			{
+				current->redirs->target = NULL;
+				current->redirs->next = NULL;
+				return (free_commands(head), NULL);
+			}
+			current->redirs->target = ft_strdup(token->value);
 			current->redirs->next = NULL;
 			token = token->next;
 		}
