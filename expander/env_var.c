@@ -1,65 +1,88 @@
-#include "../inc/minishell.h"
+// #include "../inc/minishell.h"
 
-// int	expand_env_quotes_len(t_env *env_list, char *value, int len)
+// int	expand_env_key_len(char *env_list)
 // {
-// 	int	i;
-// 	(void)len;
+// 	int i;
+// 	int	env_len;
+	
 // 	i = 0;
-// 	if (value[i] && value[i] == '$')
+// 	env_len = 0;
+// 	while (env_list[i])
 // 	{
-// 		printf("try");
-// 		// if (ft_strncmp())
+// 		if (env_list[i] != 32 && env_list[i] != 34 && env_list[i] != 39)
+// 			env_len++;
+// 		i++;
 // 	}
+// 	return (env_len);
 // }
 
-int	expand_quotes_len(t_token *token)
-{
-	int	i;
-	int str_len;
-	int	env_key_len;
+// char	*expand_env_value(t_env *env_list, t_token *token)
+// {
+// 	t_env	*head;
+// 	int	env_len;
+// 	char *env_value;
+// 	int	i;
 
-	str_len = 0;
-	env_key_len = -1;
-	i = 0;
-	if (token->type == T_WORD && token->value[0] == 34)
-	{
-		while (token->value[i])
-		{
-			while (token->value[i] && token->value[i] != '$')
-			{
-				i++;
-				str_len++;
-			}
-			while (token->value[i] && token->value[i] != 32 && token->value[i] != 34)
-			{
-				i++;
-				env_key_len++;
-				printf("%s %d\n", "env" ,env_key_len);
-			}
-			i++;
-		}
-	}
-	return (str_len);
-}
+// 	i = 0;
+// 	env_len = 0;
+// 	head = env_list;
+// 	if (token->value[i] == 34)
+// 	{
+// 		while (token->value[i] && token->value[i] != '$')
+// 			i++;
+// 	}
+// 	while (env_list)
+// 	{
+// 		env_len = expand_env_key_len(token->value[i + 1]);
+// 		if (ft_strncmp(token->value + i + 1, env_list->key, env_len))
+// 		{
+// 			env_value = env_list->value;
+// 		}
+// 		env_list = env_list->next;
+// 	}
+// 	return (env_list);
+// }
+
+// char *expand_pre_env(); 
 
 // void	expand_with_quotes(t_env *env_list, t_token *token)
 // {
+// 	int	i;
+// 	int pre_len;
+// 	int env_len;
+// 	char *env_value;
 
+// 	pre_len = 0;
+// 	i = 0;
+// 	env_len = 0;
+// 	head = env_list;
+// 	if (token->value[i] == 34)
+// 	{
+// 		while (token->value[i] && token->value[i] != '$')
+// 		{
+// 			pre_len++;
+// 			i++;
+// 		}
+// 		if (token->value[i] == '$')
+// 		{
+
+// 		}
+// 	}
 // }
 
-void	expand_env_var(t_env *env_list, t_token *token)
-{
-	t_env *head;
+// void	expand_env_var(t_env *env_list, t_token *token)
+// {
+// 	t_env *head;
 
-	head = env_list;
-	while (env_list)
-	{
-		if (ft_strcmp(token->value + 1, env_list->key) == 0)
-			token->value = env_list->value;
-		env_list = env_list->next;
-	}
-	env_list = head;
-}
+// 	head = env_list;
+// 	while (env_list)
+// 	{
+// 		if (ft_strcmp(token->value + 1, env_list->key) == 0)
+// 			token->value = env_list->value;
+// 		env_list = env_list->next;
+// 	}
+// 	env_list = head;
+// }
 
 // void	ft_expand(t_env *env_list, t_token *token)
 // {
@@ -76,7 +99,6 @@ void	expand_env_var(t_env *env_list, t_token *token)
 // 		else if (token->type == T_WORD)
 // 		{
 // 			printf("%s", "yeteeeeeeeeeeeeeeeeetrrrrrrrrrr");
-// 			str_len =  expand_quotes_len(token);
 // 		}
 // 		token = token->next;
 // 	}

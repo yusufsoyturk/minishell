@@ -68,7 +68,6 @@ void	sort_env_array(t_env **arr);
 // expander env_var
 void	expand_env_var(t_env *env_list, t_token *token);
 void	ft_expand(t_env *env_list, t_token *token);
-int	expand_quotes_len(t_token *token);
 
 void	free_token(t_token *token);
 
