@@ -61,24 +61,24 @@ void	expand_env_var(t_env *env_list, t_token *token)
 	env_list = head;
 }
 
-void	ft_expand(t_env *env_list, t_token *token)
-{
-	int str_len;
+// void	ft_expand(t_env *env_list, t_token *token)
+// {
+// 	int str_len;
 
-	(void)str_len;
-	str_len = 0;
-	while (token)
-	{
-		if (token->type == T_ENV_VAR)
-		{
-			expand_env_var(env_list, token);
-		}
-		else if (token->type == T_WORD)
-		{
-			printf("%s", "yeteeeeeeeeeeeeeeeeetrrrrrrrrrr");
-			// str_len =  expand_quotes_len(token);
-		}
-		token = token->next;
-	}
-	// printf("%d\n", str_len);
-}
+// 	(void)str_len;
+// 	str_len = 0;
+// 	while (token)
+// 	{
+// 		if (token->type == T_ENV_VAR)
+// 		{
+// 			expand_env_var(env_list, token);
+// 		}
+// 		else if (token->type == T_WORD)
+// 		{
+// 			printf("%s", "yeteeeeeeeeeeeeeeeeetrrrrrrrrrr");
+// 			str_len =  expand_quotes_len(token);
+// 		}
+// 		token = token->next;
+// 	}
+// 	printf("%d\n", str_len);
+// }
