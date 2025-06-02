@@ -90,7 +90,7 @@ t_command	*pars(t_token *token, t_env *env)
 			}
 			token_check(token->value);
 		}
-		else if (token->type != T_PIPE && token->type != T_WORD)
+		else if (token->type != T_PIPE && token->type != T_WORD && token->type != T_ENV_VAR)
 		{//BURASI KOMPLE BAŞKA BİR FONKSİYONA ALINABİLİR
 			current->redirs = malloc(sizeof(t_redir));
 			if (token->type == T_REDIR_IN)
