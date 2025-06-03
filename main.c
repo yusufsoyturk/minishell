@@ -135,7 +135,7 @@ int main(int ac, char **av, char **env)
 			minishell->args = ft_split(minishell->line, ' ');
 			built(minishell, &env_list);
 			commands = pars(minishell->token, env_list);
-			print_commands(commands);
+			// print_commands(commands);
 			free_max(minishell, env_list, commands);
 		}
 		free_struct(minishell);
