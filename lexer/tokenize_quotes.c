@@ -4,12 +4,15 @@
 int	double_quotes_len(char *line)
 {
 	int	i;
+	int flag;
 
+	flag = 0;
 	i = 0;
 	while (line[i])
 	{
 		if (line[i] == 34)
 		{
+			flag++;
 			if (line[i + 1] == 34 || line[i + 1] == 39)
 			{
 				while (line[i + 1])
@@ -20,7 +23,7 @@ int	double_quotes_len(char *line)
 				}
 			}
 		}
-		else if (line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32)
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
 			break;
 		i++;
 	}
@@ -50,13 +53,16 @@ char	*in_double_quotes(char *line)
 int	single_quote_len(char *line)
 {
 	int	i;
+	int flag;
 
+	flag = 0;
 	i = 0;
 	while (line[i])
 	{
 		if (line[i] == 39)
 		{
-			if (line[i + 1] == 39 || line[i + 1] == 34)
+			flag++;
+			if (line[i + 1] == 39)
 			{
 				while (line[i + 1])
 				{
@@ -66,7 +72,7 @@ int	single_quote_len(char *line)
 				}
 			}
 		}
-		else if (line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32)
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
 			break;
 		i++;
 	}
