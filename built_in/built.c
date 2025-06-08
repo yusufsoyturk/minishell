@@ -1,6 +1,6 @@
 #include "../inc/minishell.h"
 
-static void	builtin_cd(char **args)
+static int	builtin_cd(char **args)
 {
 	char	*cwd;
 	char	**tmp;
@@ -9,13 +9,13 @@ static void	builtin_cd(char **args)
 	if (cwd == NULL)
 	{
 		perror("malloc");
-		return ;
+		return (1);
 	}
 	if (args[1] == NULL)
 	{
 		free(cwd);
 		chdir(getenv("HOME"));
-		return ;
+		return (0);
 	}
 	if (ft_strncmp(args[1], "..", 2) == 0)
 	{
@@ -31,12 +31,18 @@ static void	builtin_cd(char **args)
 	else if (chdir(args[1]) == -1)
 	{
 		if (ft_strncmp(args[1], ".", 1) == 0)
-			return ;
+		{
+			free(cwd);
+			return (0);
+		}
 		exit_error(args[1], "No such file or directory", "cd");
+		free(cwd);
+		return (1);
 	}
 	free(cwd);
+	return (0);
 }
-static void	builtin_pwd(void)
+static int	builtin_pwd(void)
 {
 	char	*cwd;
 
@@ -44,19 +50,20 @@ static void	builtin_pwd(void)
 	if (cwd == NULL)
 	{
 		perror("malloc");
-		return ;
+		return (1);
 	}
 	if (getcwd(cwd, 1024) == NULL)
 	{
 		perror("getcwd");
 		free(cwd);
-		return ;
+		return (1);
 	}
 	ft_putendl_fd(cwd, 1);
 	free(cwd);
+	return (0);
 }
 
-int	builtin_exit(t_shell *minishell, t_env *env_list)
+int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *minishell)
 {
 	int			i;
 	long long	exit_code;
@@ -64,41 +71,55 @@ int	builtin_exit(t_shell *minishell, t_env *env_list)
 	i = -1;
 	exit_code = 0;
 	write(2, "exit\n", 5);
-	if (minishell->args[1])
+	if (cmd->args[1])
 	{
-		while (minishell->args[1][++i])
+		while (cmd->args[1][++i])
 		{
-			if (ft_isdigit(minishell->args[1][i]) == 0)
+			if (ft_isdigit(cmd->args[1][i]) == 0)
 			{
-				exit_error(minishell->args[1], "numeric argument required", "exit");
+				exit_error(cmd->args[1], "numeric argument required", "exit");
 				return (1);
 			}
 		}
-		if (minishell->args[2])
+		if (cmd->args[2])
 		{
-			ft_putendl_fd("minishell: exit: too many arguments", 2);
+			ft_putendl_fd("cmd: exit: too many arguments", 2);
 			return (1);
 		}
-		exit_code = ft_atoll(minishell->args[1]) % 256;
+		exit_code = ft_atoll(cmd->args[1]) % 256;
 	}
-	free_token(minishell->token);
-	free_struct(minishell);
-	free_env_list(env_list);
+	free_max(minishell, env_list, cmd);
 	exit(exit_code);
 }
 
-void	built(t_shell *minishell, t_env **env)
+int	built(t_command *cmd, t_env **env, t_shell *minishell)
 {
-	if (minishell->args[0] && ft_strncmp(minishell->args[0], "exit", 4) == 0 && minishell->args[0][4] == '\0')
-		builtin_exit(minishell, (*env));
-	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "cd", 2) == 0 && minishell->args[0][2] == '\0')
-		builtin_cd(minishell->args);
-	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "env", 3) == 0 && minishell->args[0][3] == '\0')
-		builtin_env((*env));
-	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "export", 6) == 0 && minishell->args[0][6] == '\0')
-		builtin_export(minishell->args, env);
-	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "unset", 5) == 0 && minishell->args[0][5] == '\0')
-		builtin_unset(minishell->args[1], env);
-	else if (minishell->args[0] && ft_strncmp(minishell->args[0], "pwd", 3) == 0 && minishell->args[0][3] == '\0')
-		builtin_pwd();
+	if (cmd->args[0] && ft_strncmp(cmd->args[0], "exit", 4) == 0 && cmd->args[0][4] == '\0')
+		return (builtin_exit(cmd, (*env), minishell));
+	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "cd", 2) == 0 && cmd->args[0][2] == '\0')
+		return (builtin_cd(cmd->args));
+	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "env", 3) == 0 && cmd->args[0][3] == '\0')
+		return (builtin_env((*env)));
+	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "export", 6) == 0 && cmd->args[0][6] == '\0')
+		return (builtin_export(cmd->args, env));
+	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "unset", 5) == 0 && cmd->args[0][5] == '\0')
+		return (builtin_unset(cmd->args[1], env));
+	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "pwd", 3) == 0 && cmd->args[0][3] == '\0')
+		return (builtin_pwd());
+	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "echo", 4) == 0 && cmd->args[0][4] == '\0')
+		return (builtin_echo(cmd->args));
+	return (1);
+}
+
+int	is_builtin(char **cmd)
+{
+	if (!cmd)
+		return (0);
+	return (!ft_strcmp(cmd[0], "cd")
+		|| !ft_strcmp(cmd[0], "echo")
+		|| !ft_strcmp(cmd[0], "exit")
+		|| !ft_strcmp(cmd[0], "pwd")
+		|| !ft_strcmp(cmd[0], "env")
+		|| !ft_strcmp(cmd[0], "export")
+		|| !ft_strcmp(cmd[0], "unset"));
 }

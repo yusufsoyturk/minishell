@@ -10,9 +10,9 @@ int	word_len(char *line)
 	len = 0;
 	while (line[i])
 	{
-		if (line[i] == 32)
+		if (line[i] == 32  || (line[i] >= 9 && line[i] <= 13))		
 			break;
-		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|'))
+		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|' || line[i] == '$'))
 		{
 			if (line[i] != line[i - 1])
 				break;
@@ -77,6 +77,7 @@ char	*find_value(char *line, int *i)
 	{
 		token = in_double_quotes(line + (*i));
 		*i += double_quotes_len(token);
+		// printf("%d %s\n", *i, token);
 	}
 	else if (line[*i] == 39)
 	{

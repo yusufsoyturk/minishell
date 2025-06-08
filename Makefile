@@ -30,6 +30,8 @@ LEXER = lexer/tokenize.c \
 PARSE = parse/parse_utils.c \
 		parse/parser.c 
 
+EXECUTE = execute/execute.c
+
 EXPANDER = expander/env_var.c 
 
 SRCS = $(BUILT_IN) \
@@ -37,6 +39,7 @@ SRCS = $(BUILT_IN) \
 		$(UTILS) \
 		$(LEXER) \
 		$(EXPANDER)\
+		$(EXECUTE)\
 		main.c
 
 OBJS = $(SRCS:.c=.o)

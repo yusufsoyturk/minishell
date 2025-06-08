@@ -10,7 +10,7 @@ t_token	*make_token(char *line, t_token *head)
 	i = &j;
 	while (line[*i])
 	{
-		if (line[*i] == 32)
+		if (line[*i] == 32 || (line[*i] >= 9 && line[*i] <= 13))
 			(*i)++;
 		else
 		{

@@ -4,15 +4,12 @@
 int	double_quotes_len(char *line)
 {
 	int	i;
-	int flag;
 
-	flag = 0;
 	i = 0;
 	while (line[i])
 	{
-		if (line[i] == 34)
+		if (line[i] == 34 && i != 0)
 		{
-			flag++;
 			if (line[i + 1] == 34 || line[i + 1] == 39)
 			{
 				while (line[i + 1])
@@ -22,12 +19,11 @@ int	double_quotes_len(char *line)
 						return (i + 2);
 				}
 			}
+			break ;
 		}
-		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
-			break;
 		i++;
 	}
-	return (i);
+	return (i + 1);
 }
 
 //bu fonksiyondan döndürülen token freelenmeli
@@ -53,16 +49,13 @@ char	*in_double_quotes(char *line)
 int	single_quote_len(char *line)
 {
 	int	i;
-	int flag;
 
-	flag = 0;
 	i = 0;
 	while (line[i])
 	{
-		if (line[i] == 39)
+		if (line[i] == 39 && i != 0)
 		{
-			flag++;
-			if (line[i + 1] == 39)
+			if (line[i + 1] == 39 || line[i + 1])
 			{
 				while (line[i + 1])
 				{
@@ -71,12 +64,11 @@ int	single_quote_len(char *line)
 						return (i + 2);
 				}
 			}
+			break ;
 		}
-		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
-			break;
 		i++;
 	}
-	return (i);
+	return (i + 1);
 }
 
 char	*in_single_quote(char *line)

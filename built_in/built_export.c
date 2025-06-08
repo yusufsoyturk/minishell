@@ -78,14 +78,14 @@ static int is_valid_var_name(const char *name)
     return (1);
 }
 
-void builtin_export(char **args, t_env **env_list)
+int builtin_export(char **args, t_env **env_list)
 {
     int i = 1;
 
     if (!args[1])
     {
         print_export(*env_list);
-        return ;
+        return (1);
     }
 
     while (args[i])
@@ -110,5 +110,6 @@ void builtin_export(char **args, t_env **env_list)
         }
         i++;
     }
+    return (0);
 }
 
