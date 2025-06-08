@@ -97,6 +97,13 @@ t_command	*pars(t_token *token, t_env *env)
 	head = init_command();
 	current = head;
 	(void)env;
+	if (!token)
+		return (NULL);
+	if (token->type == T_PIPE)
+	{
+		ft_putendl_fd("minishell: syntax error near unexpected token `|'", 2);
+		return (free_commands(head), NULL);
+	}
 	while (token)
 	{
 		if (token->type == T_PIPE)
