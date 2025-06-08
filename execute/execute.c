@@ -90,13 +90,10 @@ int	arg_check(char *cmd)
 	ft_strcmp(cmd, "cut") == 0 ||
 	ft_strcmp(cmd, "awk") == 0 ||
 	ft_strcmp(cmd, "sed") == 0 ||
+	ft_strcmp(cmd, "as") == 0 ||
 	ft_strcmp(cmd, "unset") == 0 ||
 	ft_strcmp(cmd, "sort") == 0)
-	{
-		ft_putstr_fd(cmd, 2);
-		ft_putendl_fd(": Syntax error command requiers arguman", 2);
 		return (1);
-	}
 	return (0);
 }
 int	execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
@@ -110,8 +107,12 @@ int	execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	current = cmd;
 	while (current)
 	{
-		if (arg_check(current->args[0]) && !current->args[1])
-			break ;
+		if (arg_check(current->args[0]) && !(current->args[1] || current->redirs))
+			{
+				ft_putstr_fd(current->args[0], 2);
+				ft_putendl_fd(": Syntax error command requiers arguman", 2);
+				break ;
+			}
 		if (!current->next && is_builtin(current->args))
 		{
 			if (current->redirs && handle_redirection(current) == -1)
