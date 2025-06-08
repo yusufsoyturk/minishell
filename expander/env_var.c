@@ -1,154 +1,177 @@
 #include "../inc/minishell.h"
 
-int	expand_env_key_len(char *env_list)
+char *expand_chance_env(t_env *env_list, t_token *token, int *i)
 {
-	int i;
-	int	env_len;
-	
-	i = 0;
-	env_len = 0;
-	while (env_list[i])
-	{
-		if (env_list[i] != 32 && env_list[i] != 34 && env_list[i] != 39)
-			env_len++;
-		i++;
-	}
-	return (env_len);
-}
+	t_env *head;
+	char *new_val;
+	int a;
 
-char	*expand_env_value(t_env *env_list, t_token *token, int *a)
-{
-	t_env	*head;
-	int	env_len;
-	char *env_value;
-	int	i;
-
-	i = *a;
-	env_len = 0;
 	head = env_list;
-    env_value = "\0";
-	// if (token->value[i] == 34)
-	// {
-	// 	while (token->value[i] && token->value[i] != '$')
-	// 	{
-	// 		i++;
-	// 	}
-	// }
+	new_val = NULL;
+	(*i)++;
+	a = (*i);
+	while (token->value[*i] && token->value[*i] != '$' && token->value[*i] != 34 && token->value[*i] != 39 && token->value[*i] != 32)
+		(*i)++;
 	while (env_list)
 	{
-		env_len = expand_env_key_len(token->value + i + 1);
-		if (ft_strncmp(token->value + i + 1, env_list->key, env_len) == 0)
+		if (ft_strncmp(token->value + a, env_list->key, *i - a) == 0)
 		{
-			(*a) += ft_strlen(env_list->key) - 1; 
-			env_value = env_list->value;
-            break;
+			new_val = env_list->value;
+			break;
 		}
 		env_list = env_list->next;
 	}
-    env_list = head;
-	return (env_value);
+	if (!new_val)
+		new_val = ft_strdup("");
+	env_list = head;
+	return (new_val);
 }
 
-int	pre_env_len(t_token *token, int *a)
+char *expand_env_var(t_env *env_list, t_token *token, int *i)
 {
-	int	i;
-	int j;
+    char *new_val;
+    char *tmp;
+	char *val;
+	int start;
 
-	j = 0;
-	i = *a;
-	while (token->value[i] && token->value[i] != '$')
+    new_val = NULL;
+    while (token->value[*i])
+    {
+        if (token->value[*i] == '$')
+        {
+            val = expand_chance_env(env_list, token, i);
+            if (!new_val)
+                new_val = ft_strdup(val);
+            else
+            {
+                tmp = ft_strjoin(new_val, val);
+                free(new_val);
+                new_val = tmp;
+            }
+        }
+        else
+        {
+            start = *i;
+            (*i)++;
+            if (!new_val)
+                new_val = ft_substr(token->value, start, 1);
+            else
+            {
+                tmp = ft_strjoin(new_val, ft_substr(token->value, start, 1));
+                free(new_val);
+                new_val = tmp;
+            }
+        }
+    }
+	if (!new_val)
+		new_val = ft_strdup("");
+    return (new_val);
+}
+
+char *expand_pre(t_env *env_list, t_token *token, int *i)
+{
+	int	pre;
+	int a;
+	char *new_val;
+
+	(void)*env_list;
+	a = 0;
+	new_val = NULL;
+	pre = *i;
+	while (token->value[pre] && token->value[pre] != '$' && token->value[pre] != 39)
+		pre++;
+	new_val = malloc(sizeof(char) * pre + 1);
+	while (pre > 0)
 	{
-		j++;
-		i++;
+		new_val[a] = token->value[*i];
+		(*i)++;
+		a++;
+		pre--;
 	}
-	return (j);
+	new_val[a] = '\0';
+	return (new_val);
 }
-
-char *expand_pre_env(t_token *token, int *a)
+char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 {
-	int	i;
-	int j;
-	char *str;
+	int end;
+	char *new_val;
+	int a;
 
-	i = pre_env_len(token, a);
-	j = 0;
-	str = malloc(sizeof(char *) * (i + 1));
-	while (i > 0)
+	(void)*env_list;
+	a = 0;
+	new_val = NULL;
+	end = (*i);
+	while (token->value[end + 1] && token->value[end + 1] != 39)
+		end++;
+	end++;
+	new_val = malloc(sizeof(char) * end - (*i) + 1);
+	while ((*i) < end)
 	{
-		str[j] = token->value[j];
-		i--;
-		j++;
-		(*a)++;
+		new_val[a] = token->value[*i];
+		a++;
+		(*i)++;
 	}
-	str[j] = '\0';
-	return (str);
+	new_val[a] = '\0';
+	if (token->value[end] == 39)
+		(*i) = end + 1;
+	else
+		(*i) = end;
+	return (new_val);
 }
 
-void	expand_with_quotes(t_env *env_list, t_token *token)
+char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 {
-	char *str1;
-	char *str2;
-	char *str3;
-	char *str4;
-	int	*i;
-	int j;
-	int flag1;
+	char *new_val;
+	char *new_val2;
 
-	flag1 = 0;
-	j = 0;
-	i = &j;
-	str1 = NULL;
-	while (token->value[*i] && token->value[0] == 34)
+	new_val = NULL;
+	new_val2 = NULL;
+	while (token->value[*i])
 	{
-		if (token->value[*i] != '$')
+		if (token->value[*i] != 39 && token->value[*i] != '$')
 		{
-			str1 = expand_pre_env(token, i);
-			printf("%s\n", str1);
-			flag1 = 1;
+			if (!new_val)
+				new_val = ft_strdup(expand_pre(env_list, token, i));
+			else
+			{
+				if (new_val2)
+					free(new_val2);
+				new_val2 =  ft_strdup(expand_pre(env_list, token, i));
+				new_val = ft_strjoin(new_val, new_val2);
+			}
+		}
+		else if (token->value[*i] != '$')
+		{
+			if (!new_val)
+				new_val = ft_strdup(expand_pre_quo(env_list, token, i));
+			else
+			{
+				if (new_val2)
+					free(new_val2);
+				new_val2 = ft_strdup(expand_pre_quo(env_list, token, i));
+				new_val = ft_strjoin(new_val, new_val2);
+			}
 		}
 		else if (token->value[*i] == '$')
 		{
-			flag1 = 2;
-			str2 = expand_env_value(env_list, token, i);
-			printf("%s\n", str2);
-		}
-		if (str1 != NULL && str2 != NULL)
-		{
-			if (str3 == NULL)
+			if (!new_val)
 			{
-				str3 = ft_strjoin(str1, str2);
+				new_val = ft_strdup(expand_env_var(env_list, token, i));
 			}
-			else if (flag1 == 1)
+			else
 			{
-				str4 = str3;
-				str3 = ft_strjoin(str4, str1);
-				printf("%s\n", str3);
-			}
-			else if (flag1 == 2)
-			{
-				str4 = str3;
-				str3 = ft_strjoin(str4, str2);
-				// printf("%s\n", str3);
+				if (new_val2)
+					free(new_val2);
+				new_val2 = ft_strdup(expand_env_var(env_list, token, i));
+				new_val = ft_strjoin(new_val, new_val2);
 			}
 		}
-		// free(token->value);
-		// (*i)++;
+		else
+			(*i)++;
 	}
-	token->value = str3;
-}
-
-void	expand_env_var(t_env *env_list, t_token *token)
-{
-	t_env *head;
-
-	head = env_list;
-	while (env_list)
-	{
-		if (ft_strcmp(token->value + 1, env_list->key) == 0)
-			token->value = env_list->value;
-		env_list = env_list->next;
-	}
-	env_list = head;
+	if (new_val2)
+		free(new_val2);
+	return (new_val);
 }
 
 int dollar_control(t_token *token)
@@ -167,16 +190,25 @@ int dollar_control(t_token *token)
 
 void	ft_expand(t_env *env_list, t_token *token)
 {
+	int	i;
+	char *new_value;
+
+	i = 0;
+	new_value = NULL;
 	while (token)
 	{
-		if (token->type == T_ENV_VAR)
+		i = 0;
+		if (token->type == T_WORD || token->type == T_ENV_VAR)
 		{
-			expand_env_var(env_list, token);
-		}
-		else if (token->type == T_WORD)
-		{
-			printf("yusuf\n");
-			// if (dollar_control(token) == 1)
+			if (dollar_control(token) == 1)
+			{
+				new_value = expand_with_quotes(env_list, token, &i);
+				if (token->value)
+				{
+					free(token->value);
+					token->value = new_value;
+				}
+			}
 			// 	expand_with_quotes(env_list, token);
 		}
 		token = token->next;
