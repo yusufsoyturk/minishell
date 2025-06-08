@@ -135,7 +135,7 @@ int main(int ac, char **av, char **env)
 			minishell->args = ft_split(minishell->line, ' ');
 			commands = pars(minishell->token, env_list);
 			print_commands(commands);
-			if (commands->args || commands->redirs)
+			if (commands && (commands->args || commands->redirs))
 				execute(commands, &env_list, env, minishell);
 			free_max(minishell, env_list, commands);
 		}
