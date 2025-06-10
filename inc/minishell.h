@@ -30,6 +30,8 @@ typedef struct s_env
 	struct s_env *next;
 }				t_env;
 
+extern volatile sig_atomic_t	heredoc_sig;
+
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list);
 void	missing_quotes_double(t_shell *minishell);
