@@ -5,14 +5,30 @@ int	word_len(char *line)
 {
 	int	i;
 	int	len;
+	int a;
 
 	i = 0;
+	a = 0;
 	len = 0;
 	while (line[i])
 	{
+		if (line[i] == 34)
+		{
+			a = i;
+			i++;
+			while (line[i] != 34)
+				i++;
+		}
+		if (line[i] == 39)
+		{
+			a = i;
+			i++;
+			while (line[i] != 39)
+				i++;
+		}
 		if (line[i] == 32  || (line[i] >= 9 && line[i] <= 13))		
 			break;
-		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|' || line[i] == '$'))
+		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|'))
 		{
 			if (line[i] != line[i - 1])
 				break;
@@ -28,6 +44,7 @@ int	word_len(char *line)
 		len = i;
 		i++;
 	}
+	printf("%d\n", i);
 	return (len + 1);
 }
 
