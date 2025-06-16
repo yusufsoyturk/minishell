@@ -4,17 +4,21 @@ char *expand_chance_env(t_env *env_list, t_token *token, int *i)
 {
 	t_env *head;
 	char *new_val;
-	int a;
+	int start;
+	int key_len;
+	char *key;
 
 	head = env_list;
 	new_val = NULL;
 	(*i)++;
-	a = (*i);
+	start = (*i);
 	while (token->value[*i] && token->value[*i] != '$' && token->value[*i] != 34 && token->value[*i] != 39 && token->value[*i] != 32)
 		(*i)++;
+	key_len = *i - start;
+	key = ft_substr(token->value, start, key_len);
 	while (env_list)
 	{
-		if (ft_strncmp(token->value + a, env_list->key, *i - a) == 0)
+		if (ft_strlen(env_list->key) == (size_t)key_len && ft_strncmp(key, env_list->key, key_len) == 0)
 		{
 			new_val = env_list->value;
 			break;
@@ -188,13 +192,63 @@ int dollar_control(t_token *token)
 	return (0);
 }
 
+void	remove_double_quotes(t_token *token)
+{
+	t_token *head;
+	char *value;
+	size_t val_len;
+	int i;
+	int flag;
+	int j;
+
+	j = 0;
+	flag = 0;
+	i = 0;
+	val_len = ft_strlen(token->value);
+	value = malloc(sizeof(char) * val_len + 1);
+	head = token;
+	while (token)
+	{
+		i = 0;
+		if (token->value[i] && token->value[i] == 34)
+		{
+			while (token->value[i])
+			{
+				if (token->value[i] == 34 && flag == 0)
+				{
+					i++;
+					flag = 1;
+				}
+				else if (token->value[i] == 34 && flag == 1)
+				{
+					i++;
+					flag = 0;
+				}
+				else
+				{
+					value[j] = token->value[i];
+					j++;
+					i++;
+				}
+			}
+			value[j] = '\0';
+			free(token->value);
+			token->value = value;
+		}
+		token = token->next;
+	}
+	token = head;
+}
+
 void	ft_expand(t_env *env_list, t_token *token)
 {
 	int	i;
 	char *new_value;
+	t_token *head;
 
 	i = 0;
 	new_value = NULL;
+	head = token;
 	while (token)
 	{
 		i = 0;
@@ -213,4 +267,7 @@ void	ft_expand(t_env *env_list, t_token *token)
 		}
 		token = token->next;
 	}
+	token = head;
+	// remove_double_quotes(token);
+
 }
