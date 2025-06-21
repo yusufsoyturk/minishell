@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_var.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
+/*   Updated: 2025/06/21 15:02:00 by ysoyturk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
 
 char *expand_chance_env(t_env *env_list, t_token *token, int *i)
@@ -53,6 +65,17 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
                 new_val = tmp;
             }
         }
+		else if (token->value[*i] == 39)
+		{
+			if (!new_val)
+				new_val = expand_pre_quo(env_list, token, i);
+			else
+			{
+				tmp = ft_strjoin(new_val ,expand_pre_quo(env_list, token, i));
+				free(new_val);
+				new_val = tmp;
+			}
+		}
         else
         {
             start = *i;
@@ -147,7 +170,10 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 		else if (token->value[*i] != '$')
 		{
 			if (!new_val)
+			{
 				new_val = ft_strdup(expand_pre_quo(env_list, token, i));
+
+			}
 			else
 			{
 				if (new_val2)
@@ -192,54 +218,6 @@ int dollar_control(t_token *token)
 	return (0);
 }
 
-void	remove_double_quotes(t_token *token)
-{
-	t_token *head;
-	char *value;
-	size_t val_len;
-	int i;
-	int flag;
-	int j;
-
-	j = 0;
-	flag = 0;
-	i = 0;
-	val_len = ft_strlen(token->value);
-	value = malloc(sizeof(char) * val_len + 1);
-	head = token;
-	while (token)
-	{
-		i = 0;
-		if (token->value[i] && token->value[i] == 34)
-		{
-			while (token->value[i])
-			{
-				if (token->value[i] == 34 && flag == 0)
-				{
-					i++;
-					flag = 1;
-				}
-				else if (token->value[i] == 34 && flag == 1)
-				{
-					i++;
-					flag = 0;
-				}
-				else
-				{
-					value[j] = token->value[i];
-					j++;
-					i++;
-				}
-			}
-			value[j] = '\0';
-			free(token->value);
-			token->value = value;
-		}
-		token = token->next;
-	}
-	token = head;
-}
-
 void	ft_expand(t_env *env_list, t_token *token)
 {
 	int	i;
@@ -268,6 +246,6 @@ void	ft_expand(t_env *env_list, t_token *token)
 		token = token->next;
 	}
 	token = head;
-	// remove_double_quotes(token);
+	remove_double_quotes(token);
 
 }

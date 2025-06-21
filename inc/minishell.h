@@ -82,7 +82,7 @@ int	execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini);
 // expander env_var
 char *expand_env_var(t_env *env_list, t_token *token, int *i);
 void	ft_expand(t_env *env_list, t_token *token);
-
+char *expand_pre_quo(t_env *env_list, t_token *token, int *i);
 void	free_token(t_token *token);
 
 #endif

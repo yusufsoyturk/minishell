@@ -32,7 +32,8 @@ PARSE = parse/parse_utils.c \
 
 EXECUTE = execute/execute.c
 
-EXPANDER = expander/env_var.c 
+EXPANDER = expander/env_var.c \
+			expander/remove_quotes.c 
 
 SRCS = $(BUILT_IN) \
 		$(PARSE) \
