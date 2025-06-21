@@ -30,7 +30,7 @@ typedef struct s_env
 	struct s_env *next;
 }				t_env;
 
-extern volatile sig_atomic_t	heredoc_sig;
+extern volatile sig_atomic_t	g_sigint;
 
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list);
@@ -49,11 +49,7 @@ void	free_commands(t_command *cmd);
 // utils init.c
 void init_env(char **env, t_env **env_list);
 // utils signal.c
-void	signal_handler(int sig);
 void	setup_signals(void);
-void setup_heredoc_signals(void);
-
-
 
 void	exit_error(char *arg, char *err_msg, char *type);
 int		array_len(char **args);

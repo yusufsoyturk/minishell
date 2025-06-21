@@ -5,29 +5,23 @@ int handle_heredoc(t_redir *redir)
 	int pipefd[2];
 	char *line;
 
-	heredoc_sig = 0;
-	setup_heredoc_signals();
 	if (pipe(pipefd) == -1)
 		return (perror("pipe"), -1);
 	while (1)
 	{
 		line = readline("> ");
-		if (heredoc_sig == 1)
+		if (g_sigint == 1)
 		{
 			free(line);
 			close(pipefd[0]);
 			close(pipefd[1]);
 			return (-1);
 		}
-		if (!line)
-		{
-			setup_signals();	
+		if (!line)	
 			break;
-		}
 		if (ft_strcmp(line, redir->target) == 0)
 		{
 			free(line);
-			setup_signals();
 			break;
 		}
 		ft_putendl_fd(line, pipefd[1]);
@@ -116,9 +110,15 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"), 1);
-
+		signal(SIGINT, SIG_IGN);
 		if (pid == 0)
 		{
+			struct sigaction sa;
+    		sa.sa_handler = SIG_DFL;
+    		sigemptyset(&sa.sa_mask);
+    		sa.sa_flags = 0;
+    		sigaction(SIGINT, &sa, NULL);
+    		sigaction(SIGQUIT, &sa, NULL);
 			if (current->input != STDIN_FILENO)
 				dup2(current->input, STDIN_FILENO);
 			else if (prev_fd != -1)
@@ -139,6 +139,12 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		else
 		{
 			waitpid(pid, &status, 0);
+			if (WIFSIGNALED(status))
+			{
+				int sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					write(1, "\n", 1);
+			}
 			if (prev_fd != -1)
 				close(prev_fd);
 			if (current->next)
@@ -146,8 +152,9 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				close(pipe_fd[1]);
 				prev_fd = pipe_fd[0];
 			}
+			setup_signals();
 		}
 		current = current->next;
 	}
-	return (status);
+	return (WEXITSTATUS(status));
 }
