@@ -85,4 +85,7 @@ void	ft_expand(t_env *env_list, t_token *token);
 char *expand_pre_quo(t_env *env_list, t_token *token, int *i);
 void	free_token(t_token *token);
 
+// expander remove_quotes
+void	remove_quotes(t_token *token);
+
 #endif
