@@ -98,8 +98,7 @@ void print_commands(t_command *cmds)
 
 // PRİNT ALANI CAN GPT BABAYA SELAMLAR
 
-volatile sig_atomic_t heredoc_sig;
-
+volatile sig_atomic_t g_sigint = 0;
 
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
 {
@@ -116,9 +115,8 @@ int main(int ac, char **av, char **env)
 	t_env				*env_list;
 	t_command			*commands;
 
-	heredoc_sig = 0;
-	setup_signals();
 	minishell = malloc(sizeof(t_shell));
+	setup_signals();
 	env_list = NULL;
 	ft_init_shell(minishell);
 	init_env(env, &env_list);
@@ -126,9 +124,12 @@ int main(int ac, char **av, char **env)
 	{
 		while (1)
 		{
+			g_sigint = 0;
 			minishell->line = readline("minishell> ");
 			if (minishell->line)
 				missing_quotes_double(minishell);
+			if (!minishell->line && g_sigint)
+				continue;
 			if (!minishell->line)
 				minishell->line = ft_strdup("exit");
 			else

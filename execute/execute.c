@@ -5,29 +5,23 @@ int handle_heredoc(t_redir *redir)
 	int pipefd[2];
 	char *line;
 
-	heredoc_sig = 0;
-	setup_heredoc_signals();
 	if (pipe(pipefd) == -1)
 		return (perror("pipe"), -1);
 	while (1)
 	{
 		line = readline("> ");
-		if (heredoc_sig == 1)
+		if (g_sigint == 1)
 		{
 			free(line);
 			close(pipefd[0]);
 			close(pipefd[1]);
 			return (-1);
 		}
-		if (!line)
-		{
-			setup_signals();	
+		if (!line)	
 			break;
-		}
 		if (ft_strcmp(line, redir->target) == 0)
 		{
 			free(line);
-			setup_signals();
 			break;
 		}
 		ft_putendl_fd(line, pipefd[1]);
