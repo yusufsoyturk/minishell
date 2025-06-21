@@ -124,12 +124,10 @@ int main(int ac, char **av, char **env)
 	{
 		while (1)
 		{
-			g_sigint = 0;
+			//g_sigint = 0;
 			minishell->line = readline("minishell> ");
 			if (minishell->line)
 				missing_quotes_double(minishell);
-			if (!minishell->line && g_sigint)
-				continue;
 			if (!minishell->line)
 				minishell->line = ft_strdup("exit");
 			else

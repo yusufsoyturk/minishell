@@ -110,9 +110,15 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"), 1);
-
+		signal(SIGINT, SIG_IGN);
 		if (pid == 0)
 		{
+			struct sigaction sa;
+    		sa.sa_handler = SIG_DFL;
+    		sigemptyset(&sa.sa_mask);
+    		sa.sa_flags = 0;
+    		sigaction(SIGINT, &sa, NULL);
+    		sigaction(SIGQUIT, &sa, NULL);
 			if (current->input != STDIN_FILENO)
 				dup2(current->input, STDIN_FILENO);
 			else if (prev_fd != -1)
@@ -133,6 +139,12 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		else
 		{
 			waitpid(pid, &status, 0);
+			if (WIFSIGNALED(status))
+			{
+				int sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					write(1, "\n", 1);
+			}
 			if (prev_fd != -1)
 				close(prev_fd);
 			if (current->next)
@@ -140,8 +152,9 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				close(pipe_fd[1]);
 				prev_fd = pipe_fd[0];
 			}
+			setup_signals();
 		}
 		current = current->next;
 	}
-	return (status);
+	return (WEXITSTATUS(status));
 }
