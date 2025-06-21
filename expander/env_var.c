@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/06/21 20:51:25 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/06/21 21:04:23 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,6 +246,6 @@ void	ft_expand(t_env *env_list, t_token *token)
 		token = token->next;
 	}
 	token = head;
-	remove_double_quotes(token);
+	// remove_quotes(token);
 
 }
