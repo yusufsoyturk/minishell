@@ -18,13 +18,18 @@ int	double_quotes_len(char *line)
 				while (line[i + 1])
 				{
 					i++;
-					if (line[i + 1] == 34)
+					if (line[i + 1] == 34 && ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) ))
+					{
 						return (i + 2);
+					}
 				}
 			}
 		}
 		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		{
+			printf("deneme %d\n", i);
 			break;
+		}
 		i++;
 	}
 	return (i);
@@ -59,6 +64,7 @@ int	single_quote_len(char *line)
 	i = 0;
 	while (line[i])
 	{
+		printf("%c\n", line[i]);
 		if (line[i] == 39)
 		{
 			flag++;

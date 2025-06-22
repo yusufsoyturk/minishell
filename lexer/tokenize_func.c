@@ -13,13 +13,13 @@ int	word_len(char *line)
 		if (line[i] == 34)
 		{
 			i++;
-			while (line[i] != 34)
+			while (line[i] && line[i] != 34)
 				i++;
 		}
 		if (line[i] == 39)
 		{
 			i++;
-			while (line[i] != 39)
+			while (line[i] && line[i] != 39)
 				i++;
 		}
 		if (line[i] == 32  || (line[i] >= 9 && line[i] <= 13))		
