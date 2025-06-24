@@ -124,12 +124,19 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	status = 0;
 	current = cmd;
 	if (handle_redirection(cmd) < 0)
-		return(1);
+	{
+		mini->last_status = 128 + SIGINT;
+		return(mini->last_status);
+	}
 	current = cmd;
 	while (current)
 	{
 		if (!current->next && is_builtin(current->args))
-			return (built(current, env_list, mini));
+		{
+			code = built(current, env_list, mini);
+			mini->last_status = code;
+			return (code);
+		}
 		if (current->next && pipe(pipe_fd) < 0)
 			return (perror("pipe"), 1);
 		pid = fork();
