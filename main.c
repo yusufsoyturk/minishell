@@ -102,12 +102,22 @@ volatile sig_atomic_t g_sigint = 0;
 
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
 {
-	(void)env;
+	free_env(env);
 	free_double(minishell);
 	free_token(minishell->token);
 	free(minishell->line);
+	free(minishell);
 	free_commands(cmd);
 }
+
+void	free_less(t_shell *minishell, t_command *commands)
+{
+    free_double(minishell);
+    free_token(minishell->token);
+    free(minishell->line);
+    free_commands(commands);
+}
+
 
 int main(int ac, char **av, char **env)
 {
@@ -124,7 +134,6 @@ int main(int ac, char **av, char **env)
 	{
 		while (1)
 		{
-			//g_sigint = 0;
 			minishell->line = readline("minishell> ");
 			if (minishell->line)
 				missing_quotes_double(minishell);
@@ -140,7 +149,7 @@ int main(int ac, char **av, char **env)
 			// print_commands(commands);
 			if (commands && (commands->args || commands->redirs))
 				execute(commands, &env_list, env, minishell);
-			free_max(minishell, env_list, commands);
+			free_less(minishell, commands);
 		}
 		free_struct(minishell);
 	}
