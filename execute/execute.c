@@ -1,36 +1,60 @@
 #include "../inc/minishell.h"
 
-int handle_heredoc(t_redir *redir)
+int	handle_heredoc(t_redir *redir)
 {
-	int pipefd[2];
-	char *line;
+	int		pipefd[2];
+	pid_t	pid;
+	int		status;
 
 	if (pipe(pipefd) == -1)
 		return (perror("pipe"), -1);
-	while (1)
+	pid = fork();
+	if (pid == -1)
+		return (perror("fork"), -1);
+	signal(SIGINT, SIG_IGN);
+	if (pid == 0)
 	{
-		line = readline("> ");
-		if (g_sigint == 1)
+		char *line;
+		struct sigaction sa;
+		sa.sa_handler = SIG_DFL;
+		sigemptyset(&sa.sa_mask);
+		sa.sa_flags = 0;
+		sigaction(SIGINT, &sa, NULL);
+		sigaction(SIGQUIT, &sa, NULL);
+		close(pipefd[0]);
+		while (1)
 		{
+			line = readline("> ");
+			if (!line)
+				break;
+			if (ft_strcmp(line, redir->target) == 0)
+			{
+				free(line);
+				break;
+			}
+			ft_putendl_fd(line, pipefd[1]);
 			free(line);
+		}
+		close(pipefd[1]);
+		exit(0);
+	}
+	else
+	{
+		close(pipefd[1]);
+		waitpid(pid, &status, 0);
+		setup_signals();
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			write(1, "\n", 1);
+			rl_replace_line("", 0);
 			close(pipefd[0]);
-			close(pipefd[1]);
 			return (-1);
 		}
-		if (!line)	
-			break;
-		if (ft_strcmp(line, redir->target) == 0)
-		{
-			free(line);
-			break;
-		}
-		ft_putendl_fd(line, pipefd[1]);
-		free(line);
+		redir->fd = pipefd[0];
+		return (pipefd[0]);
 	}
-	close(pipefd[1]);
-	redir->fd = pipefd[0];
-	return (pipefd[0]);
 }
+
 
 int handle_redirection(t_command *cmd)
 {
@@ -49,7 +73,7 @@ int handle_redirection(t_command *cmd)
 			else
 				fd = open(r->target, r->flag, 0777);
 			if (fd < 0)
-				return (perror(r->target), -1);
+				return (-1);
 			r->fd = fd;
 			if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
 				cur->input = fd;
@@ -99,7 +123,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	status = 0;
 	current = cmd;
 	if (handle_redirection(cmd) < 0)
-		exit(1);
+		return(1);
 	current = cmd;
 	while (current)
 	{
