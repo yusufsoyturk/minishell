@@ -135,21 +135,23 @@ int main(int ac, char **av, char **env)
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
-			if (minishell->line)
-				missing_quotes_double(minishell);
-			if (!minishell->line)
-				minishell->line = ft_strdup("exit");
-			else
-				add_history(minishell->line);
-			ft_token(minishell);
-			ft_expand(env_list, minishell);
-			print_tokens(minishell->token);
-			minishell->args = ft_split(minishell->line, ' ');
-			commands = pars(minishell->token, env_list);
-			// print_commands(commands);
-			if (commands && (commands->args || commands->redirs))
-				execute(commands, &env_list, env, minishell);
-			free_less(minishell, commands);
+			if (minishell->line && missing_quotes_double(minishell) == 0)
+			{
+				if (!minishell->line)
+					minishell->line = ft_strdup("exit");
+				else
+					add_history(minishell->line);
+				ft_token(minishell);
+				ft_expand(env_list, minishell);
+				print_tokens(minishell->token);
+				minishell->args = ft_split(minishell->line, ' ');
+				commands = pars(minishell->token, env_list);
+				// print_commands(commands);
+				if (commands && (commands->args || commands->redirs))
+					execute(commands, &env_list, env, minishell);
+				free_less(minishell, commands);
+			}
+
 		}
 		free_struct(minishell);
 	}

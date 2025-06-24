@@ -35,7 +35,7 @@ extern volatile sig_atomic_t	g_sigint;
 
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list);
-void	missing_quotes_double(t_shell *minishell);
+int		missing_quotes_double(t_shell *minishell);
 
 // tokenize.c
 int		ft_token(t_shell *minishell);

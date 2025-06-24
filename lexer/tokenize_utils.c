@@ -9,7 +9,7 @@ void	error_message(t_shell *minishell, char *err_msg,t_env *env_list)
 }
 // "merhaba 'yusuf" gibi örneklerde hata vermemeli
 //, fonksiyonların içerisinde kullan genel kullanımı hatalı
-void	missing_quotes_double(t_shell *minishell)
+int	missing_quotes_double(t_shell *minishell)
 {
 	int	i;
 	int	quote_flag;
@@ -33,7 +33,11 @@ void	missing_quotes_double(t_shell *minishell)
 		i++;
 	}
 	if (quote_flag != 0)
+	{
 		printf("Missing Quotes\n");
+		return (-1);
+	}
+	return (0);
 }
 
 
