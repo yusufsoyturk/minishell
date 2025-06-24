@@ -222,7 +222,7 @@ int dollar_control(t_token *token)
 	return (0);
 }
 
-void	ft_expand(t_env *env_list, t_token *token)
+void	ft_expand(t_env *env_list, t_shell *mini)
 {
 	int	i;
 	char *new_value;
@@ -230,25 +230,31 @@ void	ft_expand(t_env *env_list, t_token *token)
 
 	i = 0;
 	new_value = NULL;
-	head = token;
-	while (token)
+	head = mini->token;
+	while (mini->token)
 	{
 		i = 0;
-		if (token->type == T_WORD || token->type == T_ENV_VAR)
+		if (mini->token->type == T_WORD || mini->token->type == T_ENV_VAR)
 		{
-			if (dollar_control(token) == 1)
+			if (dollar_control(mini->token) == 1)
 			{
-				new_value = expand_with_quotes(env_list, token, &i);
-				if (token->value)
+				if (ft_strncmp(mini->token->value, "$?", 2) == 0)
 				{
-					free(token->value);
-					token->value = new_value;
+					new_value = ft_itoa(mini->last_status);
+				}
+				else
+				{
+					new_value = expand_with_quotes(env_list, mini->token, &i);
+				}
+				if (mini->token->value)
+				{
+					free(mini->token->value);
+					mini->token->value = new_value;
 				}
 			}
-			// 	expand_with_quotes(env_list, token);
 		}
-		token = token->next;
+		mini->token = mini->token->next;
 	}
-	token = head;
-	remove_quotes(token);
+	mini->token = head;
+	remove_quotes(mini->token);
 }

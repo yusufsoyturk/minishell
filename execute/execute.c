@@ -118,6 +118,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	int pipe_fd[2];
 	int prev_fd;
 	int status;
+	int code;
 
 	prev_fd = -1;
 	status = 0;
@@ -128,12 +129,12 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	while (current)
 	{
 		if (!current->next && is_builtin(current->args))
-		return (built(current, env_list, mini));
+			return (built(current, env_list, mini));
 		if (current->next && pipe(pipe_fd) < 0)
-		return (perror("pipe"), 1);
+			return (perror("pipe"), 1);
 		pid = fork();
 		if (pid < 0)
-		return (perror("fork"), 1);
+			return (perror("fork"), 1);
 		signal(SIGINT, SIG_IGN);
 		if (pid == 0)
 		{
@@ -185,5 +186,12 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		}
 		current = current->next;
 	}
-	return (WEXITSTATUS(status));
+	if (WIFEXITED(status))
+		code = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		code = 128 + WTERMSIG(status);
+	else 
+		code = 1;
+	mini->last_status = code;
+	return (code);
 }

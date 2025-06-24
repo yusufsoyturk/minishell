@@ -142,7 +142,7 @@ int main(int ac, char **av, char **env)
 			else
 				add_history(minishell->line);
 			ft_token(minishell);
-			ft_expand(env_list, minishell->token);
+			ft_expand(env_list, minishell);
 			print_tokens(minishell->token);
 			minishell->args = ft_split(minishell->line, ' ');
 			commands = pars(minishell->token, env_list);
