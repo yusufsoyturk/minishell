@@ -128,12 +128,12 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	while (current)
 	{
 		if (!current->next && is_builtin(current->args))
-			return (built(current, env_list, mini));
+		return (built(current, env_list, mini));
 		if (current->next && pipe(pipe_fd) < 0)
-			return (perror("pipe"), 1);
+		return (perror("pipe"), 1);
 		pid = fork();
 		if (pid < 0)
-			return (perror("fork"), 1);
+		return (perror("fork"), 1);
 		signal(SIGINT, SIG_IGN);
 		if (pid == 0)
 		{
@@ -144,9 +144,9 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
     		sigaction(SIGINT, &sa, NULL);
     		sigaction(SIGQUIT, &sa, NULL);
 			if (current->input != STDIN_FILENO)
-				dup2(current->input, STDIN_FILENO);
+			dup2(current->input, STDIN_FILENO);
 			else if (prev_fd != -1)
-				dup2(prev_fd, STDIN_FILENO);
+			dup2(prev_fd, STDIN_FILENO);
 			if (current->next)
 			{
 				dup2(pipe_fd[1], STDOUT_FILENO);
@@ -154,11 +154,16 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				close(pipe_fd[1]);
 			}
 			if (is_builtin(current->args))
-				exit(built(current, env_list, mini));
-			execve(get_path(current->args[0], env), current->args, env);
-			ft_putstr_fd(current->args[0], 2);
-			ft_putendl_fd(": Command not found", 2);
-			exit(127);
+			exit(built(current, env_list, mini));
+			free_env_list((*env_list));
+			free_struct(mini);
+			if (execve(get_path(current->args[0], env), current->args, env) == -1)
+			{
+				ft_putstr_fd(current->args[0], 2);
+				ft_putendl_fd(": Command not found", 2);
+				free_commands(cmd);
+				exit(127);
+			}
 		}
 		else
 		{

@@ -42,10 +42,12 @@ int		ft_token(t_shell *minishell);
 // utils utils.c
 int		ft_atoll(const char *str);
 // utils free.c
+void	free_less(t_shell *minishell, t_command *commands);
 void	free_double(t_shell *minishell);
 void	free_struct(t_shell *minishell);
 void	free_env_list(t_env *env_list);
 void	free_commands(t_command *cmd);
+void	free_env(t_env *env);
 // utils init.c
 void init_env(char **env, t_env **env_list);
 // utils signal.c

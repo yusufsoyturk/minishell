@@ -17,7 +17,7 @@ void	free_struct(t_shell *minishell)
 {
 	free(minishell->line);
 	free_double(minishell);
-	// free_token(minishell->token);
+	free_token(minishell->token);
 	free(minishell);
 }
 
@@ -68,3 +68,16 @@ void free_commands(t_command *cmd)
     }
 }
 
+void	free_env(t_env *env)
+{
+	t_env *tmp;
+
+	while (env)
+	{
+		tmp = env->next;
+		free(env->key);
+		free(env->value);
+		free(env);
+		env = tmp;
+	}
+}
