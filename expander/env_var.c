@@ -99,6 +99,7 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
 char *expand_pre(t_env *env_list, t_token *token, int *i)
 {
 	int	pre;
+	int pre2;
 	int a;
 	char *new_val;
 
@@ -106,10 +107,11 @@ char *expand_pre(t_env *env_list, t_token *token, int *i)
 	a = 0;
 	new_val = NULL;
 	pre = *i;
+	pre2 = *i;
 	while (token->value[pre] && token->value[pre] != '$' && token->value[pre] != 39)
 		pre++;
 	new_val = malloc(sizeof(char) * pre + 1);
-	while (pre > 0)
+	while (pre > pre2)
 	{
 		new_val[a] = token->value[*i];
 		(*i)++;
@@ -129,7 +131,8 @@ char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 	a = 0;
 	new_val = NULL;
 	end = (*i);
-	while (token->value[end + 1] && token->value[end + 1] != 39)
+	end++;
+	while (token->value[end] && token->value[end] != 39)
 		end++;
 	end++;
 	new_val = malloc(sizeof(char) * end - (*i) + 1);
@@ -140,10 +143,11 @@ char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 		(*i)++;
 	}
 	new_val[a] = '\0';
-	if (token->value[end] == 39)
-		(*i) = end + 1;
-	else
-		(*i) = end;
+	// if (token->value[end] == 39)
+	// 	(*i) = end + 1;
+	// else
+	// 	(*i) = end;
+	// (*i)++;
 	return (new_val);
 }
 
@@ -173,7 +177,6 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 			if (!new_val)
 			{
 				new_val = ft_strdup(expand_pre_quo(env_list, token, i));
-
 			}
 			else
 			{

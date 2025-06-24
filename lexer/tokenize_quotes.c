@@ -1,13 +1,13 @@
 # include "../inc/minishell.h"
-
+// "a"a" $HOME"
 // zaten başlangıç değerim double quotes
 int	double_quotes_len(char *line)
 {
 	int	i;
 	int flag;
 
-	flag = 0;
 	i = 0;
+	flag = 0;
 	while (line[i])
 	{
 		if (line[i] == 34)
@@ -15,19 +15,19 @@ int	double_quotes_len(char *line)
 			flag++;
 			if (line[i + 1] == 34 || line[i + 1] == 39)
 			{
+				flag = 0;
 				while (line[i + 1])
 				{
 					i++;
-					if (line[i + 1] == 34 && ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) ))
+					if (line[i + 1] == 34 && ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32)))
 					{
 						return (i + 2);
 					}
 				}
 			}
 		}
-		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag == 1)
 		{
-			printf("deneme %d\n", i);
 			break;
 		}
 		i++;
@@ -64,22 +64,26 @@ int	single_quote_len(char *line)
 	i = 0;
 	while (line[i])
 	{
-		printf("%c\n", line[i]);
 		if (line[i] == 39)
 		{
 			flag++;
-			if (line[i + 1] == 39)
+			if (line[i + 1] == 34 || line[i + 1] == 39)
 			{
+				flag = 0;
 				while (line[i + 1])
 				{
 					i++;
-					if (line[i + 1] == 39)
+					if (line[i + 1] == 39 && ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) ))
+					{
 						return (i + 2);
+					}
 				}
 			}
 		}
-		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag == 1)
+		{
 			break;
+		}
 		i++;
 	}
 	return (i);

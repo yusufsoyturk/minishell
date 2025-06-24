@@ -89,7 +89,6 @@ char	*find_value(char *line, int *i)
 	{
 		token = in_double_quotes(line + (*i));
 		*i += double_quotes_len(token);
-		// printf("%d %s\n", *i, token);
 	}
 	else if (line[*i] == 39)
 	{
