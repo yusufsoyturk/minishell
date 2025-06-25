@@ -6,10 +6,9 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/06/22 18:26:16 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/06/25 20:16:44 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../inc/minishell.h"
 
@@ -38,6 +37,7 @@ char *expand_chance_env(t_env *env_list, t_token *token, int *i)
 		}
 		env_list = env_list->next;
 	}
+	free(key);
 	if (!new_val)
 		new_val = ft_strdup("");
 	env_list = head;
@@ -50,6 +50,7 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
     char *tmp;
 	char *val;
 	int start;
+	char	*c;
 
     new_val = NULL;
     while (token->value[*i])
@@ -65,6 +66,7 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
                 free(new_val);
                 new_val = tmp;
             }
+			free(val);
         }
 		else if (token->value[*i] == 39)
 		{
@@ -81,13 +83,15 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
         {
             start = *i;
             (*i)++;
+			c = ft_substr(token->value, start, 1);
             if (!new_val)
-                new_val = ft_substr(token->value, start, 1);
+                new_val = c;
             else
             {
-                tmp = ft_strjoin(new_val, ft_substr(token->value, start, 1));
+                tmp = ft_strjoin(new_val, c);
                 free(new_val);
                 new_val = tmp;
+				free(c);
             }
         }
     }
@@ -143,11 +147,6 @@ char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 		(*i)++;
 	}
 	new_val[a] = '\0';
-	// if (token->value[end] == 39)
-	// 	(*i) = end + 1;
-	// else
-	// 	(*i) = end;
-	// (*i)++;
 	return (new_val);
 }
 
@@ -155,6 +154,8 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 {
 	char *new_val;
 	char *new_val2;
+	char *tmp;
+	char *tmp2;
 
 	new_val = NULL;
 	new_val2 = NULL;
@@ -162,42 +163,45 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 	{
 		if (token->value[*i] != 39 && token->value[*i] != '$')
 		{
+			tmp2 = expand_pre(env_list, token, i);
 			if (!new_val)
-				new_val = ft_strdup(expand_pre(env_list, token, i));
+				new_val = tmp2;
 			else
 			{
-				if (new_val2)
-					free(new_val2);
-				new_val2 =  ft_strdup(expand_pre(env_list, token, i));
-				new_val = ft_strjoin(new_val, new_val2);
+				tmp = ft_strjoin(new_val, tmp2);
+				free(new_val);
+				new_val = tmp;
+				free(tmp2);
 			}
 		}
 		else if (token->value[*i] != '$')
 		{
+			tmp2 = expand_pre_quo(env_list, token, i);
 			if (!new_val)
 			{
-				new_val = ft_strdup(expand_pre_quo(env_list, token, i));
+				new_val = tmp2;
 			}
 			else
 			{
-				if (new_val2)
-					free(new_val2);
-				new_val2 = ft_strdup(expand_pre_quo(env_list, token, i));
-				new_val = ft_strjoin(new_val, new_val2);
+				tmp = ft_strjoin(new_val, tmp2);
+				free(new_val);
+				new_val = tmp;
+				free(tmp2);
 			}
 		}
 		else if (token->value[*i] == '$')
 		{
+			tmp2 = expand_env_var(env_list, token, i);
 			if (!new_val)
 			{
-				new_val = ft_strdup(expand_env_var(env_list, token, i));
+				new_val = tmp2;
 			}
 			else
 			{
-				if (new_val2)
-					free(new_val2);
-				new_val2 = ft_strdup(expand_env_var(env_list, token, i));
-				new_val = ft_strjoin(new_val, new_val2);
+				tmp = ft_strjoin(new_val, tmp2);
+				free(new_val);
+				new_val = tmp;
+				free(tmp2);
 			}
 		}
 		else
