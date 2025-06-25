@@ -54,33 +54,35 @@ int	handle_heredoc(t_redir *redir)
 
 int handle_redirection(t_command *cmd)
 {
-	int			fd;
-	t_command	*cur;
-	t_redir		*r;
+    int         fd;
+    t_command   *cur = cmd;
 
-	r = cmd->redirs;
-	cur = cmd;
-	while (cur)
-	{
-		while(r)
-		{
-			if (r->flag == R_HEREDOC)
-				fd = handle_heredoc(r);
-			else
-				fd = open(r->target, r->flag, 0777);
-			if (fd < 0)
-				return (-1);
-			r->fd = fd;
-			if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
-				cur->input = fd;
-			else
-				cur->output = fd;
-			r = r->next;
-		}
-		cur = cur->next;
-	}
-	return (0);
+    while (cur)
+    {
+        t_redir *r = cur->redirs;
+
+        while (r)
+        {
+            if (r->flag == R_HEREDOC)
+                fd = handle_heredoc(r);
+            else
+                fd = open(r->target, r->flag, 0644);
+            if (fd < 0)
+                return (-1);
+
+            r->fd = fd;
+            if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
+                cur->input = fd;
+            else
+                cur->output = fd;
+
+            r = r->next;
+        }
+        cur = cur->next;
+    }
+    return (0);
 }
+
 
 char *get_path(char *cmd, char **env)
 {
@@ -127,8 +129,8 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	current = cmd;
 	while (current)
 	{
-		if (!current->next && is_builtin(current->args))
-			built(current, env_list, mini);
+		if (!current->redirs && !current->next && is_builtin(current->args))
+			return (built(current, env_list, mini));
 		if (current->next && pipe(pipe_fd) < 0)
 			return (perror("pipe"), 1);
 		pid = fork();
@@ -138,31 +140,29 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		if (pid == 0)
 		{
 			setup_child_signals();
+			printf("%d\n", current->input);
 			if (current->input != STDIN_FILENO)
-				dup2(current->input, STDIN_FILENO);
-			else if (prev_fd != -1)
-				dup2(prev_fd, STDIN_FILENO);
-			printf("%d\n", current->output);
-			printf("DEBUG\n");
-			if (current->output != STDOUT_FILENO)
-				dup2(current->output, STDOUT_FILENO);
-			if (current->next)
-			{
-				dup2(pipe_fd[1], STDOUT_FILENO);
-				close(pipe_fd[0]);
-				close(pipe_fd[1]);
-			}
+    		    dup2(current->input, STDIN_FILENO);
+    		else if (prev_fd != -1)
+    		    dup2(prev_fd, STDIN_FILENO);
+    		if (current->output != STDOUT_FILENO)
+    		    dup2(current->output, STDOUT_FILENO);
+    		else if (current->next)
+    		    dup2(pipe_fd[1], STDOUT_FILENO);
+    		if (current->next)
+    		{
+    		    close(pipe_fd[0]);
+    		    close(pipe_fd[1]);
+    		}
 			if (is_builtin(current->args))
 				exit(built(current, env_list, mini));
 			free_env_list((*env_list));
 			free_struct(mini);
 			if (execve(get_path(current->args[0], env), current->args, env) == -1)
-			{
-				ft_putstr_fd(current->args[0], 2);
-				ft_putendl_fd(": Command not found", 2);
-				free_commands(cmd);
-				exit(127);
-			}
+			ft_putstr_fd(current->args[0], 2);
+			ft_putendl_fd(": Command not found", 2);
+			free_commands(cmd);
+			exit(127);
 		}
 		else
 		{

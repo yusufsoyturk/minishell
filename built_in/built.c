@@ -111,6 +111,18 @@ int	built(t_command *cmd, t_env **env, t_shell *minishell)
 	return (1);
 }
 
+int	is_builtin_parent(char **cmd)
+{
+	if (!cmd)
+		return (0);
+	return (!ft_strcmp(cmd[0], "cd")
+		|| !ft_strcmp(cmd[0], "exit")
+		|| !ft_strcmp(cmd[0], "pwd")
+		|| !ft_strcmp(cmd[0], "env")
+		|| !ft_strcmp(cmd[0], "export")
+		|| !ft_strcmp(cmd[0], "unset"));
+}
+
 int	is_builtin(char **cmd)
 {
 	if (!cmd)

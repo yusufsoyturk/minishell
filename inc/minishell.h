@@ -70,6 +70,7 @@ t_env	**env_to_array(t_env *env);
 void	sort_env_array(t_env **arr);
 int		is_builtin(char **cmd);
 int		builtin_echo(char **args);
+int		is_builtin_parent(char **cmd);
 
 //main.c
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd);
