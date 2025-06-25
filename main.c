@@ -137,7 +137,7 @@ int main(int ac, char **av, char **env)
 			{
 				if (!minishell->line)
 					minishell->line = ft_strdup("exit");
-				else
+				else if (ft_strncmp(minishell->line, "", 1) != 0)
 					add_history(minishell->line);
 				ft_token(minishell);
 				ft_expand(env_list, minishell);
