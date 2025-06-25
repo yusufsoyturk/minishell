@@ -98,8 +98,6 @@ void print_commands(t_command *cmds)
 
 // PRİNT ALANI CAN GPT BABAYA SELAMLAR
 
-volatile sig_atomic_t g_sigint = 0;
-
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
 {
 	free_env(env);
@@ -140,14 +138,14 @@ int main(int ac, char **av, char **env)
 			{
 				if (!minishell->line)
 					minishell->line = ft_strdup("exit");
-				else
+				else if (ft_strncmp(minishell->line, "", 1) != 0)
 					add_history(minishell->line);
 				ft_token(minishell);
 				ft_expand(env_list, minishell);
 				print_tokens(minishell->token);
 				minishell->args = ft_split(minishell->line, ' ');
-				commands = pars(minishell->token, env_list);
-				// print_commands(commands);
+				commands = pars(minishell->token, env_list, minishell);
+				print_commands(commands);
 				if (commands && (commands->args || commands->redirs))
 					execute(commands, &env_list, env, minishell);
 				free_less(minishell, commands);
