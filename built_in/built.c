@@ -69,9 +69,11 @@ int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *minishell)
 
 	i = -1;
 	exit_code = 0;
-	write(2, "exit\n", 5);
+	write(1, "exit\n", 5);
 	if (cmd->args[1])
 	{
+		if ((ft_strncmp(cmd->args[1], "-", 1) || ft_strncmp(cmd->args[1], "+", 1)))
+			i++;
 		while (cmd->args[1][++i])
 		{
 			if (ft_isdigit(cmd->args[1][i]) == 0)

@@ -159,7 +159,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 			free_struct(mini);
 			if (execve(get_path(current->args[0], env), current->args, env) == -1)
 			ft_putstr_fd(current->args[0], 2);
-			ft_putendl_fd(": Command not found", 2);
+			ft_putendl_fd(": command not found", 2);
 			free_commands(cmd);
 			exit(127);
 		}
