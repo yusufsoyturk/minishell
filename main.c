@@ -134,18 +134,18 @@ int main(int ac, char **av, char **env)
 		while (1)
 		{
 			minishell->line = readline("minishell> ");
+			if (!minishell->line)
+				minishell->line = ft_strdup("exit");
+			else if (ft_strncmp(minishell->line, "", 1) != 0)
+				add_history(minishell->line);
 			if (minishell->line && missing_quotes_double(minishell) == 0)
 			{
-				if (!minishell->line)
-					minishell->line = ft_strdup("exit");
-				else if (ft_strncmp(minishell->line, "", 1) != 0)
-					add_history(minishell->line);
 				ft_token(minishell);
 				ft_expand(env_list, minishell);
-				print_tokens(minishell->token);
+				//print_tokens(minishell->token);
 				minishell->args = ft_split(minishell->line, ' ');
 				commands = pars(minishell->token, env_list, minishell);
-				print_commands(commands);
+				//print_commands(commands);
 				if (commands && (commands->args || commands->redirs))
 					execute(commands, &env_list, env, minishell);
 				free_less(minishell, commands);

@@ -26,7 +26,6 @@ static int	builtin_cd(char **args)
 		else
 			chdir("..");
 		ft_free_tab(tmp);
-		free(cwd);
 	}
 	else if (chdir(args[1]) == -1)
 	{
@@ -109,18 +108,6 @@ int	built(t_command *cmd, t_env **env, t_shell *minishell)
 	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "echo", 4) == 0 && cmd->args[0][4] == '\0')
 		return (builtin_echo(cmd->args));
 	return (1);
-}
-
-int	is_builtin_parent(char **cmd)
-{
-	if (!cmd)
-		return (0);
-	return (!ft_strcmp(cmd[0], "cd")
-		|| !ft_strcmp(cmd[0], "exit")
-		|| !ft_strcmp(cmd[0], "pwd")
-		|| !ft_strcmp(cmd[0], "env")
-		|| !ft_strcmp(cmd[0], "export")
-		|| !ft_strcmp(cmd[0], "unset"));
 }
 
 int	is_builtin(char **cmd)

@@ -140,7 +140,6 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		if (pid == 0)
 		{
 			setup_child_signals();
-			printf("%d\n", current->input);
 			if (current->input != STDIN_FILENO)
     		    dup2(current->input, STDIN_FILENO);
     		else if (prev_fd != -1)
