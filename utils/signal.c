@@ -11,7 +11,7 @@ void sigint_handler(int sig)
 
 void setup_signals(void)
 {
-    struct sigaction sa;
+    struct sigaction	sa;
 
     sa.sa_handler = sigint_handler;
     sigemptyset(&sa.sa_mask);
@@ -21,19 +21,23 @@ void setup_signals(void)
     sigaction(SIGQUIT, &sa, NULL);
 }
 
-void sigint_heredoc_handler(int sig)
+void	setup_child_signals(void)
 {
-	(void)sig;
-	g_sigint= 1;
-}
+	struct sigaction	sa;
 
-void	setup_heredoc_signals(void)
-{
-	struct sigaction sa;
-
-	sa.sa_handler = sigint_heredoc_handler;
+	sa.sa_handler = SIG_DFL;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
+}
+
+void	ignore_signals(void)
+{
+	struct	sigaction	sa;
+
+	sa.sa_handler = SIG_IGN;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
 }

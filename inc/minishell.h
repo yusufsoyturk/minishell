@@ -14,13 +14,13 @@
 # include "lexer.h"
 # include "parse.h"
 
-typedef struct s_shell
+typedef struct	s_shell
 {
 	char	*line;
 	char	**args;
 	int		last_status;
 	t_token	*token;
-}	t_shell;
+}				t_shell;
 
 //çevre değişkenlerini tutuyor
 typedef struct s_env
@@ -30,8 +30,6 @@ typedef struct s_env
 	int		exported;
 	struct s_env *next;
 }				t_env;
-
-extern volatile sig_atomic_t	g_sigint;
 
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list);
@@ -53,8 +51,8 @@ void	free_env(t_env *env);
 void init_env(char **env, t_env **env_list);
 // utils signal.c
 void	setup_signals(void);
-void sigint_heredoc_handler(int sig);
-void	setup_heredoc_signals(void);
+void	setup_child_signals(void);
+void	ignore_signals(void);
 
 void	exit_error(char *arg, char *err_msg, char *type);
 int		array_len(char **args);

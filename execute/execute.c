@@ -11,16 +11,12 @@ int	handle_heredoc(t_redir *redir)
 	pid = fork();
 	if (pid == -1)
 		return (perror("fork"), -1);
-	signal(SIGINT, SIG_IGN);
+	ignore_signals();
 	if (pid == 0)
 	{
 		char *line;
-		struct sigaction sa;
-		sa.sa_handler = SIG_DFL;
-		sigemptyset(&sa.sa_mask);
-		sa.sa_flags = 0;
-		sigaction(SIGINT, &sa, NULL);
-		sigaction(SIGQUIT, &sa, NULL);
+		
+		setup_child_signals();
 		close(pipefd[0]);
 		while (1)
 		{
@@ -113,12 +109,12 @@ char *get_path(char *cmd, char **env)
 
 int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 {
-	t_command *current;
-	pid_t pid;
-	int pipe_fd[2];
-	int prev_fd;
-	int status;
-	int code;
+	t_command	*current;
+	pid_t		pid;
+	int			pipe_fd[2];
+	int			prev_fd;
+	int			status;
+	int			code;
 
 	prev_fd = -1;
 	status = 0;
@@ -142,15 +138,10 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"), 1);
-		signal(SIGINT, SIG_IGN);
+		ignore_signals();
 		if (pid == 0)
 		{
-			struct sigaction sa;
-    		sa.sa_handler = SIG_DFL;
-    		sigemptyset(&sa.sa_mask);
-    		sa.sa_flags = 0;
-    		sigaction(SIGINT, &sa, NULL);
-    		sigaction(SIGQUIT, &sa, NULL);
+			setup_child_signals();
 			if (current->input != STDIN_FILENO)
 			dup2(current->input, STDIN_FILENO);
 			else if (prev_fd != -1)

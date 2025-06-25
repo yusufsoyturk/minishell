@@ -27,10 +27,11 @@ typedef struct	s_command //bu kısım t_shell'le bağlantılı olacak
 
 //böyle bir şey yapmam gerekti
 typedef struct s_env t_env;
+typedef struct s_shell t_shell;
 
 // parse_utils.c
 void	ft_free_tab(char **tab);
 // parser.c
-t_command	*pars(t_token *token, t_env *env);
+t_command	*pars(t_token *token, t_env *env, t_shell *mini);
 
 #endif

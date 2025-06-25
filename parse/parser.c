@@ -43,7 +43,7 @@ int add_arg_to_command(t_command *cmd, const char *arg)
 
     return (0);
 }
-int	token_check_pipe(char *str)
+int	token_check_pipe(char *str, t_shell *mini)
 {
 	char	*prefix;
 	char	*msg;
@@ -59,13 +59,14 @@ int	token_check_pipe(char *str)
 		free(tmp);
 		ft_putendl_fd(msg, 2);
 		free(msg);
+		mini->last_status = 2;
 		return (1);
 	}
 	free(prefix);
 	return (0);
 }
 
-int	token_check(char *str)
+int	token_check(char *str, t_shell *mini)
 {
 	char	*prefix;
 	char	*msg;
@@ -83,13 +84,14 @@ int	token_check(char *str)
 		free(tmp);
 		ft_putendl_fd(msg, 2);
 		free(msg);
+		mini->last_status = 2;
 		return (1);
 	}
 	free(prefix);
 	return (0);
 }
 
-t_command	*pars(t_token *token, t_env *env)
+t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 {
 	t_command	*head;
 	t_command	*current;
@@ -113,10 +115,11 @@ t_command	*pars(t_token *token, t_env *env)
 			token = token->next;
 			if (!token)
 			{
+				mini->last_status = 2;
 				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
 				return (free_commands(head), NULL);
 			}
-			if (token_check_pipe(token->value))
+			if (token_check_pipe(token->value, mini))
 				return (free_commands(head), NULL);
 		}
 		else if (token->type != T_PIPE && token->type != T_WORD && token->type != T_ENV_VAR)
@@ -136,10 +139,11 @@ t_command	*pars(t_token *token, t_env *env)
 			{
 				current->redirs->target = NULL;
 				current->redirs->next = NULL;
+				mini->last_status = 2;
 				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
 				return (free_commands(head), NULL);
 			}
-			if (token_check(token->value))
+			if (token_check(token->value, mini))
 			{
 				current->redirs->target = NULL;
 				current->redirs->next = NULL;
