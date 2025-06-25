@@ -130,6 +130,7 @@ int main(int ac, char **av, char **env)
 	env_list = NULL;
 	ft_init_shell(minishell);
 	init_env(env, &env_list);
+	// printf("%c %c \n", 60, 62);
 	if (ac == 1 && av[0])
 	{
 		while (1)

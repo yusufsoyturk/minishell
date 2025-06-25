@@ -5,11 +5,16 @@ int	word_len(char *line)
 {
 	int	i;
 	int	len;
+	int	r_len;
+	int	last;
 
+	last = 0;
+	r_len = 0;
 	i = 0;
 	len = 0;
 	while (line[i])
 	{
+		r_len = 0;
 		if (line[i] == 34)
 		{
 			i++;
@@ -22,12 +27,21 @@ int	word_len(char *line)
 			while (line[i] && line[i] != 39)
 				i++;
 		}
-		if (line[i] == 32  || (line[i] >= 9 && line[i] <= 13))		
+		if (line[i] == 32  || (line[i] >= 9 && line[i] <= 13))
 			break;
 		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|'))
 		{
 			if (line[i] != line[i - 1])
 				break;
+			last = i;
+			while (line[i] == '>' || line[i] == '<' || line[i] == '|')
+			{
+				r_len++;
+				i++;
+				if (r_len == 2)
+					return (r_len);
+			}
+			i = last;
 		}
 		if (line[i] == '<' || line[i] == '>' || line[i] == '|')
 		{
@@ -81,6 +95,7 @@ t_token_type	find_type(char *line)
 }
 
 // sadece boşluk varsa argüman sanıyor bu fonksiyonu kullanırken dikkat edilmeli
+
 char	*find_value(char *line, int *i)
 {
 	char	*token;
