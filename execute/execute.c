@@ -128,11 +128,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	while (current)
 	{
 		if (!current->next && is_builtin(current->args))
-		{
-			code = built(current, env_list, mini);
-			mini->last_status = code;
-			return (code);
-		}
+			built(current, env_list, mini);
 		if (current->next && pipe(pipe_fd) < 0)
 			return (perror("pipe"), 1);
 		pid = fork();
@@ -143,9 +139,13 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		{
 			setup_child_signals();
 			if (current->input != STDIN_FILENO)
-			dup2(current->input, STDIN_FILENO);
+				dup2(current->input, STDIN_FILENO);
 			else if (prev_fd != -1)
-			dup2(prev_fd, STDIN_FILENO);
+				dup2(prev_fd, STDIN_FILENO);
+			printf("%d\n", current->output);
+			printf("DEBUG\n");
+			if (current->output != STDOUT_FILENO)
+				dup2(current->output, STDOUT_FILENO);
 			if (current->next)
 			{
 				dup2(pipe_fd[1], STDOUT_FILENO);
@@ -153,7 +153,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				close(pipe_fd[1]);
 			}
 			if (is_builtin(current->args))
-			exit(built(current, env_list, mini));
+				exit(built(current, env_list, mini));
 			free_env_list((*env_list));
 			free_struct(mini);
 			if (execve(get_path(current->args[0], env), current->args, env) == -1)
