@@ -38,6 +38,8 @@ int	builtin_unset(const char *key, t_env **env_list)
 
 	current = *env_list;
 	previous = NULL;
+	if (!current->key || key)
+		return (1);
 	while (current)
 	{
 		if (ft_strcmp(current->key, key) == 0)

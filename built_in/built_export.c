@@ -78,7 +78,7 @@ static int is_valid_var_name(const char *name)
     return (1);
 }
 
-int builtin_export(char **args, t_env **env_list)
+int builtin_export(char **args, t_env **env_list, t_shell *mini)
 {
     int i = 1;
 
@@ -95,6 +95,7 @@ int builtin_export(char **args, t_env **env_list)
             ft_putstr_fd("minishell: export: `", 2);
             ft_putstr_fd(args[i], 2);
             ft_putstr_fd("': not a valid identifier\n", 2);
+            mini->last_status = 1;
         }
         else if (ft_strchr(args[i], '='))
         {

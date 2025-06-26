@@ -61,7 +61,7 @@ int		array_len(char **args);
 int		built(t_command *cmd, t_env **env, t_shell *minishell);
 int		ft_strcmp(const char *s1, const char *s2);
 int		builtin_unset(const char *key, t_env **env_list);
-int		builtin_export(char **args, t_env **env_list);
+int		builtin_export(char **args, t_env **env_list, t_shell *mini);
 int		builtin_exit(t_command *cmd, t_env *env_list, t_shell *minishell);
 int		builtin_env(t_env *env_list);
 t_env	*find_env_node(t_env *env, const char *key);
