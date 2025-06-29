@@ -123,34 +123,38 @@ t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 				return (free_commands(head), NULL);
 		}
 		else if (token->type != T_PIPE && token->type != T_WORD && token->type != T_ENV_VAR)
-		{//BURASI KOMPLE BAŞKA BİR FONKSİYONA ALINABİLİR
-			current->redirs = malloc(sizeof(t_redir));
+		{
+			t_redir *new_redir = malloc(sizeof(t_redir));
+			if (!new_redir)
+				return (free_commands(head), NULL);
+			new_redir->next = NULL;
+			new_redir->fd = -1;
 			if (token->type == T_REDIR_IN)
-                current->redirs->flag = O_RDONLY;
-            else if (token->type == T_REDIR_OUT)
-                current->redirs->flag = O_CREAT | O_WRONLY | O_TRUNC;
-            else if (token->type == T_REDIR_APPEND)
-                current->redirs->flag = O_CREAT | O_WRONLY | O_APPEND;
+				new_redir->flag = O_RDONLY;
+			else if (token->type == T_REDIR_OUT)
+				new_redir->flag = O_CREAT | O_WRONLY | O_TRUNC;
+			else if (token->type == T_REDIR_APPEND)
+				new_redir->flag = O_CREAT | O_WRONLY | O_APPEND;
 			else if (token->type == T_REDIR_HEREDOC)
-				current->redirs->flag = R_HEREDOC;
-			current->redirs->fd = -1;
-			token = token->next; //token'da ilerlememizin sebebi redirectionların targete her zaman sağ tarafta olur
-			if (!token)
+				new_redir->flag = R_HEREDOC;
+			token = token->next;
+			if (!token || token_check(token->value, mini))
 			{
-				current->redirs->target = NULL;
-				current->redirs->next = NULL;
+				free(new_redir);
 				mini->last_status = 2;
-				ft_putendl_fd("minishell: syntax error near unexpected token `newline'", 2);
+				ft_putendl_fd("minishell: syntax error near unexpected token", 2);
 				return (free_commands(head), NULL);
 			}
-			if (token_check(token->value, mini))
+			new_redir->target = ft_strdup(token->value);
+			if (!current->redirs)
+				current->redirs = new_redir;
+			else
 			{
-				current->redirs->target = NULL;
-				current->redirs->next = NULL;
-				return (free_commands(head), NULL);
+				t_redir *tmp = current->redirs;
+				while (tmp->next)
+					tmp = tmp->next;
+				tmp->next = new_redir;
 			}
-			current->redirs->target = ft_strdup(token->value);
-			current->redirs->next = NULL;
 			token = token->next;
 		}
 		else

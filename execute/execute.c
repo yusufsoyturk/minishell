@@ -75,7 +75,6 @@ int handle_redirection(t_command *cmd)
                 cur->input = fd;
             else
                 cur->output = fd;
-
             r = r->next;
         }
         cur = cur->next;
@@ -123,7 +122,8 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	current = cmd;
 	if (handle_redirection(cmd) < 0)
 	{
-		mini->last_status = 128 + SIGINT;
+		mini->last_status = 1;
+		ft_putendl_fd("No such a file or directory", 2);
 		return(mini->last_status);
 	}
 	current = cmd;
@@ -165,24 +165,24 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		}
 		else
 		{
-			waitpid(pid, &status, 0);
-			if (WIFSIGNALED(status))
-			{
-				int sig = WTERMSIG(status);
-				if (sig == SIGINT)
-					write(1, "\n", 1);
-			}
 			if (prev_fd != -1)
-				close(prev_fd);
+			close(prev_fd);
 			if (current->next)
 			{
 				close(pipe_fd[1]);
 				prev_fd = pipe_fd[0];
 			}
-			setup_signals();
 		}
 		current = current->next;
 	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status))
+	{
+		int sig = WTERMSIG(status);
+		if (sig == SIGINT)
+		write(1, "\n", 1);
+	}
+	setup_signals();
 	if (WIFEXITED(status))
 		code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
