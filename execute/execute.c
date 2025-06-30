@@ -68,7 +68,10 @@ int handle_redirection(t_command *cmd)
             else
                 fd = open(r->target, r->flag, 0644);
             if (fd < 0)
+			{
+				ft_putendl_fd(" No such file or directory", 2);
                 return (-1);
+			}
 
             r->fd = fd;
             if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
@@ -115,17 +118,9 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	int			pipe_fd[2];
 	int			prev_fd;
 	int			status;
-	int			code;
 
 	prev_fd = -1;
 	status = 0;
-	current = cmd;
-	if (handle_redirection(cmd) < 0)
-	{
-		mini->last_status = 1;
-		ft_putendl_fd("No such a file or directory", 2);
-		return(mini->last_status);
-	}
 	current = cmd;
 	while (current)
 	{
@@ -139,6 +134,11 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		ignore_signals();
 		if (pid == 0)
 		{
+			if (handle_redirection(cmd) < 0)
+			{
+				mini->last_status = 1;
+				exit(mini->last_status);
+			}
 			setup_child_signals();
 			if (current->input != STDIN_FILENO)
     		    dup2(current->input, STDIN_FILENO);
@@ -157,7 +157,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				exit(built(current, env_list, mini));
 			free_env_list((*env_list));
 			free_struct(mini);
-			if (execve(get_path(current->args[0], env), current->args, env) == -1)
+			execve(get_path(current->args[0], env), current->args, env);
 			ft_putstr_fd(current->args[0], 2);
 			ft_putendl_fd(": command not found", 2);
 			free_commands(cmd);
@@ -184,11 +184,10 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	}
 	setup_signals();
 	if (WIFEXITED(status))
-		code = WEXITSTATUS(status);
+		mini->last_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
-		code = 128 + WTERMSIG(status);
+		mini->last_status = 128 + WTERMSIG(status);
 	else 
-		code = 1;
-	mini->last_status = code;
-	return (code);
+		mini->last_status = 1;
+	return (mini->last_status);
 }
