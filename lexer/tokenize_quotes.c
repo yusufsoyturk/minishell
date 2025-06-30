@@ -26,10 +26,10 @@ int	double_quotes_len(char *line)
 				}
 			}
 		}
-		// else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag == 1)
-		// {
-		// 	break;
-		// }
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		{
+			break;
+		}
 		i++;
 	}
 	return (i);
@@ -80,10 +80,10 @@ int	single_quote_len(char *line)
 				}
 			}
 		}
-		// else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag == 1)
-		// {
-		// 	break;
-		// }
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		{
+			break;
+		}
 		i++;
 	}
 	return (i);
