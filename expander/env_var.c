@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/06/30 18:59:54 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:12:02 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char *expand_chance_env(t_env *env_list, t_token *token, int *i)
 	{
 		if (ft_strlen(env_list->key) == (size_t)key_len && ft_strncmp(key, env_list->key, key_len) == 0)
 		{
-			new_val = env_list->value;
+			new_val = ft_strdup(env_list->value);
 			break;
 		}
 		env_list = env_list->next;
