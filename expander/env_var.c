@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/01 19:12:02 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/01 20:10:59 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 	return (new_val);
 }
 
-char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
+char	*expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
 {
 	char *new_val;
 	char *new_val2;
@@ -159,11 +159,25 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 
 	new_val = NULL;
 	new_val2 = NULL;
-	while (token->value[*i])
+	while (mini->token->value[*i])
 	{
-		if (token->value[*i] != 39 && token->value[*i] != '$')
+		if (ft_strncmp(mini->token->value + *i, "$?", 2) == 0)
 		{
-			tmp2 = expand_pre(env_list, token, i);
+			tmp2 = ft_itoa(mini->last_status);
+			if (!new_val)
+				new_val = tmp2;
+			else
+			{
+				tmp = ft_strjoin(new_val, tmp2);
+				free(new_val);
+				new_val = tmp;
+				free(tmp2);
+			}
+			*i += 2;
+		}
+		else if (mini->token->value[*i] != 39 && mini->token->value[*i] != '$')
+		{
+			tmp2 = expand_pre(env_list, mini->token, i);
 			if (!new_val)
 				new_val = tmp2;
 			else
@@ -174,9 +188,9 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 				free(tmp2);
 			}
 		}
-		else if (token->value[*i] != '$')
+		else if (mini->token->value[*i] != '$')
 		{
-			tmp2 = expand_pre_quo(env_list, token, i);
+			tmp2 = expand_pre_quo(env_list, mini->token, i);
 			if (!new_val)
 			{
 				new_val = tmp2;
@@ -189,9 +203,9 @@ char	*expand_with_quotes(t_env *env_list, t_token *token, int *i)
 				free(tmp2);
 			}
 		}
-		else if (token->value[*i] == '$')
+		else if (mini->token->value[*i] == '$')
 		{
-			tmp2 = expand_env_var(env_list, token, i);
+			tmp2 = expand_env_var(env_list, mini->token, i);
 			if (!new_val)
 			{
 				new_val = tmp2;
@@ -242,14 +256,7 @@ void	ft_expand(t_env *env_list, t_shell *mini)
 		{
 			if (dollar_control(mini->token) == 1)
 			{
-				if (ft_strncmp(mini->token->value, "$?", 2) == 0)
-				{
-					new_value = ft_itoa(mini->last_status);
-				}
-				else
-				{
-					new_value = expand_with_quotes(env_list, mini->token, &i);
-				}
+				new_value = expand_with_quotes(env_list, mini, &i);
 				if (mini->token->value)
 				{
 					free(mini->token->value);
