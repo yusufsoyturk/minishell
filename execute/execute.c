@@ -52,14 +52,10 @@ int	handle_heredoc(t_redir *redir)
 }
 
 
-int handle_redirection(t_command *cmd)
+int handle_redirection(t_command *cmd)//current
 {
     int         fd;
-    t_command   *cur = cmd;
-
-    while (cur)
-    {
-        t_redir *r = cur->redirs;
+    t_redir *r = cmd->redirs;
 
         while (r)
         {
@@ -75,13 +71,11 @@ int handle_redirection(t_command *cmd)
 
             r->fd = fd;
             if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
-                cur->input = fd;
+                cmd->input = fd;
             else
-                cur->output = fd;
+                cmd->output = fd;
             r = r->next;
         }
-        cur = cur->next;
-    }
     return (0);
 }
 
@@ -124,6 +118,22 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	current = cmd;
 	while (current)
 	{
+	if (handle_redirection(current) < 0)
+    {
+        mini->last_status = 1;
+        if (current->next)
+        {
+            // dummy pipe ile hemen EOF geçir
+            if (pipe(pipe_fd) < 0)
+                perror("pipe");
+            close(pipe_fd[1]);      // yazma ucunu kapat
+            prev_fd = pipe_fd[0];   // okuma ucunu next komut için sakla
+            current = current->next; // bir sonraki komuta geç
+			mini->last_status = 0;
+            continue;
+        }
+        return mini->last_status;
+    }
 		if (!current->redirs && !current->next && is_builtin(current->args))
 			return (built(current, env_list, mini));
 		if (current->next && pipe(pipe_fd) < 0)
@@ -134,11 +144,6 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		ignore_signals();
 		if (pid == 0)
 		{
-			if (handle_redirection(cmd) < 0)
-			{
-				mini->last_status = 1;
-				exit(mini->last_status);
-			}
 			setup_child_signals();
 			if (current->input != STDIN_FILENO)
     		    dup2(current->input, STDIN_FILENO);
@@ -166,7 +171,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 		else
 		{
 			if (prev_fd != -1)
-			close(prev_fd);
+				close(prev_fd);
 			if (current->next)
 			{
 				close(pipe_fd[1]);
