@@ -11,7 +11,8 @@
 typedef struct	s_redir
 {
 	char			*target; //yönlendirilen dosyanın adı
-	int				flag;    //sahip olacağı flagler örn O_APPEND, O_TRUNC türüne göre değişiyor 
+	int				flag;    //sahip olacağı flagler örn O_APPEND, O_TRUNC türüne göre değişiyor
+	int				here_flag;
 	int				fd;		 //kullanılan dosya ama o kısım execute'ta açılacak ilk pars kısmında -1 olacak
 	struct s_redir	*next;   //bir komut kısmında birden fazla redir varsa
 }				t_redir;

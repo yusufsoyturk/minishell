@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/01 20:10:59 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:52:28 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,16 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
     {
         if (token->value[*i] == '$')
         {
-            val = expand_chance_env(env_list, token, i);
+			// printf("%s\n", token->value + *i + 1);
+			if (token->value[*i + 1] == 34 || token->value[*i + 1] == 32)
+			{
+				val = ft_strdup("$");
+				(*i)++;
+			}
+			else
+			{
+	            val = expand_chance_env(env_list, token, i);
+			}
             if (!new_val)
                 new_val = ft_strdup(val);
             else
@@ -161,7 +170,21 @@ char	*expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
 	new_val2 = NULL;
 	while (mini->token->value[*i])
 	{
-		if (ft_strncmp(mini->token->value + *i, "$?", 2) == 0)
+		if (ft_strncmp(mini->token->value + *i, "$", 1) == 0 && mini->token->value[*i + 1] == '\0')
+		{
+			tmp2 = ft_strdup("$");
+			if (!new_val)
+				new_val = tmp2;
+			else
+			{
+				tmp = ft_strjoin(new_val, tmp2);
+				free(new_val);
+				new_val = tmp;
+				free(tmp2);
+			}
+			(*i)++;
+		}
+		else if (ft_strncmp(mini->token->value + *i, "$?", 2) == 0)
 		{
 			tmp2 = ft_itoa(mini->last_status);
 			if (!new_val)
@@ -240,6 +263,20 @@ int dollar_control(t_token *token)
 	return (0);
 }
 
+int	quotes_controler(t_token *token)
+{
+	int i;
+
+	i = 0;
+	while (token->value[i])
+	{
+		if (token->value[i] == 34 || token->value[i] == 39)	
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	ft_expand(t_env *env_list, t_shell *mini)
 {
 	int	i;
@@ -252,6 +289,15 @@ void	ft_expand(t_env *env_list, t_shell *mini)
 	while (mini->token)
 	{
 		i = 0;
+		if (mini->token->type == T_REDIR_HEREDOC)
+		{
+			if (mini->token->next && quotes_controler(mini->token) == 1)
+				mini->token->here_flag = 1;
+			if (mini->token->next->next)
+				mini->token = mini->token->next->next;
+			else
+				break ;
+		}
 		if (mini->token->type == T_WORD || mini->token->type == T_ENV_VAR)
 		{
 			if (dollar_control(mini->token) == 1)

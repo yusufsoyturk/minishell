@@ -56,8 +56,8 @@ void print_redirections(t_redir *redir)
 {
     while (redir)
     {
-        printf("    🔁 Redirection: target='%s', flags=%d, fd=%d\n",
-               redir->target, redir->flag, redir->fd);
+        printf("    🔁 Redirection: target='%s', flags=%d, fd=%d, here_flag=%d\n",
+               redir->target, redir->flag, redir->fd, redir->here_flag);
         redir = redir->next;
     }
 }
@@ -141,7 +141,7 @@ int main(int ac, char **av, char **env)
 			{
 				ft_token(minishell);
 				ft_expand(env_list, minishell);
-				//print_tokens(minishell->token);
+				// print_tokens(minishell->token);
 				minishell->args = ft_split(minishell->line, ' ');
 				commands = pars(minishell->token, env_list, minishell);
 				// print_commands(commands);

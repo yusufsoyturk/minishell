@@ -128,6 +128,7 @@ t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 			if (!new_redir)
 				return (free_commands(head), NULL);
 			new_redir->next = NULL;
+			new_redir->here_flag = 0;
 			new_redir->fd = -1;
 			if (token->type == T_REDIR_IN)
 				new_redir->flag = O_RDONLY;
@@ -136,7 +137,11 @@ t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 			else if (token->type == T_REDIR_APPEND)
 				new_redir->flag = O_CREAT | O_WRONLY | O_APPEND;
 			else if (token->type == T_REDIR_HEREDOC)
+			{
+				if (token->here_flag == 1)
+					new_redir->here_flag = 1;
 				new_redir->flag = R_HEREDOC;
+			}
 			token = token->next;
 			if (!token || token_check(token->value, mini))
 			{
