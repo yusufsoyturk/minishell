@@ -1,58 +1,184 @@
 #include "../inc/minishell.h"
 
-int	handle_heredoc(t_redir *redir)
+static char *append_str(char *base, const char *suffix)
 {
-	int		pipefd[2];
-	pid_t	pid;
-	int		status;
+    char *new;
+    if (base)
+        new = ft_strjoin(base, suffix);
+    else
+        new = ft_strjoin("", suffix);
+    free(base);
+    return new;
+}
 
-	if (pipe(pipefd) == -1)
-		return (perror("pipe"), -1);
-	pid = fork();
-	if (pid == -1)
-		return (perror("fork"), -1);
-	ignore_signals();
-	if (pid == 0)
-	{
-		char *line;
-		
-		setup_child_signals();
-		close(pipefd[0]);
-		while (1)
-		{
-			line = readline("> ");
-			if (!line)
-				break;
-			if (ft_strcmp(line, redir->target) == 0)
-			{
-				free(line);
-				break;
-			}
-			ft_putendl_fd(line, pipefd[1]);
-			free(line);
-		}
-		close(pipefd[1]);
-		exit(0);
-	}
-	else
-	{
-		close(pipefd[1]);
-		waitpid(pid, &status, 0);
-		setup_signals();
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		{
-			write(1, "\n", 1);
-			rl_replace_line("", 0);
-			close(pipefd[0]);
-			return (-1);
-		}
-		redir->fd = pipefd[0];
-		return (pipefd[0]);
-	}
+// Expand all $VARNAME in str, except inside single quotes
+char *expand_env_var_str(const char *str, t_env *env_list)
+{
+    char *result = NULL;
+    char *tmp2;
+    int  i = 0;
+
+    while (str[i])
+    {
+        if (str[i] == '\'')
+        {
+            int start = ++i;
+            while (str[i] && str[i] != '\'')
+                i++;
+            tmp2 = ft_substr(str, start, i - start);
+            result = append_str(result, tmp2);
+            free(tmp2);
+            if (str[i] == '\'')
+                i++;
+        }
+        else if (str[i] == '$')
+        {
+            if (str[i + 1] == '\0' || str[i + 1] == ' ' || str[i + 1] == '"')
+            {
+                tmp2 = ft_strdup("$");
+                i++;
+            }
+            else
+            {
+                int start = ++i;
+                while (ft_isalnum(str[i]) || str[i] == '_')
+                    i++;
+                char *var_name = ft_substr(str, start, i - start);
+                char *val = NULL;
+                t_env *cur = env_list;
+                while (cur)
+                {
+                    if (ft_strcmp(cur->key, var_name) == 0)
+                    {
+                        val = ft_strdup(cur->value);
+                        break;
+                    }
+                    cur = cur->next;
+                }
+                free(var_name);
+                if (val)
+                    tmp2 = val;
+                else
+                    tmp2 = ft_strdup("");
+            }
+            result = append_str(result, tmp2);
+            free(tmp2);
+        }
+        else
+        {
+            tmp2 = ft_substr(str, i, 1);
+            result = append_str(result, tmp2);
+            free(tmp2);
+            i++;
+        }
+    }
+    if (!result)
+        result = ft_strdup("");
+    return result;
+}
+
+// Expand $? then $VARNAME in input
+char *expand_string(const char *input, t_env *env_list, int last_status)
+{
+    char *result = NULL;
+    char *tmp2;
+    int   i = 0;
+
+    while (input[i])
+    {
+        if (input[i] == '$' && input[i + 1] == '?')
+        {
+            tmp2 = ft_itoa(last_status);
+            result = append_str(result, tmp2);
+            free(tmp2);
+            i += 2;
+        }
+        else if (input[i] == '$' && (ft_isalpha(input[i + 1]) || input[i + 1] == '_'))
+        {
+            int start = ++i;
+            while (ft_isalnum(input[i]) || input[i] == '_')
+                i++;
+            char *var_name = ft_substr(input, start, i - start);
+            char *value    = expand_env_var_str(var_name, env_list);
+            free(var_name);
+            result = append_str(result, value);
+            free(value);
+        }
+        else
+        {
+            tmp2 = ft_substr(input, i, 1);
+            result = append_str(result, tmp2);
+            free(tmp2);
+            i++;
+        }
+    }
+    if (!result)
+        result = ft_strdup("");
+    return result;
+}
+
+// Handle a heredoc redirection: returns fd for reading; here_flag==0 expand, ==1 no expand
+int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini)
+{
+    int     pipefd[2];
+    pid_t   pid;
+    int     status;
+
+    if (pipe(pipefd) == -1)
+        return (perror("pipe"), -1);
+    pid = fork();
+    if (pid == -1)
+        return (perror("fork"), -1);
+
+    ignore_signals();
+
+    if (pid == 0)
+    {
+        char *raw;
+        char *expanded;
+
+        setup_child_signals();
+        close(pipefd[0]);
+        while (1)
+        {
+            raw = readline("> ");
+            if (!raw)
+                break;
+            if (ft_strcmp(raw, redir->target) == 0)
+            {
+                free(raw);
+                break;
+            }
+            if (redir->here_flag == 0)
+                expanded = expand_string(raw, env_list, mini->last_status);
+            else
+                expanded = ft_strdup(raw);
+            free(raw);
+            ft_putendl_fd(expanded, pipefd[1]);
+            free(expanded);
+        }
+        close(pipefd[1]);
+        exit(0);
+    }
+    else
+    {
+        close(pipefd[1]);
+        waitpid(pid, &status, 0);
+        setup_signals();
+        if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+        {
+            write(1, "\n", 1);
+            rl_replace_line("", 0);
+            close(pipefd[0]);
+            return (-1);
+        }
+        redir->fd = pipefd[0];
+        return (pipefd[0]);
+    }
 }
 
 
-int handle_redirection(t_command *cmd)//current
+int handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini)
 {
     int         fd;
     t_redir *r = cmd->redirs;
@@ -60,7 +186,7 @@ int handle_redirection(t_command *cmd)//current
         while (r)
         {
             if (r->flag == R_HEREDOC)
-                fd = handle_heredoc(r);
+                fd = handle_heredoc(r, env_list, mini);
             else
                 fd = open(r->target, r->flag, 0644);
             if (fd < 0)
@@ -118,12 +244,11 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	current = cmd;
 	while (current)
 	{
-	if (handle_redirection(current) < 0)
+	if (handle_redirection(current, (*env_list), mini) < 0)
     {
         mini->last_status = 1;
         if (current->next)
         {
-            // dummy pipe ile hemen EOF geçir
             if (pipe(pipe_fd) < 0)
                 perror("pipe");
             close(pipe_fd[1]);      // yazma ucunu kapat

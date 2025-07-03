@@ -18,7 +18,7 @@ void	quotes_remover(t_token *token)
 {
 	char	*new_val;
 	int		len;
-	int		q_flag;
+	//int		q_flag;
 	int		i;
 	int		j;
 
@@ -26,7 +26,7 @@ void	quotes_remover(t_token *token)
 	new_val = malloc(sizeof(char) * len + 1);
 	i = 0;
 	j = 0;
-	q_flag = 0;
+	//q_flag = 0;
 	while (token->value[i])
 	{
 		if (token->value[i] == 34)

@@ -47,7 +47,7 @@ void print_tokens(t_token *tokens)
 {
     while (tokens)
 	{
-        printf("Type = %s, Value = '%s'\n", token_type_to_string(tokens->type), tokens->value);
+        printf("Type = %s, Value = '%s', Here_flag = '%d'", token_type_to_string(tokens->type), tokens->value, tokens->here_flag);
 		tokens = tokens->next;
 	}
 }
@@ -141,10 +141,10 @@ int main(int ac, char **av, char **env)
 			{
 				ft_token(minishell);
 				ft_expand(env_list, minishell);
-				// print_tokens(minishell->token);
+				print_tokens(minishell->token);
 				minishell->args = ft_split(minishell->line, ' ');
 				commands = pars(minishell->token, env_list, minishell);
-				// print_commands(commands);
+				print_commands(commands);
 				if (commands && (commands->args || commands->redirs))
 					execute(commands, &env_list, env, minishell);
 				free_less(minishell, commands);

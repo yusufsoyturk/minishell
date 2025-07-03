@@ -291,7 +291,7 @@ void	ft_expand(t_env *env_list, t_shell *mini)
 		i = 0;
 		if (mini->token->type == T_REDIR_HEREDOC)
 		{
-			if (mini->token->next && quotes_controler(mini->token) == 1)
+			if (mini->token->next && quotes_controler(mini->token->next) == 1)
 				mini->token->here_flag = 1;
 			if (mini->token->next->next)
 				mini->token = mini->token->next->next;
