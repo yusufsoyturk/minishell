@@ -101,7 +101,15 @@ int	built(t_command *cmd, t_env **env, t_shell *minishell)
 	if (cmd->args[0] && ft_strncmp(cmd->args[0], "exit", 4) == 0 && cmd->args[0][4] == '\0')
 		return (builtin_exit(cmd, (*env), minishell));
 	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "cd", 2) == 0 && cmd->args[0][2] == '\0')
+	{
+		if (cmd->args[2])
+		{
+			ft_putendl_fd("minishell: cd: too many arguments", 2);
+			minishell->last_status = 1;
+			return (-1);
+		}
 		return (builtin_cd(cmd->args, minishell));
+	}
 	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "env", 3) == 0 && cmd->args[0][3] == '\0')
 		return (builtin_env((*env)));
 	else if (cmd->args[0] && ft_strncmp(cmd->args[0], "export", 6) == 0 && cmd->args[0][6] == '\0')

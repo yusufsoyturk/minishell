@@ -33,7 +33,7 @@ void append_env(t_env **env_list, t_env *new)
     while (current->next)
         current = current->next;
     current->next = new;
-    new->next = NULL; // Ensure the new node's next pointer is initialized
+    new->next = NULL;
 }
 
 int	env_size(t_env *env)

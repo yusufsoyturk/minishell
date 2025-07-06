@@ -13,6 +13,7 @@
 # include "../libft/libft.h"
 # include "lexer.h"
 # include "parse.h"
+# include <sys/stat.h>
 
 typedef struct	s_shell
 {
@@ -70,6 +71,7 @@ t_env	**env_to_array(t_env *env);
 void	sort_env_array(t_env **arr);
 int		is_builtin(char **cmd);
 int		builtin_echo(char **args);
+int	env_size(t_env *env);
 
 //main.c
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd);

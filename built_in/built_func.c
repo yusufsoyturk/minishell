@@ -59,24 +59,30 @@ int	builtin_unset(const char *key, t_env **env_list)
 	return (1);
 }
 
-int	builtin_echo(char **args)
+int builtin_echo(char **args)
 {
-	int	i = 1;
-	int	newline = 1;
+    int i = 1;
+    int newline = 1;
 
-	if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
-	{
-		newline = 0;
-		i++;
-	}
-	while (args[i])
-	{
-		ft_putstr_fd(args[i], 1);
-		if (args[i + 1])
-			write(1, " ", 1);
-		i++;
-	}
-	if (newline)
-		write(1, "\n", 1);
-	return (0);
+    while (args[i]
+        && args[i][0] == '-'
+        && args[i][1] == 'n'
+        && args[i][2] == '\0'
+        )
+    {
+        newline = 0;
+        i++;
+    }
+    while (args[i])
+    {
+        ft_putstr_fd(args[i], 1);
+        if (args[i + 1])
+            write(1, " ", 1);
+        i++;
+    }
+    if (newline)
+        write(1, "\n", 1);
+
+    return (0);
 }
+
