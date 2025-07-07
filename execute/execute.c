@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/07 17:21:18 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/07 19:46:38 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,6 +304,11 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 			if (pid == 0)
 			{
 				setup_child_signals();
+				if (!current->args)
+				{
+					free_max(mini, *env_list, cmd);
+					exit(0);
+				}
 				if (current->input != STDIN_FILENO)
 					dup2(current->input, STDIN_FILENO);
 				else if (prev_fd != -1)

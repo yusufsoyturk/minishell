@@ -138,7 +138,7 @@ t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 				new_redir->flag = O_CREAT | O_WRONLY | O_APPEND;
 			else if (token->type == T_REDIR_HEREDOC)
 			{
-				if (token->here_flag == 1)
+				if (token->here_flag)
 					new_redir->here_flag = 1;
 				new_redir->flag = R_HEREDOC;
 			}
@@ -147,7 +147,7 @@ t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 			{
 				free(new_redir);
 				mini->last_status = 2;
-				ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+				ft_putendl_fd("minishell: syntax error near unexpected token ", 2);
 				return (free_commands(head), NULL);
 			}
 			new_redir->target = ft_strdup(token->value);

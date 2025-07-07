@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/07 15:06:19 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/07 22:10:56 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,9 +291,10 @@ void	ft_expand(t_env *env_list, t_shell *mini)
 		i = 0;
 		if (mini->token->type == T_REDIR_HEREDOC)
 		{
+			mini->token->here_flag = 0;
 			if (mini->token->next && quotes_controler(mini->token->next) == 1)
 				mini->token->here_flag = 1;
-			if (mini->token->next->next)
+			if (mini->token->next && mini->token->next->next)
 				mini->token = mini->token->next->next;
 			else
 				break ;

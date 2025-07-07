@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/07 17:29:57 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/07 22:16:56 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void handle_heredoc_sig(int pipefd[2])
 	close(pipefd[0]);
 }
 
-static void	handle_heredoc_child(t_redir *redir, t_shell *mini, t_env *env_list, int pipefd[2])
+static void	handle_heredoc_child(t_redir *redir, t_shell *mini, t_env *env_list, int pipefd[2], t_command *cmd)
 {
 	char	*raw;
 	char	*expanded;
@@ -44,11 +44,12 @@ static void	handle_heredoc_child(t_redir *redir, t_shell *mini, t_env *env_list,
 		ft_putendl_fd(expanded, pipefd[1]);
 		free(expanded);
 	}
+	free_max(mini, env_list, cmd);
 	close(pipefd[1]);
 	exit(0);
 }
 
-int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini)
+int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini, t_command *cmd)
 {
 	int     pipefd[2];
 	pid_t   pid;
@@ -61,7 +62,7 @@ int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini)
 		return (perror("fork"), -1);
 	ignore_signals();
 	if (pid == 0)
-		handle_heredoc_child(redir, mini, env_list, pipefd);
+		handle_heredoc_child(redir, mini, env_list, pipefd, cmd);
 	else
 	{
 		close(pipefd[1]);
@@ -86,7 +87,7 @@ int handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini)
 		while (r)
 		{
 			if (r->flag == R_HEREDOC)
-				fd = handle_heredoc(r, env_list, mini);
+				fd = handle_heredoc(r, env_list, mini, cmd);
 			else
 				fd = open(r->target, r->flag, 0644);
 			if (fd < 0)
