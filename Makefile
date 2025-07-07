@@ -30,7 +30,9 @@ LEXER = lexer/tokenize.c \
 PARSE = parse/parse_utils.c \
 		parse/parser.c 
 
-EXECUTE = execute/execute.c
+EXECUTE = 	execute/execute.c \
+			execute/execute_redir.c \
+			execute/heredoc_utils.c
 
 EXPANDER = expander/env_var.c \
 			expander/remove_quotes.c 

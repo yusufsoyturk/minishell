@@ -77,7 +77,11 @@ int	env_size(t_env *env);
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd);
 
 //execute
-int	execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini);
+int		execute(t_command *cmd, t_env **env_list, t_shell *mini);
+int		handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini);
+int		handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini);
+int		check_permissions(const char *path);
+char *expand_string(const char *input, t_env *env_list, int last_status);
 
 
 // expander env_var
