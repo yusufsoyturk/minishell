@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/07 15:06:19 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:21:14 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,6 +277,34 @@ int	quotes_controler(t_token *token)
 	return (0);
 }
 
+void	ft_remover_token(t_shell *mini)
+{
+	t_token	*curr;
+	t_token	*prev;
+	t_token	*next;
+
+	curr = mini->token;
+	prev = NULL;
+	while (curr)
+	{
+		next = curr->next;
+		if (curr->type && curr->value && curr->value[0] == '\0')
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				mini->token = curr->next;
+
+			free(curr->value);
+			free(curr);
+		}
+		else
+			prev = curr;
+		curr = next;
+	}
+}
+
+
 void	ft_expand(t_env *env_list, t_shell *mini)
 {
 	int	i;
@@ -313,5 +341,6 @@ void	ft_expand(t_env *env_list, t_shell *mini)
 		mini->token = mini->token->next;
 	}
 	mini->token = head;
+	ft_remover_token(mini);
 	remove_quotes(mini->token);
 }
