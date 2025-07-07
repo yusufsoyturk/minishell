@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
+/*   Updated: 2025/07/07 16:59:00 by ktoraman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
 
 char *get_path(char *cmd, char **env)
@@ -111,37 +123,48 @@ int check_permissions(const char *path)
 	return (0);
 }
 
-void check_permissions_exec(const char *path)
+void check_permissions_exec(const char *path, t_command *cmd, char **env)
 {
 	struct stat st;
 
 	if (!path || path[0] == '\0')
 	{
 		ft_putstr_fd("minishell: command not found\n", 2);
+		free_commands(cmd);
+		ft_free_tab(env);
 		exit(127);
 	}
-
 	if (access(path, F_OK) != 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd((char *)path, 2);
 		ft_putendl_fd(": No such file or directory", 2);
+		free_commands(cmd);
+		ft_free_tab(env);
 		exit(127);
 	}
-
 	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode) && ft_strchr(path, '/'))
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd((char *)path, 2);
 		ft_putendl_fd(": Is a directory", 2);
+		free_commands(cmd);
+		ft_free_tab(env);
 		exit(126);
 	}
-
 	if (access(path, X_OK) != 0)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd((char *)path, 2);
-		ft_putendl_fd(": Permission denied", 2);
+		if (access(path, X_OK) != 0)
+    	{
+        	ft_putstr_fd("minishell: ", 2);
+        	ft_putstr_fd((char *)path, 2);
+        	if (ft_strchr(path, '/'))
+        		ft_putendl_fd(": Permission denied", 2), exit(126);
+        	else
+        	ft_putendl_fd(": command not found", 2), exit(127);
+    	}
+		free_commands(cmd);
+		ft_free_tab(env);
 		exit(126);
 	}
 }
@@ -375,9 +398,9 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 			{
 				if (pipe(pipe_fd) < 0)
 					perror("pipe");
-				close(pipe_fd[1]);      // yazma ucunu kapat
-				prev_fd = pipe_fd[0];   // okuma ucunu next komut için sakla
-				current = current->next; // bir sonraki komuta geç
+				close(pipe_fd[1]);
+				prev_fd = pipe_fd[0];
+				current = current->next;
 				mini->last_status = 0;
 				continue;
 			}
@@ -412,8 +435,11 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				if (!current->args[0] || current->args[0][0] == '\0')
 				{
     				ft_putstr_fd("minishell: command not found\n", 2);
+					free_env_list((*env_list));
+					free_struct(mini);
+					free_commands(cmd);
     				exit(127);
-			}
+				}
 				char **char_env;
 				char_env = env_to_envp_array(*env_list);
 				char *exec_path = get_path(current->args[0], char_env);
@@ -426,13 +452,19 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 						ft_putstr_fd("minishell: ", 2);
 						ft_putstr_fd(current->args[0], 2);
 						ft_putendl_fd(": command not found", 2);
+						free_env_list((*env_list));
+						free_struct(mini);
+						ft_free_tab(char_env);
+						free_commands(cmd);
 						exit(127);
 					}
 				}
 				free_env_list((*env_list));
 				free_struct(mini);
-				check_permissions_exec(exec_path);
+				check_permissions_exec(exec_path, cmd, char_env);
 				execve(exec_path, current->args, char_env);
+				ft_putstr_fd("minishell: ", 2);
+				ft_putstr_fd(current->args[0], 2);
 				ft_putendl_fd(": command not found", 2);
 				free_commands(cmd);
 				exit(127);
