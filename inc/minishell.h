@@ -71,14 +71,17 @@ t_env	**env_to_array(t_env *env);
 void	sort_env_array(t_env **arr);
 int		is_builtin(char **cmd);
 int		builtin_echo(char **args);
-int	env_size(t_env *env);
+int		env_size(t_env *env);
 
 //main.c
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd);
 
 //execute
-int	execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini);
-
+int		execute(t_command *cmd, t_env **env_list, t_shell *mini);
+int		handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini);
+int		handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini, t_command *cmd);
+int		check_permissions(const char *path);
+char	*expand_string(const char *input, t_env *env_list, int last_status);
 
 // expander env_var
 char *expand_env_var(t_env *env_list, t_token *token, int *i);

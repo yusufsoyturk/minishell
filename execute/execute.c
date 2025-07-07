@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/07 16:59:00 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/07 19:46:38 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,26 +103,6 @@ char **env_to_envp_array(t_env *env_list)
     return envp;
 }
 
-
-int check_permissions(const char *path)
-{
-	if (access(path, F_OK) != 0)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd((char *)path, 2);
-		ft_putendl_fd(": No such file or directory", 2);
-		return (-1);
-	}
-	if (access(path, X_OK) != 0)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd((char *)path, 2);
-		ft_putendl_fd(": Permission denied", 2);
-		return (-1);
-	}
-	return (0);
-}
-
 void check_permissions_exec(const char *path, t_command *cmd, char **env)
 {
 	struct stat st;
@@ -169,8 +149,6 @@ void check_permissions_exec(const char *path, t_command *cmd, char **env)
 	}
 }
 
-
-
 static char *append_str(char *base, const char *suffix)
 {
 	char *new;
@@ -182,7 +160,6 @@ static char *append_str(char *base, const char *suffix)
 	return new;
 }
 
-// Expand all $VARNAME in str, except inside single quotes
 char *expand_env_var_str(const char *str, t_env *env_list)
 {
 	char *result = NULL;
@@ -248,7 +225,6 @@ char *expand_env_var_str(const char *str, t_env *env_list)
 	return result;
 }
 
-// Expand $? then $VARNAME in input
 char *expand_string(const char *input, t_env *env_list, int last_status)
 {
 	char *result = NULL;
@@ -285,98 +261,10 @@ char *expand_string(const char *input, t_env *env_list, int last_status)
 	}
 	if (!result)
 		result = ft_strdup("");
-	return result;
+	return (result);
 }
 
-// Handle a heredoc redirection: returns fd for reading; here_flag==0 expand, ==1 no expand
-int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini)
-{
-	int     pipefd[2];
-	pid_t   pid;
-	int     status;
-
-	if (pipe(pipefd) == -1)
-		return (perror("pipe"), -1);
-	pid = fork();
-	if (pid == -1)
-		return (perror("fork"), -1);
-
-	ignore_signals();
-
-	if (pid == 0)
-	{
-		char *raw;
-		char *expanded;
-
-		setup_child_signals();
-		close(pipefd[0]);
-		while (1)
-		{
-			raw = readline("> ");
-			if (!raw)
-				break;
-			if (ft_strcmp(raw, redir->target) == 0)
-			{
-				free(raw);
-				break;
-			}
-			if (redir->here_flag == 0)
-				expanded = expand_string(raw, env_list, mini->last_status);
-			else
-				expanded = ft_strdup(raw);
-			free(raw);
-			ft_putendl_fd(expanded, pipefd[1]);
-			free(expanded);
-		}
-		close(pipefd[1]);
-		exit(0);
-	}
-	else
-	{
-		close(pipefd[1]);
-		waitpid(pid, &status, 0);
-		setup_signals();
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		{
-			write(1, "\n", 1);
-			rl_replace_line("", 0);
-			close(pipefd[0]);
-			return (-1);
-		}
-		redir->fd = pipefd[0];
-		return (pipefd[0]);
-	}
-}
-
-
-int handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini)
-{
-	int         fd;
-	t_redir *r = cmd->redirs;
-
-		while (r)
-		{
-			if (r->flag == R_HEREDOC)
-				fd = handle_heredoc(r, env_list, mini);
-			else
-				fd = open(r->target, r->flag, 0644);
-			if (fd < 0)
-				{
-					check_permissions(r->target);
-					return (-1);
-				}
-
-			r->fd = fd;
-			if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
-				cmd->input = fd;
-			else
-				cmd->output = fd;
-			r = r->next;
-		}
-	return (0);
-}
-
-int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
+int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 {
 	t_command	*current;
 	pid_t		pid;
@@ -384,7 +272,6 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 	int			prev_fd;
 	int			status;
 
-	(void)env;
 	prev_fd = -1;
 	status = 0;
 	current = cmd;
@@ -402,7 +289,7 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 				prev_fd = pipe_fd[0];
 				current = current->next;
 				mini->last_status = 0;
-				continue;
+				continue ;
 			}
 			return mini->last_status;
 		}
@@ -417,6 +304,11 @@ int execute(t_command *cmd, t_env **env_list, char **env, t_shell *mini)
 			if (pid == 0)
 			{
 				setup_child_signals();
+				if (!current->args)
+				{
+					free_max(mini, *env_list, cmd);
+					exit(0);
+				}
 				if (current->input != STDIN_FILENO)
 					dup2(current->input, STDIN_FILENO);
 				else if (prev_fd != -1)

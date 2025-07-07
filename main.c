@@ -146,7 +146,7 @@ int main(int ac, char **av, char **env)
 				commands = pars(minishell->token, env_list, minishell);
 				//print_commands(commands);
 				if (commands && (commands->args || commands->redirs))
-					execute(commands, &env_list, env, minishell);
+					execute(commands, &env_list, minishell);
 				free_less(minishell, commands);
 			}
 
