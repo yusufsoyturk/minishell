@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 17:25:46 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:07:16 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	int			pipe_fd[2];
 	int			prev_fd;
 	int			status;
+	int			loop;
 
+	loop = 0;
 	prev_fd = -1;
 	status = 0;
 	current = cmd;
@@ -39,9 +41,9 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 				mini->last_status = 0;
 				continue ;
 			}
-			return mini->last_status;
+			return (mini->last_status);
 		}
-			if (!current->redirs && !current->next && is_builtin(current->args))
+			if (!current->redirs && !current->next && is_builtin(current->args) && !loop)
 				return (built(current, env_list, mini));
 			if (current->next && pipe(pipe_fd) < 0)
 			return (perror("pipe"), 1);
@@ -74,11 +76,11 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 					exit(built(current, env_list, mini));
 				if (!current->args[0] || current->args[0][0] == '\0')
 				{
-    				ft_putstr_fd("minishell: command not found\n", 2);
+					ft_putstr_fd("minishell: command not found\n", 2);
 					free_env_list((*env_list));
 					free_struct(mini);
 					free_commands(cmd);
-    				exit(127);
+					exit(127);
 				}
 				char **char_env;
 				char_env = env_to_envp_array(*env_list);
@@ -118,10 +120,12 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 					close(pipe_fd[1]);
 					prev_fd = pipe_fd[0];
 				}
+				loop = 1;
 			}
 			current = current->next;
 		}
-	waitpid(pid, &status, 0);
+	while (waitpid(-1, &status, 0) > 0)
+		;
 	if (WIFSIGNALED(status))
 	{
 		int sig = WTERMSIG(status);
@@ -129,7 +133,9 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 		write(1, "\n", 1);
 	}
 	setup_signals();
-	if (WIFEXITED(status))
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGPIPE)
+		mini->last_status = 0;
+	else if (WIFEXITED(status))
 		mini->last_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 		mini->last_status = 128 + WTERMSIG(status);

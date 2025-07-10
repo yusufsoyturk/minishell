@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 12:29:01 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/10 19:32:15 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ static void	handle_heredoc_child(t_redir *redir, t_shell *mini, t_env *env_list,
 	{
 		raw = readline("> ");
 		if (!raw)
-			break;
+			break ;
 		if (ft_strcmp(raw, redir->target) == 0)
 		{
 			free(raw);
-			break;
+			break ;
 		}
 		if (redir->here_flag == 0)
 			expanded = expand_string(raw, env_list, mini->last_status);
@@ -49,7 +49,7 @@ static void	handle_heredoc_child(t_redir *redir, t_shell *mini, t_env *env_list,
 	exit(0);
 }
 
-int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini, t_command *cmd)
+int handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini, t_command *cmd)//PROBLEMLİ
 {
 	int     pipefd[2];
 	pid_t   pid;
