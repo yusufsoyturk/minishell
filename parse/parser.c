@@ -138,7 +138,7 @@ t_command	*pars(t_token *token, t_env *env, t_shell *mini)
 				new_redir->flag = O_CREAT | O_WRONLY | O_APPEND;
 			else if (token->type == T_REDIR_HEREDOC)
 			{
-				if (token->here_flag)
+				if (token->here_flag == 1)
 					new_redir->here_flag = 1;
 				new_redir->flag = R_HEREDOC;
 			}

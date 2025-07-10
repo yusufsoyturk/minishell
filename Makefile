@@ -32,17 +32,19 @@ PARSE = parse/parse_utils.c \
 
 EXECUTE = 	execute/execute.c \
 			execute/execute_redir.c \
-			execute/heredoc_utils.c
+			execute/execute_utils.c \
+			execute/execute_utils2.c \
+			execute/execute_expand.c
 
 EXPANDER = expander/env_var.c \
 			expander/remove_quotes.c 
 
-SRCS = $(BUILT_IN) \
+SRCS =	$(BUILT_IN) \
 		$(PARSE) \
 		$(UTILS) \
 		$(LEXER) \
-		$(EXPANDER)\
-		$(EXECUTE)\
+		$(EXPANDER) \
+		$(EXECUTE) \
 		main.c
 
 OBJS = $(SRCS:.c=.o)

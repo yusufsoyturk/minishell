@@ -82,11 +82,14 @@ int		handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini);
 int		handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini, t_command *cmd);
 int		check_permissions(const char *path);
 char	*expand_string(const char *input, t_env *env_list, int last_status);
+char	**env_to_envp_array(t_env *env_list);
+char	*get_path(char *cmd, char **env);
+void	check_permissions_exec(const char *path, t_command *cmd, char **env);
 
 // expander env_var
-char *expand_env_var(t_env *env_list, t_token *token, int *i);
+char	*expand_env_var(t_env *env_list, t_token *token, int *i);
 void	ft_expand(t_env *env_list, t_shell *mini);
-char *expand_pre_quo(t_env *env_list, t_token *token, int *i);
+char	*expand_pre_quo(t_env *env_list, t_token *token, int *i);
 void	free_token(t_token *token);
 
 // expander remove_quotes
