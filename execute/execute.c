@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 14:25:05 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/10 17:25:46 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 					exit(built(current, env_list, mini));
 				if (!current->args[0] || current->args[0][0] == '\0')
 				{
-    				ft_putstr_fd("'' command not found\n", 2);
+    				ft_putstr_fd("minishell: command not found\n", 2);
 					free_env_list((*env_list));
 					free_struct(mini);
 					free_commands(cmd);
@@ -89,6 +89,7 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 						exec_path = ft_strdup(current->args[0]);
 					else	
 					{
+						ft_putstr_fd("minishell: ", 2);
 						ft_putstr_fd(current->args[0], 2);
 						ft_putendl_fd(": command not found", 2);
 						free_env_list((*env_list));
@@ -102,6 +103,7 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 				free_struct(mini);
 				check_permissions_exec(exec_path, cmd, char_env);
 				execve(exec_path, current->args, char_env);
+				ft_putstr_fd("minishell: ", 2);
 				ft_putstr_fd(current->args[0], 2);
 				ft_putendl_fd(": command not found", 2);
 				free_commands(cmd);

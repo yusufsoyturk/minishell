@@ -11,7 +11,7 @@ void init_env(char **env, t_env **env_list)
 	{
 		new_node = malloc(sizeof(t_env));
 		if (!new_node)
-			return ;  // malloc hatası, düşük öncelik: exit de edebilirsin
+			return ;
 
 		equal_pos = ft_strchr(env[i], '=');
 		if (equal_pos)

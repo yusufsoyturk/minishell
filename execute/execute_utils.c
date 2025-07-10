@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:20:51 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 13:13:57 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:03:49 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,59 +75,4 @@ void check_permissions_exec(const char *path, t_command *cmd, char **env)
 		ft_free_tab(env);
 		exit(126);
 	}
-}
-
-char **env_to_envp_array(t_env *env_list)
-{
-    int     count = 0;
-    t_env   *curr = env_list;
-    char    **envp;
-    char    *tmp1;
-    char    *tmp2;
-    int     i = 0;
-    int     j;
-
-    while (curr)
-    {
-        if (curr->key)
-            count++;
-        curr = curr->next;
-    }
-    envp = malloc(sizeof(char *) * (count + 1));
-    if (!envp)
-	return NULL;
-    j = 0;
-    while (j <= count)
-	envp[j++] = NULL;
-    curr = env_list;
-    while (curr)
-    {
-		if (curr->key)
-        {
-			tmp1 = ft_strjoin(curr->key, "=");
-            if (!tmp1)
-            {
-                ft_free_tab(envp);
-                return NULL;
-            }
-            if (curr->value)
-            {
-                tmp2 = ft_strjoin(tmp1, curr->value);
-                free(tmp1);
-                if (!tmp2)
-                {
-                    ft_free_tab(envp);
-                    return NULL;
-                }
-                envp[i++] = tmp2;
-            }
-            else
-            {
-                envp[i++] = tmp1;
-            }
-        }
-        curr = curr->next;
-    }
-    envp[i] = NULL;
-    return envp;
 }

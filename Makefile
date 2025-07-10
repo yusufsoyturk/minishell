@@ -33,7 +33,8 @@ PARSE = parse/parse_utils.c \
 EXECUTE = 	execute/execute.c \
 			execute/execute_redir.c \
 			execute/execute_utils.c \
-			execute/execute_utils2.c \
+			execute/execute_get_path.c \
+			execute/execute_envp.c \
 			execute/execute_expand.c
 
 EXPANDER = expander/env_var.c \
