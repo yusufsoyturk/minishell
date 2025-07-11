@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/11 16:52:41 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/11 22:44:11 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
 	char *c;
 
     new_val = NULL;
-    while (token->value[*i])
+    while (*i < (int)ft_strlen(token->value) && token->value[*i])
     {
         if (token->value[*i] == '$')
         {
@@ -111,7 +111,7 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
     return (new_val);
 }
 
-char *expand_pre(t_env *env_list, t_token *token, int *i)
+char *expand_pre(t_env *env_list, t_token *token, int *i, int *d_flag)
 {
 	int	pre;
 	int pre2;
@@ -124,7 +124,15 @@ char *expand_pre(t_env *env_list, t_token *token, int *i)
 	pre = *i;
 	pre2 = *i;
 	while (token->value[pre] && token->value[pre] != '$')
+	{
+		if (token->value[pre] == 34 && *d_flag == 0)
+		{
+			*d_flag = 1;
+		}
+		else if (token->value[pre] == 34 && *d_flag == 1)
+			*d_flag = 0;
 		pre++;
+	}
 	new_val = malloc(sizeof(char) * pre + 1);
 	while (pre > pre2)
 	{
@@ -161,95 +169,114 @@ char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 	return (new_val);
 }
 
-char	*expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
+char *expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
 {
-	char *new_val;
-	char *new_val2;
-	char *tmp;
-	char *tmp2;
+    char *new_val;
+    char *tmp;
+    char *tmp2;
+	int	d_flag;
 
-	new_val = NULL;
-	new_val2 = NULL;
-	while (mini->token->value[*i])
-	{
-		if (ft_strncmp(mini->token->value + *i, "$", 1) == 0 && mini->token->value[*i + 1] == '\0')
-		{
-			tmp2 = ft_strdup("$");
-			if (!new_val)
-				new_val = tmp2;
-			else
-			{
-				tmp = ft_strjoin(new_val, tmp2);
-				free(new_val);
-				new_val = tmp;
-				free(tmp2);
-			}
-			(*i)++;
-		}
-		else if (ft_strncmp(mini->token->value + *i, "$?", 2) == 0)
-		{
-			tmp2 = ft_itoa(mini->last_status);
-			if (!new_val)
-				new_val = tmp2;
-			else
-			{
-				tmp = ft_strjoin(new_val, tmp2);
-				free(new_val);
-				new_val = tmp;
-				free(tmp2);
-			}
-			*i += 2;
-		}
-		else if (mini->token->value[*i] != 39 && mini->token->value[*i] != '$')
-		{
-			tmp2 = expand_pre(env_list, mini->token, i);
-			if (!new_val)
-				new_val = tmp2;
-			else
-			{
-				tmp = ft_strjoin(new_val, tmp2);
-				free(new_val);
-				new_val = tmp;
-				free(tmp2);
-			}
-		}
-		else if (mini->token->value[*i] != '$')
-		{
-			tmp2 = expand_pre_quo(env_list, mini->token, i);
-			if (!new_val)
-			{
-				new_val = tmp2;
-			}
-			else
-			{
-				tmp = ft_strjoin(new_val, tmp2);
-				free(new_val);
-				new_val = tmp;
-				free(tmp2);
-			}
-		}
-		else if (mini->token->value[*i] == '$')
-		{
-			tmp2 = expand_env_var(env_list, mini->token, i);
-			if (!new_val)
-			{
-				new_val = tmp2;
-			}
-			else
-			{
-				tmp = ft_strjoin(new_val, tmp2);
-				free(new_val);
-				new_val = tmp;
-				free(tmp2);
-			}
-		}
-		else
-			(*i)++;
-	}
-	if (new_val2)
-		free(new_val2);
-	return (new_val);
+	d_flag = 0;
+    new_val = NULL;
+    while (mini->token->value[*i])
+    {
+        // $? durumu - exit status
+        if (ft_strncmp(mini->token->value + *i, "$?", 2) == 0)
+        {
+            tmp2 = ft_itoa(mini->last_status);
+            if (!new_val)
+                new_val = tmp2;
+            else
+            {
+                tmp = ft_strjoin(new_val, tmp2);
+                free(new_val);
+                new_val = tmp;
+                free(tmp2);
+            }
+            *i += 2;
+        }
+        // $ durumu - literal $ yazdır (sonraki karakter $ ise)
+        else if (ft_strncmp(mini->token->value + *i, "$", 2) == 0)
+        {
+            tmp2 = ft_strdup("$");
+            if (!new_val)
+                new_val = tmp2;
+            else
+            {
+                tmp = ft_strjoin(new_val, tmp2);
+                free(new_val);
+                new_val = tmp;
+                free(tmp2);
+            }
+            *i += 2;
+        }
+        // Tek başına $ - sonraki karakter özel değilse literal $ yazdır
+        else if (mini->token->value[*i] == '$' && 
+                 (mini->token->value[*i + 1] == '\0' || 
+                  mini->token->value[*i + 1] == ' ' || 
+                  mini->token->value[*i + 1] == '"' || 
+                  mini->token->value[*i + 1] == '$'))
+        {
+            tmp2 = ft_strdup("$");
+            if (!new_val)
+                new_val = tmp2;
+            else
+            {
+                tmp = ft_strjoin(new_val, tmp2);
+                free(new_val);
+                new_val = tmp;
+                free(tmp2);
+            }
+            (*i)++;
+        }
+        // Environment variable expansion
+        else if (mini->token->value[*i] == '$')
+        {
+            tmp2 = expand_env_var(env_list, mini->token, i);
+            if (!new_val)
+                new_val = tmp2;
+            else
+            {
+                tmp = ft_strjoin(new_val, tmp2);
+                free(new_val);
+                new_val = tmp;
+                free(tmp2);
+            }
+        }
+        // Single quote durumu
+        else if (mini->token->value[*i] == 39 && d_flag == 0)  // 39 = single quote
+        {
+            tmp2 = expand_pre_quo(env_list, mini->token, i);
+            if (!new_val)
+                new_val = tmp2;
+            else
+            {
+                tmp = ft_strjoin(new_val, tmp2);
+                free(new_val);
+                new_val = tmp;
+                free(tmp2);
+            }
+        }
+        // Normal karakterler
+        else
+        {
+            tmp2 = expand_pre(env_list, mini->token, i, &d_flag);
+            if (!new_val)
+                new_val = tmp2;
+            else
+            {
+                tmp = ft_strjoin(new_val, tmp2);
+                free(new_val);
+                new_val = tmp;
+                free(tmp2);
+            }
+        }
+    }
+    
+    return (new_val);
 }
+
+
 
 int dollar_control(t_token *token)
 {
