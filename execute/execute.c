@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/11 17:10:01 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/11 17:42:29 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 				mini->last_status = 0;
 				continue ;
 			}
-			free_commands(cmd);
-			free_env_list((*env_list));
 			return (mini->last_status);
 		}
 		if (!current->redirs && !current->next && is_builtin(current->args) && !loop)
