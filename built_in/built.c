@@ -3,45 +3,93 @@
 static int	builtin_cd(char **args, t_shell *mini)
 {
 	char	*cwd;
-	char	**tmp;
+	char	*newpwd;
+	char	*oldpwd;
+	char	*target;
 
-	cwd = (char *)malloc(1024 * sizeof(char));
-	if (cwd == NULL)
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
 	{
-		perror("malloc");
+		perror("getcwd");
 		return (1);
 	}
-	if (args[1] == NULL)
+	oldpwd = getenv("OLDPWD");
+	if (!args[1] || ft_strcmp(args[1], "~") == 0)
 	{
-		free(cwd);
-		chdir(getenv("HOME"));
-		return (0);
-	}
-	if (ft_strncmp(args[1], "..", 2) == 0)
-	{
-		getcwd(cwd, 1024);
-		tmp = ft_split(cwd, '/');
-		if (tmp[0] == NULL)
-			chdir("/");
-		else
-			chdir("..");
-		ft_free_tab(tmp);
-	}
-	else if (chdir(args[1]) == -1)
-	{
-		if (ft_strncmp(args[1], ".", 1) == 0)
+		target = getenv("HOME");
+		if (!target)
 		{
 			free(cwd);
-			return (0);
+			return (1);
 		}
-		exit_error(args[1], "No such file or directory", "cd");
-		mini->last_status = 1;
+	}
+	else if (ft_strcmp(args[1], "-") == 0)
+	{
+		if (!oldpwd || ft_strcmp(oldpwd, cwd) == 0)
+		{
+			if (chdir("..") == -1)
+			{
+				perror("cd");
+				free(cwd);
+				mini->last_status = 1;
+				return (1);
+			}
+			else
+			{
+				target = getcwd(NULL, 0);
+				printf("%s\n", target);
+				free(target);
+			}
+		}
+		else
+		{
+			if (chdir(oldpwd) == -1)
+			{
+				perror("cd");
+				free(cwd);
+				mini->last_status = 1;
+				return (1);
+			}
+			else
+			{
+				printf("%s\n", oldpwd);
+			}
+		}
+		setenv("OLDPWD", cwd, 1);
+		newpwd = getcwd(NULL, 0);
+		if (newpwd)
+		{
+			setenv("PWD", newpwd, 1);
+			free(newpwd);
+		}
 		free(cwd);
-		return (1);
+		mini->last_status = 0;
+		return (0);
+	}
+	else
+	{
+		target = args[1];
+		if (chdir(target) == -1)
+		{
+			perror("cd");
+			free(cwd);
+			mini->last_status = 1;
+			return (1);
+		}
+	}
+	setenv("OLDPWD", cwd, 1);
+
+	newpwd = getcwd(NULL, 0);
+	if (newpwd)
+	{
+		setenv("PWD", newpwd, 1);
+		free(newpwd);
 	}
 	free(cwd);
+	mini->last_status = 0;
 	return (0);
 }
+
 static int	builtin_pwd(void)
 {
 	char	*cwd;
