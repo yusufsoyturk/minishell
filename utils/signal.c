@@ -41,3 +41,22 @@ void	ignore_signals(void)
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
 }
+
+void heredoc_sigint_handler(int signo)
+{
+	(void)signo;
+	close(STDIN_FILENO);
+	g_sigint_received = 1;
+}
+
+void setup_heredoc_signals(void)
+{
+	struct sigaction sa;
+
+	sa.sa_handler = heredoc_sigint_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+}

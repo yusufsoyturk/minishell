@@ -15,6 +15,8 @@
 # include "parse.h"
 # include <sys/stat.h>
 
+extern volatile sig_atomic_t g_sigint_received;
+
 typedef struct	s_shell
 {
 	char	*line;
@@ -53,6 +55,7 @@ void init_env(char **env, t_env **env_list);
 // utils signal.c
 void	setup_signals(void);
 void	setup_child_signals(void);
+void	setup_heredoc_signals(void);
 void	ignore_signals(void);
 
 void	exit_error(char *arg, char *err_msg, char *type);
@@ -84,7 +87,9 @@ int		check_permissions(const char *path);
 char	*expand_string(const char *input, t_env *env_list, int last_status);
 char	**env_to_envp_array(t_env *env_list);
 char	*get_path(char *cmd, char **env);
-void	check_permissions_exec(const char *path, t_command *cmd, char **env);
+void	heredoc_child(t_shell *mini, t_env *env, int pfd[2], t_command *cmd);
+void	handle_heredoc_sig(int pipefd[2]);
+void	check_permissions_exec(char *path, t_command *cmd, char **env);
 
 // expander env_var
 char	*expand_env_var(t_env *env_list, t_token *token, int *i);
