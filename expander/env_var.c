@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/07 22:27:42 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:52:41 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,13 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
     char *tmp;
 	char *val;
 	int start;
-	char	*c;
+	char *c;
 
     new_val = NULL;
     while (token->value[*i])
     {
         if (token->value[*i] == '$')
         {
-			// printf("%s\n", token->value + *i + 1);
 			if (token->value[*i + 1] == 34 || token->value[*i + 1] == 32)
 			{
 				val = ft_strdup("$");
@@ -79,13 +78,16 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
         }
 		else if (token->value[*i] == 39)
 		{
+			// Tek tırnak durumu - c değişkenini kullanarak
+			c = expand_pre_quo(env_list, token, i);
 			if (!new_val)
-				new_val = expand_pre_quo(env_list, token, i);
+				new_val = c;
 			else
 			{
-				tmp = ft_strjoin(new_val ,expand_pre_quo(env_list, token, i));
+				tmp = ft_strjoin(new_val, c);
 				free(new_val);
 				new_val = tmp;
+				free(c);  // ← Bu satır eksikti, leak'in sebebi buydu
 			}
 		}
         else
@@ -121,7 +123,7 @@ char *expand_pre(t_env *env_list, t_token *token, int *i)
 	new_val = NULL;
 	pre = *i;
 	pre2 = *i;
-	while (token->value[pre] && token->value[pre] != '$' && token->value[pre] != 39)
+	while (token->value[pre] && token->value[pre] != '$')
 		pre++;
 	new_val = malloc(sizeof(char) * pre + 1);
 	while (pre > pre2)
@@ -148,7 +150,7 @@ char *expand_pre_quo(t_env *env_list, t_token *token, int *i)
 	while (token->value[end] && token->value[end] != 39)
 		end++;
 	end++;
-	new_val = malloc(sizeof(char) * end - (*i) + 1);
+	new_val = malloc(sizeof(char) * (end - (*i) + 1));
 	while ((*i) < end)
 	{
 		new_val[a] = token->value[*i];

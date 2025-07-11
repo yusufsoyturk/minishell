@@ -15,10 +15,14 @@ void	free_double(t_shell *minishell)
 
 void	free_struct(t_shell *minishell)
 {
-	free(minishell->line);
-	free_double(minishell);
-	free_token(minishell->token);
-	free(minishell);
+    if (minishell->line)
+	    free(minishell->line);
+	if (minishell->args)
+        free_double(minishell);
+	if (minishell->token)
+        free_token(minishell->token);
+    if (minishell)
+	    free(minishell);
 }
 
 void	free_env_list(t_env *env_list)

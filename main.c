@@ -141,7 +141,7 @@ int main(int ac, char **av, char **env)
 			{
 				ft_token(minishell);
 				ft_expand(env_list, minishell);
-				//print_tokens(minishell->token);
+				// print_tokens(minishell->token);
 				minishell->args = ft_split(minishell->line, ' ');
 				commands = pars(minishell->token, env_list, minishell);
 				//print_commands(commands);
