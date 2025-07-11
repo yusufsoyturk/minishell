@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:01:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 15:09:48 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:14:25 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,25 @@ static char	*env_join(t_env *curr)
 	return (tmp1);
 }
 
+static int	add_env_to_array(char **envp, t_env *curr, int i)
+{
+	char	*tmp;
+
+	tmp = env_join(curr);
+	if (tmp)
+	{
+		envp[i] = tmp;
+		return (1);
+	}
+	return (-1);
+}
+
 char	**env_to_envp_array(t_env *env_list)
 {
 	int		count;
 	char	**envp;
 	t_env	*curr;
 	int		i;
-	char	*tmp;
 
 	count = env_count(env_list);
 	envp = malloc(sizeof(char *) * (count + 1));
@@ -63,17 +75,12 @@ char	**env_to_envp_array(t_env *env_list)
 	i = 0;
 	while (curr)
 	{
-		tmp = NULL;
-		if (curr->key)
+		if (curr->key && add_env_to_array(envp, curr, i) == 1)
+			i++;
+		else if (curr->key)
 		{
-			tmp = env_join(curr);
-			if (tmp)
-				envp[i++] = tmp;
-			else
-			{
-				ft_free_tab(envp);
-				return (NULL);
-			}
+			ft_free_tab(envp);
+			return (NULL);
 		}
 		curr = curr->next;
 	}

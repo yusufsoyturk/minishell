@@ -116,6 +116,7 @@ void	free_less(t_shell *minishell, t_command *commands)
     free_commands(commands);
 }
 
+volatile sig_atomic_t g_sigint_received = 0;
 
 int main(int ac, char **av, char **env)
 {
@@ -149,7 +150,6 @@ int main(int ac, char **av, char **env)
 					execute(commands, &env_list, minishell);
 				free_less(minishell, commands);
 			}
-
 		}
 		free_struct(minishell);
 	}
