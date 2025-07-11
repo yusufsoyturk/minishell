@@ -1,4 +1,4 @@
-# include "../inc/minishell.h"
+#include "../inc/minishell.h"
 
 // kelime boşluğa "" ve '' eşit deilse girecek
 int	word_len(char *line)
@@ -27,12 +27,12 @@ int	word_len(char *line)
 			while (line[i] && line[i] != 39)
 				i++;
 		}
-		if (line[i] == 32  || (line[i] >= 9 && line[i] <= 13))
-			break;
+		if (line[i] == 32 || (line[i] >= 9 && line[i] <= 13))
+			break ;
 		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|'))
 		{
 			if (line[i] != line[i - 1])
-				break;
+				break ;
 			last = i;
 			while (line[i] == '>' || line[i] == '<' || line[i] == '|')
 			{
@@ -48,7 +48,7 @@ int	word_len(char *line)
 			if (line[i + 1] && (line[i + 1] != line[i]))
 			{
 				len = i;
-				break;
+				break ;
 			}
 		}
 		len = i;
@@ -60,8 +60,8 @@ int	word_len(char *line)
 char	*new_word(char *line)
 {
 	char	*token;
-	int len;
-	int	i;
+	int		len;
+	int		i;
 
 	i = 0;
 	len = word_len(line);
@@ -79,19 +79,19 @@ char	*new_word(char *line)
 t_token_type	find_type(char *line)
 {
 	if (ft_strncmp(line, "|", 1) == 0)
-		return	T_PIPE;
+		return (T_PIPE);
 	else if (ft_strncmp(line, ">>", 2) == 0)
-		return	T_REDIR_APPEND;
+		return (T_REDIR_APPEND);
 	else if (ft_strncmp(line, "<<", 2) == 0)
-		return	T_REDIR_HEREDOC;
+		return (T_REDIR_HEREDOC);
 	else if (ft_strncmp(line, "<", 1) == 0)
-		return	T_REDIR_IN;
+		return (T_REDIR_IN);
 	else if (ft_strncmp(line, ">", 1) == 0)
-		return	T_REDIR_OUT;
+		return (T_REDIR_OUT);
 	else if (ft_strncmp(line, "$", 1) == 0)
-		return	T_ENV_VAR;
+		return (T_ENV_VAR);
 	else
-		return T_WORD;
+		return (T_WORD);
 }
 
 // sadece boşluk varsa argüman sanıyor bu fonksiyonu kullanırken dikkat edilmeli
@@ -129,4 +129,3 @@ t_token	*new_token(t_token *token, char *value)
 	ft_tknadd_back(&token, new);
 	return (token);
 }
-

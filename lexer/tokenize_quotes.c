@@ -1,10 +1,11 @@
-# include "../inc/minishell.h"
+#include "../inc/minishell.h"
+
 // "yusuf << islam"
 // zaten başlangıç değerim double quotes
 int	double_quotes_len(char *line)
 {
 	int	i;
-	int flag;
+	int	flag;
 
 	i = 0;
 	flag = 0;
@@ -19,28 +20,30 @@ int	double_quotes_len(char *line)
 				while (line[i + 1])
 				{
 					i++;
-					if (line[i + 1] == 34 && ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32)))
+					if (line[i + 1] == 34 && ((line[i] == '<' || line[i] == '>'
+								|| line[i] == '|' || line[i] == 32)))
 					{
 						return (i + 2);
 					}
 				}
 			}
 		}
-		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|'
+				|| line[i] == 32) && flag > 1)
 		{
-			break;
+			break ;
 		}
 		i++;
 	}
 	return (i);
 }
 
-//bu fonksiyondan döndürülen token freelenmeliMore actions
+// bu fonksiyondan döndürülen token freelenmeliMore actions
 char	*in_double_quotes(char *line)
 {
 	char	*token;
-	int len;
-	int	i;
+	int		len;
+	int		i;
 
 	i = 0;
 	len = double_quotes_len(line);
@@ -58,7 +61,7 @@ char	*in_double_quotes(char *line)
 int	single_quote_len(char *line)
 {
 	int	i;
-	int flag;
+	int	flag;
 
 	flag = 0;
 	i = 0;
@@ -73,16 +76,18 @@ int	single_quote_len(char *line)
 				while (line[i + 1])
 				{
 					i++;
-					if (line[i + 1] == 39 && ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) ))
+					if (line[i + 1] == 39 && ((line[i] == '<' || line[i] == '>'
+								|| line[i] == '|' || line[i] == 32)))
 					{
 						return (i + 2);
 					}
 				}
 			}
 		}
-		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|' || line[i] == 32) && flag > 1)
+		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|'
+				|| line[i] == 32) && flag > 1)
 		{
-			break;
+			break ;
 		}
 		i++;
 	}
@@ -92,8 +97,8 @@ int	single_quote_len(char *line)
 char	*in_single_quote(char *line)
 {
 	char	*token;
-	int len;
-	int	i;
+	int		len;
+	int		i;
 
 	i = 0;
 	len = single_quote_len(line);

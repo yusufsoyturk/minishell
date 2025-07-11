@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/11 17:42:29 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/12 00:24:10 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	int			prev_fd;
 	int			status;
 	int			loop;
-
+	
 	loop = 0;
 	prev_fd = -1;
 	status = 0;
@@ -28,13 +28,13 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	while (current)
 	{
 		mini->last_status = 0;
-		if (handle_redirection(current, (*env_list), mini) < 0)
+		if (handle_redirection(current, (*env_list), mini, cmd) < 0)
 		{
 			mini->last_status = 1;
 			if (current->next)
 			{
 				if (pipe(pipe_fd) < 0)
-					perror("pipe");
+				perror("pipe");
 				close(pipe_fd[1]);
 				prev_fd = pipe_fd[0];
 				current = current->next;
@@ -46,7 +46,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 		if (!current->redirs && !current->next && is_builtin(current->args) && !loop)
 			return (built(current, env_list, mini));
 		if (current->next && pipe(pipe_fd) < 0)
-		return (perror("pipe"), 1);
+			return (perror("pipe"), 1);
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"), 1);
@@ -60,13 +60,13 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 				exit(0);
 			}
 			if (current->input != STDIN_FILENO)
-				dup2(current->input, STDIN_FILENO);
+			dup2(current->input, STDIN_FILENO);
 			else if (prev_fd != -1)
-				dup2(prev_fd, STDIN_FILENO);
+			dup2(prev_fd, STDIN_FILENO);
 			if (current->output != STDOUT_FILENO)
-				dup2(current->output, STDOUT_FILENO);
+			dup2(current->output, STDOUT_FILENO);
 			else if (current->next)
-				dup2(pipe_fd[1], STDOUT_FILENO);
+			dup2(pipe_fd[1], STDOUT_FILENO);
 			if (current->next)
 			{
 				close(pipe_fd[0]);
@@ -94,7 +94,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 			if (!exec_path)
 			{
 				if (access(current->args[0], F_OK) == 0)
-					exec_path = ft_strdup(current->args[0]);
+				exec_path = ft_strdup(current->args[0]);
 				else	
 				{
 					ft_putstr_fd("minishell: ", 2);
@@ -114,13 +114,15 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(current->args[0], 2);
 			ft_putendl_fd(": command not found", 2);
+			ft_free_tab(char_env);
 			free_commands(cmd);
+			free(exec_path);
 			exit(127);
 		}
 		else
 		{
 			if (prev_fd != -1)
-				close(prev_fd);
+			close(prev_fd);
 			if (current->next)
 			{
 				close(pipe_fd[1]);

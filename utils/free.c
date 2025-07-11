@@ -41,16 +41,18 @@ void	free_env_list(t_env *env_list)
 
 void free_redirections(t_redir *redir)
 {
-    t_redir	*tmp;
+	t_redir *tmp;
 
-    while (redir)
-    {
-        tmp = redir;
-        redir = redir->next;
-        free(tmp->target);
-        free(tmp);
-    }
+	while (redir)
+	{
+		tmp = redir;
+		redir = redir->next;
+		if (tmp->target)
+			free(tmp->target);
+		free(tmp);
+	}
 }
+
 
 void free_commands(t_command *cmd)
 {
