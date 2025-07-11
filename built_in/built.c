@@ -22,6 +22,13 @@ static int	builtin_cd(char **args, t_shell *mini)
 			free(cwd);
 			return (1);
 		}
+		if (chdir(target) == -1)
+		{
+			perror("cd");
+			free(cwd);
+			mini->last_status = 1;
+			return (1);
+		}
 	}
 	else if (ft_strcmp(args[1], "-") == 0)
 	{
@@ -152,7 +159,7 @@ int	built(t_command *cmd, t_env **env, t_shell *minishell)
 		return (builtin_exit(cmd, (*env), minishell));
 	if (ft_strcmp(cmd->args[0], "cd") == 0)
 	{
-		if (cmd->args[2])
+		if (cmd->args[1] && cmd->args[2])
 		{
 			ft_putendl_fd("minishell: cd: too many arguments", 2);
 			minishell->last_status = 1;
