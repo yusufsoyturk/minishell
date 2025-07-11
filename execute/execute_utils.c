@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:20:51 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/11 17:07:12 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:18:17 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ static void	exec_perm_error(char *path, t_command *cmd, char **env, int code)
 		ft_putendl_fd(": command not found", 2);
 	free_commands(cmd);
 	ft_free_tab(env);
+	free(path);
 	exit(code);
 }
 
@@ -50,6 +51,7 @@ static void	exec_isdir_error(char *path, t_command *cmd, char **env)
 	ft_putstr_fd((char *)path, 2);
 	ft_putendl_fd(": Is a directory", 2);
 	free_commands(cmd);
+	free(path);
 	ft_free_tab(env);
 	exit(126);
 }
@@ -74,6 +76,7 @@ void	check_permissions_exec(char *path, t_command *cmd, char **env)
 		ft_putstr_fd(path, 2);
 		ft_putendl_fd(": No such file or directory", 2);
 		free_commands(cmd);
+		free(path);
 		ft_free_tab(env);
 		exit(127);
 	}

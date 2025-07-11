@@ -1,12 +1,12 @@
-# include "../inc/minishell.h"
+#include "../inc/minishell.h"
 
 t_token	*make_token(char *line, t_token *head)
 {
 	int		j;
 	int		*i;
 	char	*token;
-	// int		is_open = -1;
 
+	// int		is_open = -1;
 	j = 0;
 	i = &j;
 	while (line[*i])
