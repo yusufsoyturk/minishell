@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 18:07:16 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/11 14:35:17 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,13 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 					close(pipe_fd[1]);
 				}
 				if (is_builtin(current->args))
-					exit(built(current, env_list, mini));
+				{
+					built(current, env_list, mini);
+					free_struct(mini);
+					free_env_list((*env_list));
+					free_commands(cmd);
+					exit(0);
+				}
 				if (!current->args[0] || current->args[0][0] == '\0')
 				{
 					ft_putstr_fd("minishell: command not found\n", 2);

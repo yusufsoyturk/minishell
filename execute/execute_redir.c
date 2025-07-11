@@ -6,11 +6,20 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/10 19:32:15 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/11 14:19:44 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
+
+volatile sig_atomic_t g_sigint_received = 0;
+
+void heredoc_sigint_handler(int signo)
+{
+	(void)signo;
+	close(STDIN_FILENO);
+	g_sigint_received = 1;
+}
 
 static void handle_heredoc_sig(int pipefd[2])
 {
@@ -18,18 +27,29 @@ static void handle_heredoc_sig(int pipefd[2])
 	rl_replace_line("", 0);
 	close(pipefd[0]);
 }
+void setup_heredoc_signals(void)
+{
+	struct sigaction sa;
+
+	sa.sa_handler = heredoc_sigint_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+}
 
 static void	handle_heredoc_child(t_redir *redir, t_shell *mini, t_env *env_list, int pipefd[2], t_command *cmd)
 {
 	char	*raw;
 	char	*expanded;
 
-	setup_child_signals();
+	setup_heredoc_signals();
 	close(pipefd[0]);
 	while (1)
 	{
 		raw = readline("> ");
-		if (!raw)
+		if (!raw || g_sigint_received)
 			break ;
 		if (ft_strcmp(raw, redir->target) == 0)
 		{
