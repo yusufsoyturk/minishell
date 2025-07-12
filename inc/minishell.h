@@ -41,6 +41,24 @@ typedef struct s_quote_ctx
     int	j;
 }	t_quote_ctx;
 
+typedef struct s_exec_ctx
+{
+	t_command	*current;
+	t_env		**env_list;
+	t_shell		*mini;
+	t_command	*cmd;
+	int			pipe_fd[2];
+	int			prev_fd;
+	int			status;
+	int			loop;
+}				t_exec_ctx;
+
+typedef struct s_carry
+{
+	t_env	*env_list;
+	t_shell	*mini;
+}			t_carry;
+
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list);
 int		missing_quotes_double(t_shell *minishell);
@@ -94,12 +112,12 @@ void	free_max(t_shell *minishell, t_env *env, t_command *cmd);
 //execute
 int		execute(t_command *cmd, t_env **env_list, t_shell *mini);
 int		handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini, t_command *free_cmd);
-int		handle_heredoc(t_redir *redir, t_env *env_list, t_shell *mini, t_command *cmd, t_command *free_cmd);
+int		handle_heredoc(t_redir *redir, t_carry *carry, t_command *cmd, t_command *free_cmd);
 int		check_permissions(const char *path);
 char	*expand_string(const char *input, t_env *env_list, int last_status);
 char	**env_to_envp_array(t_env *env_list);
 char	*get_path(char *cmd, char **env);
-void	heredoc_child(t_shell *mini, t_env *env, int pfd[2], t_command *cmd, t_command *free_cmd);
+void	heredoc_child(t_carry *carry, int pfd[2], t_command *cmd, t_command *free_cmd);
 void	handle_heredoc_sig(int pipefd[2]);
 void	check_permissions_exec(char *path, t_command *cmd, char **env);
 

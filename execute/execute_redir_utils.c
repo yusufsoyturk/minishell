@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:38:57 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/12 00:21:26 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/12 23:56:38 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ static char	*heredoc_expand(t_redir *r, char *raw, t_env *env, t_shell *mini)
 	return (ft_strdup(raw));
 }
 
-void	heredoc_child(t_shell *mini, t_env *env, int pfd[2], t_command *cmd, t_command *free_cmd)
+void	heredoc_child(t_carry *carry, int pfd[2], t_command *cmd,
+		t_command *free_cmd)
 {
 	char	*raw;
 	char	*expanded;
@@ -51,11 +52,12 @@ void	heredoc_child(t_shell *mini, t_env *env, int pfd[2], t_command *cmd, t_comm
 			free(raw);
 			break ;
 		}
-		expanded = heredoc_expand(redir, raw, env, mini);
+		expanded = heredoc_expand(redir, raw, carry->env_list, carry->mini);
 		free(raw);
 		heredoc_write_line(expanded, pfd[1]);
 	}
-	free_max(mini, env, free_cmd);
+	free_max(carry->mini, carry->env_list, free_cmd);
+	free(carry);
 	close(pfd[1]);
 	exit(0);
 }
