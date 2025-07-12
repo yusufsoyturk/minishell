@@ -28,7 +28,9 @@ LEXER = lexer/tokenize.c \
 		lexer/tokenize_func.c 
 
 PARSE = parse/parse_utils.c \
-		parse/parser.c 
+		parse/parser.c \
+		parse/parser_pipe.c \
+		parse/parser_redir.c 
 
 EXECUTE = 	execute/execute.c \
 			execute/execute_redir.c \
@@ -36,7 +38,7 @@ EXECUTE = 	execute/execute.c \
 			execute/execute_utils.c \
 			execute/execute_get_path.c \
 			execute/execute_envp.c \
-			execute/execute_expand.c
+			execute/execute_expand.c  
 
 EXPANDER = 	expander/env_var.c \
 			expander/remove_quotes.c \
