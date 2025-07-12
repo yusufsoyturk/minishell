@@ -121,6 +121,13 @@ char	*append_str(char *base, const char *suffix);
 void	heredoc_child(t_carry *carry, int pfd[2], t_command *cmd, t_command *free_cmd);
 void	handle_heredoc_sig(int pipefd[2]);
 void	check_permissions_exec(char *path, t_command *cmd, char **env);
+void	child_builtin_exit(t_exec_ctx *ctx);
+void	setup_child_io(t_exec_ctx *ctx);
+void	child_cmd_not_found(t_exec_ctx *ctx);
+void	child_process(t_exec_ctx *ctx);
+void	handle_child_redirection(t_exec_ctx *ctx);
+void	handle_builtin_or_exec(t_exec_ctx *ctx);
+void	child_execve(t_exec_ctx *ctx, char **char_env, char *exec_path);
 
 // expander env_var
 char	*expand_env_var(t_env *env_list, t_token *token, int *i, t_shell *mini);
