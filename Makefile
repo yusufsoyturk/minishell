@@ -38,8 +38,14 @@ EXECUTE = 	execute/execute.c \
 			execute/execute_envp.c \
 			execute/execute_expand.c
 
-EXPANDER = expander/env_var.c \
-			expander/remove_quotes.c 
+EXPANDER = 	expander/env_var.c \
+			expander/remove_quotes.c \
+			expander/expand_change.c \
+			expander/expand_env_var.c \
+			expander/expand_pre.c \
+			expander/handle_dollar.c \
+			expander/handle_dollar_env.c \
+			expander/expand_quotes.c
 
 SRCS =	$(BUILT_IN) \
 		$(PARSE) \

@@ -6,60 +6,61 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:20 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/06/30 22:07:10 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/12 17:13:10 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-// " ' a"
+static void	copy_without_quote(char *src, char *dst, t_quote_ctx *ctx,
+		char quote)
+{
+	ctx->i++;
+	while (src[ctx->i] && src[ctx->i] != quote)
+	{
+		dst[ctx->j] = src[ctx->i];
+		ctx->j++;
+		ctx->i++;
+	}
+	if (src[ctx->i] == quote)
+		ctx->i++;
+}
 
 void	quotes_remover(t_token *token)
 {
-	char	*new_val;
-	int		len;
-	//int		q_flag;
-	int		i;
-	int		j;
+	char		*new_val;
+	int			len;
+	t_quote_ctx	ctx;
 
 	len = ft_strlen(token->value);
-	new_val = malloc(sizeof(char) * len + 1);
-	i = 0;
-	j = 0;
-	//q_flag = 0;
-	while (token->value[i])
+	new_val = malloc(sizeof(char) * (len + 1));
+	if (!new_val)
+		return ;
+	ctx.i = 0;
+	ctx.j = 0;
+	while (token->value[ctx.i])
 	{
-		if (token->value[i] == 34)
-		{
-			i++;
-			while (token->value[i] && token->value[i] != 34)
-				new_val[j++] = token->value[i++];
-			i++;
-		}
-		else if (token->value[i] == 39)
-		{
-			i++;
-			while (token->value[i] && token->value[i] != 39)
-				new_val[j++] = token->value[i++];
-			i++;
-		}
+		if (token->value[ctx.i] == 34)
+			copy_without_quote(token->value, new_val, &ctx, 34);
+		else if (token->value[ctx.i] == 39)
+			copy_without_quote(token->value, new_val, &ctx, 39);
 		else
-			new_val[j++] = token->value[i++];
+			new_val[ctx.j++] = token->value[ctx.i++];
 	}
-	new_val[j] = '\0';
+	new_val[ctx.j] = '\0';
 	free(token->value);
 	token->value = new_val;
 }
 
 void	remove_quotes(t_token *token)
 {
-	t_token *head;
+	t_token	*curr;
 
-	head = token;
-	while (head)
+	curr = token;
+	while (curr)
 	{
-		if (head->value)
-			quotes_remover(head);
-		head = head->next;
+		if (curr->value)
+			quotes_remover(curr);
+		curr = curr->next;
 	}
 }

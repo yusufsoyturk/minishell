@@ -22,6 +22,7 @@ typedef struct	s_shell
 	char	*line;
 	char	**args;
 	int		last_status;
+	int		d_flag;
 	t_token	*token;
 }				t_shell;
 
@@ -33,6 +34,12 @@ typedef struct s_env
 	int		exported;
 	struct s_env *next;
 }				t_env;
+
+typedef struct s_quote_ctx
+{
+    int	i;
+    int	j;
+}	t_quote_ctx;
 
 // tokenize_utils.c
 void	error_message(t_shell *minishell, char *err_msg,t_env *env_list);
@@ -92,10 +99,45 @@ void	handle_heredoc_sig(int pipefd[2]);
 void	check_permissions_exec(char *path, t_command *cmd, char **env);
 
 // expander env_var
-char	*expand_env_var(t_env *env_list, t_token *token, int *i, int *d_flag);
+char	*expand_env_var(t_env *env_list, t_token *token, int *i, t_shell *mini);
 void	ft_expand(t_env *env_list, t_shell *mini);
 char	*expand_pre_quo(t_env *env_list, t_token *token, int *i);
 void	free_token(t_token *token);
+
+// expander expande_change
+// static char	*find_env_value(t_env *env_list, char *key, int key_len);
+char	*expand_chance_env(t_env *env_list, t_token *token, int *i);
+
+// expander expand_env_var
+// static char	*handle_dollar(t_env *env_list, t_token *token, int *i);
+// static char	*handle_single_quote(t_env *env_list, t_token *token, int *i);
+// static char	*handle_normal_char(t_token *token, int *i);
+char	*empty_handle(char *str);
+char	*expand_env_var(t_env *env_list, t_token *token, int *i, t_shell *mini);
+
+//expander expand_pre
+// static int	get_pre_len(t_token *token, t_shell *mini, int i);
+char	*expand_pre(t_env *env_list, t_token *token, int *i, t_shell *mini);
+char	*expand_pre_quo(t_env *env_list, t_token *token, int *i);
+
+// expander handle_dollar
+void	append_and_free(char **new_val, char *tmp2);
+int	is_special_dollar(t_token *token, int i);
+int	is_dollar_question(t_token *token, int i);
+int	is_double_dollar(t_token *token, int i);
+void	handle_dollar_question(t_shell *mini, char **new_val, int *i);
+
+// expander handle_dollar_env
+void	handle_double_dollar(char **new_val, int *i);
+void	handle_special_dollar(char **new_val, int *i);
+void	handle_env_var(t_env *env_list, t_shell *mini, char **new_val, int *i);
+void	handle_s_quote(t_env *env_list, t_shell *mini, char **new_val, int *i);
+void	handle_normal(t_env *env_list, t_shell *mini, char **new_val, int *i);
+
+// expander expand_quotes
+char	*expand_with_quotes(t_env *env_list, t_shell *mini, int *i);
+int		dollar_control(t_token *token);
+int		quotes_controler(t_token *token);
 
 // expander remove_quotes
 void	remove_quotes(t_token *token);
