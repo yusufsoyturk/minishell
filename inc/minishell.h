@@ -92,7 +92,7 @@ void	handle_heredoc_sig(int pipefd[2]);
 void	check_permissions_exec(char *path, t_command *cmd, char **env);
 
 // expander env_var
-char	*expand_env_var(t_env *env_list, t_token *token, int *i);
+char	*expand_env_var(t_env *env_list, t_token *token, int *i, int *d_flag);
 void	ft_expand(t_env *env_list, t_shell *mini);
 char	*expand_pre_quo(t_env *env_list, t_token *token, int *i);
 void	free_token(t_token *token);

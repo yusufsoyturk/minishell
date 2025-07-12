@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:55:34 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/11 22:44:11 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/12 14:39:20 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char *expand_chance_env(t_env *env_list, t_token *token, int *i)
 	return (new_val);
 }
 
-char *expand_env_var(t_env *env_list, t_token *token, int *i)
+char *expand_env_var(t_env *env_list, t_token *token, int *i, int *d_flag)
 {
     char *new_val;
     char *tmp;
@@ -76,7 +76,7 @@ char *expand_env_var(t_env *env_list, t_token *token, int *i)
             }
 			free(val);
         }
-		else if (token->value[*i] == 39)
+		else if (token->value[*i] == 39 && d_flag == 0)
 		{
 			// Tek tırnak durumu - c değişkenini kullanarak
 			c = expand_pre_quo(env_list, token, i);
@@ -129,8 +129,8 @@ char *expand_pre(t_env *env_list, t_token *token, int *i, int *d_flag)
 		{
 			*d_flag = 1;
 		}
-		else if (token->value[pre] == 34 && *d_flag == 1)
-			*d_flag = 0;
+		// else if (token->value[pre] == 34 && *d_flag == 1)
+		// 	*d_flag = 0;
 		pre++;
 	}
 	new_val = malloc(sizeof(char) * pre + 1);
@@ -180,6 +180,7 @@ char *expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
     new_val = NULL;
     while (mini->token->value[*i])
     {
+		// printf("%d %s \n", d_flag, new_val);
         // $? durumu - exit status
         if (ft_strncmp(mini->token->value + *i, "$?", 2) == 0)
         {
@@ -232,12 +233,16 @@ char *expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
         // Environment variable expansion
         else if (mini->token->value[*i] == '$')
         {
-            tmp2 = expand_env_var(env_list, mini->token, i);
+			// printf("%d\n", d_flag);
+            tmp2 = expand_env_var(env_list, mini->token, i, &d_flag);
             if (!new_val)
-                new_val = tmp2;
+			{
+				new_val = tmp2;
+				
+			}
             else
             {
-                tmp = ft_strjoin(new_val, tmp2);
+				tmp = ft_strjoin(new_val, tmp2);
                 free(new_val);
                 new_val = tmp;
                 free(tmp2);
@@ -246,12 +251,12 @@ char *expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
         // Single quote durumu
         else if (mini->token->value[*i] == 39 && d_flag == 0)  // 39 = single quote
         {
-            tmp2 = expand_pre_quo(env_list, mini->token, i);
+			tmp2 = expand_pre_quo(env_list, mini->token, i);
             if (!new_val)
-                new_val = tmp2;
+			new_val = tmp2;
             else
             {
-                tmp = ft_strjoin(new_val, tmp2);
+				tmp = ft_strjoin(new_val, tmp2);
                 free(new_val);
                 new_val = tmp;
                 free(tmp2);

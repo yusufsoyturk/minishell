@@ -47,7 +47,7 @@ void print_tokens(t_token *tokens)
 {
     while (tokens)
 	{
-        printf("Type = %s, Value = '%s', Here_flag = '%d'", token_type_to_string(tokens->type), tokens->value, tokens->here_flag);
+        printf("Type = %s, Value = '%s', Here_flag = '%d' \n", token_type_to_string(tokens->type), tokens->value, tokens->here_flag);
 		tokens = tokens->next;
 	}
 }
