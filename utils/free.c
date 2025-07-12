@@ -53,25 +53,28 @@ void free_redirections(t_redir *redir)
 	}
 }
 
-
-void free_commands(t_command *cmd)
+void	free_commands(t_command *cmd)
 {
-    t_command	*tmp;
-    int			i;
+	t_command	*tmp;
+	int			i;
 
-    while (cmd)
-    {
-        tmp = cmd;
-        cmd = cmd->next;
-        if (tmp->args)
-        {
-            for (i = 0; tmp->args[i]; i++)
-                free(tmp->args[i]);
-            free(tmp->args);
-        }
-        free_redirections(tmp->redirs);
-        free(tmp);
-    }
+	while (cmd)
+	{
+		tmp = cmd;
+		cmd = cmd->next;
+		i = 0;
+		if (tmp->args)
+		{
+			while (tmp->args[i])
+			{
+				free(tmp->args[i]);
+				i++;
+			}
+			free(tmp->args);
+		}
+		free_redirections(tmp->redirs);
+		free(tmp);
+	}
 }
 
 void	free_env(t_env *env)
