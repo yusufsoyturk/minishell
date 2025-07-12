@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/12 00:24:10 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/12 16:42:49 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	int			prev_fd;
 	int			status;
 	int			loop;
+	int 		redir_exit;
 	
 	loop = 0;
 	prev_fd = -1;
@@ -27,6 +28,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	current = cmd;
 	while (current)
 	{
+		redir_exit = 0;
 		mini->last_status = 0;
 		if (handle_redirection(current, (*env_list), mini, cmd) < 0)
 		{
@@ -41,7 +43,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 				mini->last_status = 0;
 				continue ;
 			}
-			return (mini->last_status);
+			redir_exit = 1;
 		}
 		if (!current->redirs && !current->next && is_builtin(current->args) && !loop)
 			return (built(current, env_list, mini));
@@ -53,6 +55,11 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 		ignore_signals();
 		if (pid == 0)
 		{
+			if(redir_exit)
+			{
+				free_max(mini, *env_list, cmd);
+				exit(1);
+			}
 			setup_child_signals();
 			if (!current->args)
 			{
