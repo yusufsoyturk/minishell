@@ -1,11 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   built_export.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/12 21:40:12 by ktoraman          #+#    #+#             */
+/*   Updated: 2025/07/12 21:44:38 by ktoraman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
 
-static void update_or_add_env(char *arg, t_env **env_list)
+void	update_or_add_env(char *arg, t_env **env_list)
 {
-	char *key = ft_substr(arg, 0, ft_strchr(arg, '=') - arg);
-	char *value = ft_strdup(ft_strchr(arg, '=') + 1);
+	char	*key;
+	char	*value;
+	t_env	*node;
+	t_env	*new;
 
-	t_env *node = find_env_node(*env_list, key);
+	key = ft_substr(arg, 0, ft_strchr(arg, '=') - arg);
+	value = ft_strdup(ft_strchr(arg, '=') + 1);
+	node = find_env_node(*env_list, key);
 	if (node)
 	{
 		free(node->value);
@@ -14,7 +30,7 @@ static void update_or_add_env(char *arg, t_env **env_list)
 	}
 	else
 	{
-		t_env *new = malloc(sizeof(t_env));
+		new = malloc(sizeof(t_env));
 		new->key = ft_strdup(key);
 		new->value = value;
 		new->exported = 1;
@@ -24,7 +40,6 @@ static void update_or_add_env(char *arg, t_env **env_list)
 	free(key);
 }
 
-
 static void	print_export(t_env *env)
 {
 	t_env	**sorted;
@@ -32,7 +47,7 @@ static void	print_export(t_env *env)
 
 	sorted = env_to_array(env);
 	if (!sorted)
-		return;
+		return ;
 	sort_env_array(sorted);
 	i = 0;
 	while (sorted[i])
@@ -51,66 +66,54 @@ static void	print_export(t_env *env)
 	}
 	free(sorted);
 }
-t_env *create_env_node(char *key, char *value, int exported)
+
+t_env	*create_env_node(char *key, char *value, int exported)
 {
-    t_env *new = malloc(sizeof(t_env));
-    if (!new)
-        return NULL;
-    new->key = key;
-    new->value = value;
-    new->exported = exported;
-    new->next = NULL;
-    return new;
+	t_env	*new;
+
+	new = malloc(sizeof(t_env));
+	if (!new)
+		return (NULL);
+	new->key = key;
+	new->value = value;
+	new->exported = exported;
+	new->next = NULL;
+	return (new);
 }
 
-static int is_valid_var_name(const char *name)
+static int	is_valid_var_name(const char *name)
 {
-    int i = 0;
+	int	i;
 
-    if (!name || (!ft_isalpha(name[0]) && name[0] != '_'))
-        return (0);
-    while (name[i] && name[i] != '=')
-    {
-        if (!ft_isalnum(name[i]) && name[i] != '_')
-            return (0);
-        i++;
-    }
-    return (1);
+	i = 0;
+	if (!name || (!ft_isalpha(name[0]) && name[0] != '_'))
+		return (0);
+	while (name[i] && name[i] != '=')
+	{
+		if (!ft_isalnum(name[i]) && name[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-int builtin_export(char **args, t_env **env_list, t_shell *mini)
+int	builtin_export(char **args, t_env **env_list, t_shell *mini)
 {
-    int i = 1;
+	int	i;
 
-    if (!args[1])
-    {
-        print_export(*env_list);
-        return (1);
-    }
-
-    while (args[i])
-    {
-        if (!is_valid_var_name(args[i]))
-        {
-            ft_putstr_fd("minishell: export: `", 2);
-            ft_putstr_fd(args[i], 2);
-            ft_putstr_fd("': not a valid identifier\n", 2);
-            mini->last_status = 1;
-        }
-        else if (ft_strchr(args[i], '='))
-        {
-            update_or_add_env(args[i], env_list);
-        }
-        else
-        {
-            t_env *node = find_env_node(*env_list, args[i]);
-            if (node)
-                node->exported = 1;
-            else
-                append_env(env_list, create_env_node(ft_strdup(args[i]), NULL, 1));
-        }
-        i++;
-    }
-    return (0);
+	if (!args[1])
+	{
+		print_export(*env_list);
+		return (1);
+	}
+	i = 1;
+	while (args[i])
+	{
+		if (!is_valid_var_name(args[i]))
+			handle_invalid_identifier(args[i], mini);
+		else
+			handle_valid_identifier(args[i], env_list);
+		i++;
+	}
+	return (0);
 }
-

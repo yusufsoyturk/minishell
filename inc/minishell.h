@@ -79,7 +79,12 @@ t_env	*find_env_node(t_env *env, const char *key);
 void	append_env(t_env **env_list, t_env *new);
 t_env	**env_to_array(t_env *env);
 void	sort_env_array(t_env **arr);
+t_env	*create_env_node(char *key, char *value, int exported);
 int		is_builtin(char **cmd);
+void	update_or_add_env(char *arg, t_env **env_list);
+void	handle_invalid_identifier(char *arg, t_shell *mini);
+void	handle_valid_identifier(char *arg, t_env **env_list);
+int		builtin_cd(char **args, t_shell *mini);
 int		builtin_echo(char **args);
 int		env_size(t_env *env);
 

@@ -12,7 +12,9 @@ BUILT_IN =	built_in/built.c \
 			built_in/built_utils.c \
 			built_in/built_func.c \
 			built_in/built_export.c \
-			built_in/built_export_func.c
+			built_in/built_export_func.c \
+			built_in/built_cd.c \
+			built_in/built_exit.c
 
 UTILS = utils/utils.c \
 		utils/free.c \

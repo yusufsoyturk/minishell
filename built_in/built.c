@@ -1,101 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   built.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/12 21:39:23 by ktoraman          #+#    #+#             */
+/*   Updated: 2025/07/12 21:39:24 by ktoraman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
-
-static int	builtin_cd(char **args, t_shell *mini)
-{
-	char	*cwd;
-	char	*newpwd;
-	char	*oldpwd;
-	char	*target;
-
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-	{
-		perror("getcwd");
-		return (1);
-	}
-	oldpwd = getenv("OLDPWD");
-	if (!args[1] || ft_strcmp(args[1], "~") == 0)
-	{
-		target = getenv("HOME");
-		if (!target)
-		{
-			free(cwd);
-			return (1);
-		}
-		if (chdir(target) == -1)
-		{
-			perror("cd");
-			free(cwd);
-			mini->last_status = 1;
-			return (1);
-		}
-	}
-	else if (ft_strcmp(args[1], "-") == 0)
-	{
-		if (!oldpwd || ft_strcmp(oldpwd, cwd) == 0)
-		{
-			if (chdir("..") == -1)
-			{
-				perror("cd");
-				free(cwd);
-				mini->last_status = 1;
-				return (1);
-			}
-			else
-			{
-				target = getcwd(NULL, 0);
-				printf("%s\n", target);
-				free(target);
-			}
-		}
-		else
-		{
-			if (chdir(oldpwd) == -1)
-			{
-				perror("cd");
-				free(cwd);
-				mini->last_status = 1;
-				return (1);
-			}
-			else
-			{
-				printf("%s\n", oldpwd);
-			}
-		}
-		setenv("OLDPWD", cwd, 1);
-		newpwd = getcwd(NULL, 0);
-		if (newpwd)
-		{
-			setenv("PWD", newpwd, 1);
-			free(newpwd);
-		}
-		free(cwd);
-		mini->last_status = 0;
-		return (0);
-	}
-	else
-	{
-		target = args[1];
-		if (chdir(target) == -1)
-		{
-			perror("cd");
-			free(cwd);
-			mini->last_status = 1;
-			return (1);
-		}
-	}
-	setenv("OLDPWD", cwd, 1);
-
-	newpwd = getcwd(NULL, 0);
-	if (newpwd)
-	{
-		setenv("PWD", newpwd, 1);
-		free(newpwd);
-	}
-	free(cwd);
-	mini->last_status = 0;
-	return (0);
-}
 
 static int	builtin_pwd(void)
 {
@@ -116,39 +31,6 @@ static int	builtin_pwd(void)
 	ft_putendl_fd(cwd, 1);
 	free(cwd);
 	return (0);
-}
-
-int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *minishell)
-{
-	int			i;
-	long long	exit_code;
-
-	i = -1;
-	exit_code = 0;
-	write(1, "exit\n", 5);
-	if (cmd->args[1])
-	{
-		if ((ft_strncmp(cmd->args[1], "-", 1) || ft_strncmp(cmd->args[1], "+", 1)))
-			i++;
-		while (cmd->args[1][++i])
-		{
-			if (ft_isdigit(cmd->args[1][i]) == 0)
-			{
-				exit_error(cmd->args[1], "numeric argument required", "exit");
-				minishell->last_status = 2;
-				return (1);
-			}
-		}
-		if (cmd->args[2])
-		{
-			ft_putendl_fd("cmd: exit: too many arguments", 2);
-			minishell->last_status = 1;
-			return (1);
-		}
-		exit_code = ft_atoll(cmd->args[1]) % 256;
-	}
-	free_max(minishell, env_list, cmd);
-	exit(exit_code);
 }
 
 int	built(t_command *cmd, t_env **env, t_shell *minishell)
@@ -184,11 +66,8 @@ int	is_builtin(char **cmd)
 {
 	if (!cmd)
 		return (0);
-	return (!ft_strcmp(cmd[0], "cd")
-		|| !ft_strcmp(cmd[0], "echo")
-		|| !ft_strcmp(cmd[0], "exit")
-		|| !ft_strcmp(cmd[0], "pwd")
-		|| !ft_strcmp(cmd[0], "env")
-		|| !ft_strcmp(cmd[0], "export")
+	return (!ft_strcmp(cmd[0], "cd") || !ft_strcmp(cmd[0], "echo")
+		|| !ft_strcmp(cmd[0], "exit") || !ft_strcmp(cmd[0], "pwd")
+		|| !ft_strcmp(cmd[0], "env") || !ft_strcmp(cmd[0], "export")
 		|| !ft_strcmp(cmd[0], "unset"));
 }
