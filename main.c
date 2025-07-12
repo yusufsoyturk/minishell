@@ -1,159 +1,75 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 00:55:53 by ktoraman          #+#    #+#             */
+/*   Updated: 2025/07/13 00:59:40 by ktoraman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "inc/minishell.h"
 
-void    write_args(char **args)
-{
-	int i;
-	i = 0;
-	while (args[i])
-	{
-		printf("%s\n", args[i]);
-		i++;
-	}
-}
-
-static void ft_init_shell(t_shell *minishell)
+static void	ft_init_shell(t_shell *minishell)
 {
 	ft_memset(minishell, 0, sizeof(t_shell));
 }
 
-const char *token_type_to_string(t_token_type type) {
-    switch (type) {
-        case T_WORD: return "T_WORD";
-        case T_PIPE: return "T_PIPE";
-        case T_REDIR_IN: return "T_REDIR_IN";
-        case T_REDIR_OUT: return "T_REDIR_OUT";
-        case T_REDIR_APPEND: return "T_REDIR_APPEND";
-        case T_REDIR_HEREDOC: return "T_REDIR_HEREDOC";
-        case T_ENV_VAR: return "T_ENV_VAR";
-        default: return "T_UNKNOWN";
-    }
-}
+volatile sig_atomic_t	g_sigint_received = 0;
 
-void	free_token(t_token *token)
+static int	handle_interactive(t_shell *minishell, t_env *env_list)
 {
-	t_token *tmp;
+	t_command	*commands;
 
-	while (token)
+	while (1)
 	{
-		tmp = token->next;
-		free(token->value);
-		free(token);
-		token = tmp;
+		minishell->line = readline("minishell> ");
+		if (!minishell->line)
+			minishell->line = ft_strdup("exit");
+		else if (ft_strncmp(minishell->line, "", 1) != 0)
+			add_history(minishell->line);
+		if (minishell->line && missing_quotes_double(minishell) == 0)
+		{
+			ft_token(minishell);
+			ft_expand(env_list, minishell);
+			minishell->args = ft_split(minishell->line, ' ');
+			commands = pars(minishell->token, env_list, minishell);
+			if (commands && (commands->args || commands->redirs))
+				execute(commands, &env_list, minishell);
+			free_less(minishell, commands);
+		}
 	}
-}
-//PRİNT ALANI
-
-void print_tokens(t_token *tokens)
-{
-    while (tokens)
-	{
-        printf("Type = %s, Value = '%s', Here_flag = '%d' \n", token_type_to_string(tokens->type), tokens->value, tokens->here_flag);
-		tokens = tokens->next;
-	}
+	return (0);
 }
 
-void print_redirections(t_redir *redir)
+static void	init_minishell(t_shell **minishell, t_env **env_list, char **env)
 {
-    while (redir)
-    {
-        printf("    🔁 Redirection: target='%s', flags=%d, fd=%d, here_flag=%d\n",
-               redir->target, redir->flag, redir->fd, redir->here_flag);
-        redir = redir->next;
-    }
-}
-
-void print_commands(t_command *cmds)
-{
-    int i = 1;
-    while (cmds)
-    {
-        printf("=== Command %d ===\n", i);
-
-        // Argümanları yazdır
-        if (cmds->args)
-        {
-            printf("  🔹 Args: ");
-            for (int j = 0; cmds->args[j]; j++)
-                printf("'%s' ", cmds->args[j]);
-            printf("\n");
-        }
-        else
-            printf("  🔹 Args: (none)\n");
-
-        // Giriş ve çıkış dosya tanımlayıcıları
-        printf("  🔸 Input FD: %d\n", cmds->input);
-        printf("  🔸 Output FD: %d\n", cmds->output);
-
-        // Redirection varsa
-        if (cmds->redirs)
-            print_redirections(cmds->redirs);
-        else
-            printf("  🔁 No redirections.\n");
-
-        printf("\n");
-        cmds = cmds->next;
-        i++;
-    }
-}
-
-// PRİNT ALANI CAN GPT BABAYA SELAMLAR
-
-void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
-{
-	free_env(env);
-	free_double(minishell);
-	free_token(minishell->token);
-	free(minishell->line);
-	free(minishell);
-	free_commands(cmd);
-}
-
-void	free_less(t_shell *minishell, t_command *commands)
-{
-    free_double(minishell);
-    free_token(minishell->token);
-    free(minishell->line);
-    free_commands(commands);
-}
-
-volatile sig_atomic_t g_sigint_received = 0;
-
-int main(int ac, char **av, char **env)
-{
-	t_shell				*minishell;
-	t_env				*env_list;
-	t_command			*commands;
-
-	minishell = malloc(sizeof(t_shell));
+	*minishell = malloc(sizeof(t_shell));
 	setup_signals();
-	env_list = NULL;
-	ft_init_shell(minishell);
-	init_env(env, &env_list);
+	ft_init_shell(*minishell);
+	*env_list = NULL;
+	init_env(env, env_list);
+}
+
+int	main(int ac, char **av, char **env)
+{
+	t_shell	*minishell;
+	t_env	*env_list;
+
+	init_minishell(&minishell, &env_list, env);
 	if (ac == 1 && av[0])
 	{
-		while (1)
-		{
-			minishell->line = readline("minishell> ");
-			if (!minishell->line)
-				minishell->line = ft_strdup("exit");
-			else if (ft_strncmp(minishell->line, "", 1) != 0)
-				add_history(minishell->line);
-			if (minishell->line && missing_quotes_double(minishell) == 0)
-			{
-				ft_token(minishell);
-				ft_expand(env_list, minishell);
-				// print_tokens(minishell->token);
-				minishell->args = ft_split(minishell->line, ' ');
-				commands = pars(minishell->token, env_list, minishell);
-				//print_commands(commands);
-				if (commands && (commands->args || commands->redirs))
-					execute(commands, &env_list, minishell);
-				free_less(minishell, commands);
-			}
-		}
+		handle_interactive(minishell, env_list);
 		free_struct(minishell);
 	}
 	else
+	{
 		error_message(minishell, "Invalid arguments", env_list);
+		free_struct(minishell);
+		free_env(env_list);
+		return (1);
+	}
 	return (0);
 }
