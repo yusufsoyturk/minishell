@@ -26,7 +26,8 @@ LEXER = lexer/tokenize.c \
 		lexer/tokenize_control.c
 
 PARSE = parse/parse_utils.c \
-		parse/parser.c 
+		parse/parser.c \
+		parse/parser_redir.c
 
 EXECUTE = 	execute/execute.c \
 			execute/execute_redir.c \

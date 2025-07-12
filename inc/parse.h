@@ -34,5 +34,10 @@ typedef struct s_shell t_shell;
 void	ft_free_tab(char **tab);
 // parser.c
 t_command	*pars(t_token *token, t_env *env, t_shell *mini);
+int	token_check_pipe(char *str, t_shell *mini);
+int	handle_redirection_parse(t_token **token, t_command *current, t_shell *mini);
+t_command	*init_command(void);
+int	token_check(char *str, t_shell *mini);
+int	add_arg_to_command(t_command *cmd, const char *arg);
 
 #endif
