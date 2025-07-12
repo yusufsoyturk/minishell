@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 00:49:19 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 00:50:27 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ static void	wait_and_status(t_exec_ctx *ctx)
 		ctx->mini->last_status = 1;
 }
 
-static void init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list, t_shell *mini)
+static void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list,
+		t_shell *mini)
 {
 	ctx->current = cmd;
 	ctx->env_list = env_list;
@@ -68,7 +69,7 @@ static void init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list, t_s
 	ctx->loop = 0;
 }
 
-int execute(t_command *cmd, t_env **env_list, t_shell *mini)
+int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 {
 	t_exec_ctx	ctx;
 	pid_t		pid;
@@ -94,4 +95,3 @@ int execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	wait_and_status(&ctx);
 	return (mini->last_status);
 }
-
