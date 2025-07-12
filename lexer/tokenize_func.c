@@ -1,61 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_func.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/12 17:16:18 by ysoyturk          #+#    #+#             */
+/*   Updated: 2025/07/12 18:52:14 by ysoyturk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
-
-// kelime boşluğa "" ve '' eşit deilse girecek
-int	word_len(char *line)
-{
-	int	i;
-	int	len;
-	int	r_len;
-	int	last;
-
-	last = 0;
-	r_len = 0;
-	i = 0;
-	len = 0;
-	while (line[i])
-	{
-		r_len = 0;
-		if (line[i] == 34)
-		{
-			i++;
-			while (line[i] && line[i] != 34)
-				i++;
-		}
-		if (line[i] == 39)
-		{
-			i++;
-			while (line[i] && line[i] != 39)
-				i++;
-		}
-		if (line[i] == 32 || (line[i] >= 9 && line[i] <= 13))
-			break ;
-		if (i > 0 && (line[i] == '>' || line[i] == '<' || line[i] == '|'))
-		{
-			if (line[i] != line[i - 1])
-				break ;
-			last = i;
-			while (line[i] == '>' || line[i] == '<' || line[i] == '|')
-			{
-				r_len++;
-				i++;
-				if (r_len == 2)
-					return (r_len);
-			}
-			i = last;
-		}
-		if (line[i] == '<' || line[i] == '>' || line[i] == '|')
-		{
-			if (line[i + 1] && (line[i + 1] != line[i]))
-			{
-				len = i;
-				break ;
-			}
-		}
-		len = i;
-		i++;
-	}
-	return (len + 1);
-}
 
 char	*new_word(char *line)
 {
@@ -93,8 +48,6 @@ t_token_type	find_type(char *line)
 	else
 		return (T_WORD);
 }
-
-// sadece boşluk varsa argüman sanıyor bu fonksiyonu kullanırken dikkat edilmeli
 
 char	*find_value(char *line, int *i)
 {

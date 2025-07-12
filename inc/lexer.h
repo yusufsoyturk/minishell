@@ -28,8 +28,10 @@ char	*in_double_quotes(char *line);
 int		single_quote_len(char *line);
 char	*in_single_quote(char *line);
 
+// tokenize_control
+int	word_len(char *line);
+
 // tokenize_func.c
-int		word_len(char *line);
 char	*new_word(char *line);
 t_token_type	find_type(char *line);
 char	*find_value(char *line, int *i);

@@ -8,9 +8,6 @@ CFLAGS = -Wall -Wextra -Werror -I.
 
 LDFLAGS = -lreadline -lncurses
 
-LIBFT = libft.a
-LIBFT_PATH = "libft"
-
 BUILT_IN =	built_in/built.c \
 			built_in/built_utils.c \
 			built_in/built_func.c \
@@ -25,7 +22,8 @@ UTILS = utils/utils.c \
 LEXER = lexer/tokenize.c \
 		lexer/tokenize_utils.c \
 		lexer/tokenize_quotes.c \
-		lexer/tokenize_func.c 
+		lexer/tokenize_func.c \
+		lexer/tokenize_control.c
 
 PARSE = parse/parse_utils.c \
 		parse/parser.c 
@@ -59,11 +57,9 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(LIBFT):
-	@make -C $(LIBFT_PATH)
-
-$(NAME): $(LIBFT) $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(LIBFT_PATH) -lft $(LDFLAGS) 
+$(NAME): $(OBJS)
+	make -C ./libft -s
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) libft/libft.a $(LDFLAGS) 
 
 clean:
 	make clean -C libft

@@ -1,7 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_quotes.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/12 17:17:13 by ysoyturk          #+#    #+#             */
+/*   Updated: 2025/07/12 21:05:16 by ysoyturk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
 
-// "yusuf << islam"
-// zaten başlangıç değerim double quotes
 int	double_quotes_len(char *line)
 {
 	int	i;
@@ -15,30 +25,16 @@ int	double_quotes_len(char *line)
 		{
 			flag++;
 			if (line[i + 1] == 34 || line[i + 1] == 39)
-			{
 				flag = 0;
-				while (line[i + 1])
-				{
-					i++;
-					if (line[i + 1] == 34 && ((line[i] == '<' || line[i] == '>'
-								|| line[i] == '|' || line[i] == 32)))
-					{
-						return (i + 2);
-					}
-				}
-			}
 		}
 		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|'
 				|| line[i] == 32) && flag > 1)
-		{
 			break ;
-		}
 		i++;
 	}
 	return (i);
 }
 
-// bu fonksiyondan döndürülen token freelenmeliMore actions
 char	*in_double_quotes(char *line)
 {
 	char	*token;
@@ -63,32 +59,19 @@ int	single_quote_len(char *line)
 	int	i;
 	int	flag;
 
-	flag = 0;
 	i = 0;
+	flag = 0;
 	while (line[i])
 	{
 		if (line[i] == 39)
 		{
 			flag++;
 			if (line[i + 1] == 34 || line[i + 1] == 39)
-			{
 				flag = 0;
-				while (line[i + 1])
-				{
-					i++;
-					if (line[i + 1] == 39 && ((line[i] == '<' || line[i] == '>'
-								|| line[i] == '|' || line[i] == 32)))
-					{
-						return (i + 2);
-					}
-				}
-			}
 		}
 		else if ((line[i] == '<' || line[i] == '>' || line[i] == '|'
 				|| line[i] == 32) && flag > 1)
-		{
 			break ;
-		}
 		i++;
 	}
 	return (i);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/12 17:17:26 by ysoyturk          #+#    #+#             */
+/*   Updated: 2025/07/12 17:17:48 by ysoyturk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minishell.h"
 
 t_token	*make_token(char *line, t_token *head)
@@ -6,7 +18,6 @@ t_token	*make_token(char *line, t_token *head)
 	int		*i;
 	char	*token;
 
-	// int		is_open = -1;
 	j = 0;
 	i = &j;
 	while (line[*i])
