@@ -117,6 +117,7 @@ int		check_permissions(const char *path);
 char	*expand_string(const char *input, t_env *env_list, int last_status);
 char	**env_to_envp_array(t_env *env_list);
 char	*get_path(char *cmd, char **env);
+char	*append_str(char *base, const char *suffix);
 void	heredoc_child(t_carry *carry, int pfd[2], t_command *cmd, t_command *free_cmd);
 void	handle_heredoc_sig(int pipefd[2]);
 void	check_permissions_exec(char *path, t_command *cmd, char **env);

@@ -37,7 +37,8 @@ EXECUTE = 	execute/execute.c \
 			execute/execute_utils.c \
 			execute/execute_get_path.c \
 			execute/execute_envp.c \
-			execute/execute_expand.c
+			execute/execute_expand.c \
+			execute/execute_expand_str.c 
 
 EXPANDER = 	expander/env_var.c \
 			expander/remove_quotes.c \
