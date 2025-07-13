@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 16:04:20 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:25:41 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ t_carry	*init_carry(t_env *env_list, t_shell *mini)
 	return (carry);
 }
 
-int	handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini,
+int	handle_redirection_exec(t_command *cmd, t_env *env_list, t_shell *mini,
 		t_command *free_cmd)
 {
 	int		fd;
@@ -88,7 +88,7 @@ int	handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini,
 	return (free(carry), 0);
 }
 
-int	handle_redirection_error(t_exec_ctx *ctx)
+int	handle_redirection_error_exec(t_exec_ctx *ctx)
 {
 	ctx->mini->last_status = 1;
 	if (ctx->current->next)

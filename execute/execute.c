@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 16:13:17 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:24:39 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,9 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	init_exec_ctx(&ctx, cmd, env_list, mini);
 	while (ctx.current)
 	{
-		if (handle_redirection(ctx.current, (*env_list), mini, cmd) < 0)
+		if (handle_redirection_exec(ctx.current, (*env_list), mini, cmd) < 0)
 		{
-			if (!handle_redirection_error(&ctx))
+			if (!handle_redirection_error_exec(&ctx))
 				return (mini->last_status);
 			continue ;
 		}

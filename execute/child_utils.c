@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:21:42 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 15:49:02 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:26:19 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	handle_redirection_error_exit(t_exec_ctx *ctx, char **char_env)
 
 int	handle_child_redirection(t_exec_ctx *ctx)
 {
-	if (handle_redirection(ctx->current, *(ctx->env_list), ctx->mini,
+	if (handle_redirection_exec(ctx->current, *(ctx->env_list), ctx->mini,
 			ctx->cmd) < 0)
 	{
 		free_max(ctx->mini, *(ctx->env_list), ctx->cmd);
