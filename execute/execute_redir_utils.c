@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:38:57 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/12 23:56:38 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 18:11:49 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,12 @@ static char	*heredoc_expand(t_redir *r, char *raw, t_env *env, t_shell *mini)
 	return (ft_strdup(raw));
 }
 
-void	heredoc_child(t_carry *carry, int pfd[2], t_command *cmd,
+void	heredoc_child(t_carry *carry, int pfd[2], t_redir *redir,
 		t_command *free_cmd)
 {
 	char	*raw;
 	char	*expanded;
-	t_redir	*redir;
 
-	redir = cmd->redirs;
 	setup_heredoc_signals();
 	close(pfd[0]);
 	while (1)

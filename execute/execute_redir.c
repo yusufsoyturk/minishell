@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 16:25:41 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 18:17:17 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	set_heredoc_parent(pid_t pid, int pipefd[2], int *status, t_redir *r)
 	return (pipefd[0]);
 }
 
-int	handle_heredoc(t_redir *r, t_carry *carry, t_command *cmd,
+int	handle_heredoc(t_redir *r, t_carry *carry,
 		t_command *free_cmd)
 {
 	int		pipefd[2];
@@ -40,7 +40,7 @@ int	handle_heredoc(t_redir *r, t_carry *carry, t_command *cmd,
 		return (perror("fork"), -1);
 	ignore_signals();
 	if (pid == 0)
-		heredoc_child(carry, pipefd, cmd, free_cmd);
+		heredoc_child(carry, pipefd, r, free_cmd);
 	return (set_heredoc_parent(pid, pipefd, &status, r));
 }
 
@@ -70,7 +70,7 @@ int	handle_redirection_exec(t_command *cmd, t_env *env_list, t_shell *mini,
 	while (r)
 	{
 		if (r->flag == R_HEREDOC)
-			fd = handle_heredoc(r, carry, cmd, free_cmd);
+			fd = handle_heredoc(r, carry, free_cmd);
 		else
 			fd = open(r->target, r->flag, 0644);
 		if (fd < 0)
