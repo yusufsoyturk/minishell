@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:40:38 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 15:01:32 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/13 15:38:01 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ typedef struct s_exec_ctx
 	t_command					*cmd;
 	int							pipe_fd[2];
 	pid_t						pids[1024];
+	int							redir_exit;
 	int							pid_count;
 	int							prev_fd;
 	int							status;
