@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/12 23:56:21 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:04:20 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,20 @@ int	handle_redirection(t_command *cmd, t_env *env_list, t_shell *mini,
 		r = r->next;
 	}
 	return (free(carry), 0);
+}
+
+int	handle_redirection_error(t_exec_ctx *ctx)
+{
+	ctx->mini->last_status = 1;
+	if (ctx->current->next)
+	{
+		if (pipe(ctx->pipe_fd) < 0)
+			perror("pipe");
+		close(ctx->pipe_fd[1]);
+		ctx->prev_fd = ctx->pipe_fd[0];
+		ctx->current = ctx->current->next;
+		ctx->mini->last_status = 0;
+		return (1);
+	}
+	return (0);
 }

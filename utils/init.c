@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:44:55 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 09:44:56 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:11:55 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,19 @@ void	init_env(char **env, t_env **env_list)
 		new_node->next = NULL;
 		append_env(env_list, new_node);
 	}
+}
+
+void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list,
+		t_shell *mini)
+{
+	ctx->current = cmd;
+	ctx->env_list = env_list;
+	ctx->mini = mini;
+	ctx->cmd = cmd;
+	ctx->pipe_fd[0] = -1;
+	ctx->pipe_fd[1] = -1;
+	ctx->pid_count = 0;
+	ctx->prev_fd = -1;
+	ctx->status = 0;
+	ctx->loop = 0;
 }

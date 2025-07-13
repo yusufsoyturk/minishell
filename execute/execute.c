@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 15:38:27 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:13:17 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,29 @@ static int	check_builtin_and_pipe(t_exec_ctx *ctx)
 static void	parent_process(t_exec_ctx *ctx)
 {
 	if (ctx->prev_fd != -1)
+	{
 		close(ctx->prev_fd);
+		ctx->prev_fd = -1;
+	}
 	if (ctx->current->input != STDIN_FILENO)
 		close(ctx->current->input);
+	if (ctx->current->output != STDOUT_FILENO)
+		close(ctx->current->output);
 	if (ctx->current->next)
 	{
-		close(ctx->pipe_fd[1]);
+		if (ctx->pipe_fd[1] != -1)
+			close(ctx->pipe_fd[1]);
 		ctx->prev_fd = ctx->pipe_fd[0];
+		ctx->pipe_fd[0] = -1;
+		ctx->pipe_fd[1] = -1;
 	}
 	else
-		close(ctx->pipe_fd[0]);
+	{
+		if (ctx->pipe_fd[0] != -1)
+			close(ctx->pipe_fd[0]);
+		ctx->pipe_fd[0] = -1;
+		ctx->pipe_fd[1] = -1;
+	}
 	ctx->loop = 1;
 }
 
@@ -46,8 +59,8 @@ static void	wait_and_status(t_exec_ctx *ctx, pid_t *pids, int count)
 	int	last;
 
 	last = 0;
-	i = 0;
-	while (i < count)
+	i = -1;
+	while (++i < count)
 	{
 		if (waitpid(pids[i], &status, 0) == -1)
 			perror("waitpid");
@@ -62,50 +75,50 @@ static void	wait_and_status(t_exec_ctx *ctx, pid_t *pids, int count)
 			last = WEXITSTATUS(status);
 		else
 			last = 1;
-		i++;
 	}
 	setup_signals();
 	ctx->mini->last_status = last;
 }
 
-static void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list,
-		t_shell *mini)
+int	fork_and_execute(t_exec_ctx *ctx)
 {
-	ctx->current = cmd;
-	ctx->env_list = env_list;
-	ctx->mini = mini;
-	ctx->cmd = cmd;
-	ctx->pid_count = 0;
-	ctx->prev_fd = -1;
-	ctx->status = 0;
-	ctx->loop = 0;
+	pid_t	pid;
+	int		ret;
+
+	ctx->mini->last_status = 0;
+	ret = check_builtin_and_pipe(ctx);
+	if (ret != -2)
+		return (ret);
+	pid = fork();
+	if (pid < 0)
+		return (perror("fork"), 1);
+	ctx->pids[ctx->pid_count++] = pid;
+	ignore_signals();
+	if (pid == 0)
+		child_process(ctx);
+	else
+		parent_process(ctx);
+	ctx->current = ctx->current->next;
+	return (-2);
 }
 
 int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 {
 	t_exec_ctx	ctx;
-	pid_t		pid;
 	int			ret;
 
 	init_exec_ctx(&ctx, cmd, env_list, mini);
 	while (ctx.current)
 	{
-		if (handle_child_redirection(&ctx) != 0)
-			return (1);
-		mini->last_status = 0;
-		ret = check_builtin_and_pipe(&ctx);
+		if (handle_redirection(ctx.current, (*env_list), mini, cmd) < 0)
+		{
+			if (!handle_redirection_error(&ctx))
+				return (mini->last_status);
+			continue ;
+		}
+		ret = fork_and_execute(&ctx);
 		if (ret != -2)
 			return (ret);
-		pid = fork();
-		if (pid < 0)
-			return (perror("fork"), 1);
-		ctx.pids[ctx.pid_count++] = pid;
-		ignore_signals();
-		if (pid == 0)
-			child_process(&ctx);
-		else
-			parent_process(&ctx);
-		ctx.current = ctx.current->next;
 	}
 	wait_and_status(&ctx, ctx.pids, ctx.pid_count);
 	return (mini->last_status);

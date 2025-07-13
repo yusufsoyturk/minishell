@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:21:42 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 15:01:06 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/13 15:49:02 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	handle_child_redirection(t_exec_ctx *ctx)
 			ctx->cmd) < 0)
 	{
 		free_max(ctx->mini, *(ctx->env_list), ctx->cmd);
-		return(1);
+		return (1);
 	}
 	return (0);
 }

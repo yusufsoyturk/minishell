@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:40:38 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 15:38:01 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:11:28 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ typedef struct s_exec_ctx
 	int							prev_fd;
 	int							status;
 	int							loop;
-	
 }								t_exec_ctx;
 
 typedef struct s_carry
@@ -97,6 +96,8 @@ void	exit_error(char *arg, char *err_msg,
 int		array_len(char **args);
 int		built(t_command *cmd, t_env **env,
 			t_shell *minishell);
+void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd,
+			t_env **env_list, t_shell *mini);
 int		ft_strcmp(const char *s1, const char *s2);
 int		builtin_unset(const char *key,
 			t_env **env_list);
@@ -109,6 +110,7 @@ t_env	*find_env_node(t_env *env, const char *key);
 int		handle_child_redirection(t_exec_ctx *ctx);
 void	append_env(t_env **env_list, t_env *new);
 t_env	**env_to_array(t_env *env);
+int		handle_redirection_error(t_exec_ctx *ctx);
 void	sort_env_array(t_env **arr);
 t_env	*create_env_node(char *key, char *value,
 			int exported);
