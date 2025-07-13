@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 00:50:27 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:32:55 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,27 +34,34 @@ static void	parent_process(t_exec_ctx *ctx)
 	ctx->loop = 1;
 }
 
-static void	wait_and_status(t_exec_ctx *ctx)
+static void	wait_and_status(t_exec_ctx *ctx, pid_t *pids, int count)
 {
+	int	i;
+	int	status;
 	int	sig;
+	int	last;
 
-	while (waitpid(-1, &ctx->status, 0) > 0)
-		;
-	if (WIFSIGNALED(ctx->status))
+	last = 0;
+	i = 0;
+	while (i < count)
 	{
-		sig = WTERMSIG(ctx->status);
-		if (sig == SIGINT)
-			write(1, "\n", 1);
+		if (waitpid(pids[i], &status, 0) == -1)
+			perror("waitpid");
+		else if (WIFSIGNALED(status))
+		{
+			sig = WTERMSIG(status);
+			if (sig == SIGINT)
+				write(1, "\n", 1);
+			last = 128 + sig;
+		}
+		else if (WIFEXITED(status))
+			last = WEXITSTATUS(status);
+		else
+			last = 1;
+		i++;
 	}
 	setup_signals();
-	if (WIFSIGNALED(ctx->status) && WTERMSIG(ctx->status) == SIGPIPE)
-		ctx->mini->last_status = 0;
-	else if (WIFEXITED(ctx->status))
-		ctx->mini->last_status = WEXITSTATUS(ctx->status);
-	else if (WIFSIGNALED(ctx->status))
-		ctx->mini->last_status = 128 + WTERMSIG(ctx->status);
-	else
-		ctx->mini->last_status = 1;
+	ctx->mini->last_status = last;
 }
 
 static void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list,
@@ -64,6 +71,7 @@ static void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd, t_env **env_list,
 	ctx->env_list = env_list;
 	ctx->mini = mini;
 	ctx->cmd = cmd;
+	ctx->pid_count = 0;
 	ctx->prev_fd = -1;
 	ctx->status = 0;
 	ctx->loop = 0;
@@ -85,6 +93,7 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"), 1);
+		ctx.pids[ctx.pid_count++] = pid;
 		ignore_signals();
 		if (pid == 0)
 			child_process(&ctx);
@@ -92,6 +101,6 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 			parent_process(&ctx);
 		ctx.current = ctx.current->next;
 	}
-	wait_and_status(&ctx);
+	wait_and_status(&ctx, ctx.pids, ctx.pid_count);
 	return (mini->last_status);
 }
