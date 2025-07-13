@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:21:42 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 10:43:53 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 15:01:06 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,15 @@ void	handle_redirection_error_exit(t_exec_ctx *ctx, char **char_env)
 	exit(127);
 }
 
-void	handle_child_redirection(t_exec_ctx *ctx)
+int	handle_child_redirection(t_exec_ctx *ctx)
 {
 	if (handle_redirection(ctx->current, *(ctx->env_list), ctx->mini,
 			ctx->cmd) < 0)
 	{
 		free_max(ctx->mini, *(ctx->env_list), ctx->cmd);
-		exit(1);
+		return(1);
 	}
+	return (0);
 }
 
 void	handle_builtin_or_exec(t_exec_ctx *ctx)

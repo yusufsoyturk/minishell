@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 16:58:59 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 10:32:55 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 15:03:21 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,15 @@ static void	parent_process(t_exec_ctx *ctx)
 {
 	if (ctx->prev_fd != -1)
 		close(ctx->prev_fd);
+	if (ctx->current->input != STDIN_FILENO)
+		close(ctx->current->input);
 	if (ctx->current->next)
 	{
 		close(ctx->pipe_fd[1]);
 		ctx->prev_fd = ctx->pipe_fd[0];
 	}
+	else
+		close(ctx->pipe_fd[0]);
 	ctx->loop = 1;
 }
 
@@ -86,6 +90,8 @@ int	execute(t_command *cmd, t_env **env_list, t_shell *mini)
 	init_exec_ctx(&ctx, cmd, env_list, mini);
 	while (ctx.current)
 	{
+		if (handle_child_redirection(&ctx) != 0)
+			return (1);
 		mini->last_status = 0;
 		ret = check_builtin_and_pipe(&ctx);
 		if (ret != -2)

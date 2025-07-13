@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:40:38 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 10:24:24 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 15:01:32 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct s_exec_ctx
 	int							prev_fd;
 	int							status;
 	int							loop;
+	
 }								t_exec_ctx;
 
 typedef struct s_carry
@@ -104,6 +105,7 @@ int		builtin_exit(t_command *cmd, t_env *env_list,
 			t_shell *minishell);
 int		builtin_env(t_env *env_list);
 t_env	*find_env_node(t_env *env, const char *key);
+int		handle_child_redirection(t_exec_ctx *ctx);
 void	append_env(t_env **env_list, t_env *new);
 t_env	**env_to_array(t_env *env);
 void	sort_env_array(t_env **arr);
@@ -142,7 +144,6 @@ void	child_builtin_exit(t_exec_ctx *ctx);
 void	setup_child_io(t_exec_ctx *ctx);
 void	child_cmd_not_found(t_exec_ctx *ctx);
 void	child_process(t_exec_ctx *ctx);
-void	handle_child_redirection(t_exec_ctx *ctx);
 void	handle_builtin_or_exec(t_exec_ctx *ctx);
 void	child_execve(t_exec_ctx *ctx, char **char_env,
 			char *exec_path);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_child.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:20:55 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 10:44:29 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/13 14:58:21 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,5 @@ void	child_execve(t_exec_ctx *ctx, char **char_env, char *exec_path)
 void	child_process(t_exec_ctx *ctx)
 {
 	setup_child_signals();
-	handle_child_redirection(ctx);
 	handle_builtin_or_exec(ctx);
 }
