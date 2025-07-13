@@ -18,8 +18,10 @@ BUILT_IN =	built_in/built.c \
 
 UTILS = utils/utils.c \
 		utils/free.c \
+		utils/free_2.c \
 		utils/init.c \
-		utils/signal.c
+		utils/signal.c \
+		utils/heredoc_signal.c
 
 LEXER = lexer/tokenize.c \
 		lexer/tokenize_utils.c \

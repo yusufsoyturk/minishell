@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   heredoc_signal.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/13 09:45:40 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 09:45:41 by ktoraman         ###   ########.fr       */
+/*   Created: 2025/07/13 09:46:25 by ktoraman          #+#    #+#             */
+/*   Updated: 2025/07/13 09:46:52 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-int	ft_atoll(const char *str)
+void	heredoc_sigint_handler(int signo)
 {
-	long long	result;
-	long long	sign;
+	(void)signo;
+	close(STDIN_FILENO);
+	g_sigint_received = 1;
+}
 
-	result = 0;
-	sign = 1;
-	while (*str == ' ' || (*str >= 9 && *str <= 13))
-		str++;
-	if (*str == '-')
-		sign = -1;
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str >= '0' && *str <= '9')
-	{
-		result = result * 10 + *str - '0';
-		str++;
-	}
-	return (sign * result);
+void	setup_heredoc_signals(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = heredoc_sigint_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
 }
