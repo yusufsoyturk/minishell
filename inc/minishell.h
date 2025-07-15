@@ -95,7 +95,7 @@ void	exit_error(char *arg, char *err_msg,
 			char *type);
 int		array_len(char **args);
 int		built(t_command *cmd, t_env **env,
-			t_shell *minishell);
+			t_shell *minishell, t_command *current);
 void	init_exec_ctx(t_exec_ctx *ctx, t_command *cmd,
 			t_env **env_list, t_shell *mini);
 int		ft_strcmp(const char *s1, const char *s2);
@@ -104,7 +104,7 @@ int		builtin_unset(const char *key,
 int		builtin_export(char **args, t_env **env_list,
 			t_shell *mini);
 int		builtin_exit(t_command *cmd, t_env *env_list,
-			t_shell *minishell);
+			t_shell *minishell, t_command *current);
 int		builtin_env(t_env *env_list);
 t_env	*find_env_node(t_env *env, const char *key);
 int		handle_child_redirection(t_exec_ctx *ctx);

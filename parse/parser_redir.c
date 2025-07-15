@@ -51,8 +51,10 @@ int	handle_redirection_parse(t_token **token, t_command *current, t_shell *mini)
 	redir->fd = -1;
 	set_redirection_flag(*token, redir);
 	*token = (*token)->next;
-	if (!(*token) || token_check((*token)->value, mini))
+	if (!(*token))
 		return (handle_redirection_error(redir, mini, NULL));
+	if (token_check((*token)->value, mini))
+		return (free(redir), 0);
 	redir->target = ft_strdup((*token)->value);
 	if (!current->redirs)
 		current->redirs = redir;

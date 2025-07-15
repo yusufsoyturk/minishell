@@ -31,7 +31,7 @@ void	setup_child_io(t_exec_ctx *ctx)
 
 void	child_builtin_exit(t_exec_ctx *ctx)
 {
-	built(ctx->current, ctx->env_list, ctx->mini);
+	built(ctx->cmd, ctx->env_list, ctx->mini, ctx->current);
 	free_struct(ctx->mini);
 	free_env_list(*(ctx->env_list));
 	free_commands(ctx->cmd);

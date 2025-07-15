@@ -17,7 +17,7 @@ int	set_heredoc_parent(pid_t pid, int pipefd[2], int *status, t_redir *r)
 	close(pipefd[1]);
 	waitpid(pid, status, 0);
 	setup_signals();
-	if (WIFSIGNALED(*status) && WTERMSIG(*status) == SIGINT)
+	if (WIFEXITED(*status) && WEXITSTATUS(*status) == 130)
 	{
 		handle_heredoc_sig(pipefd);
 		return (-1);
@@ -75,7 +75,10 @@ int	handle_redirection_exec(t_command *cmd, t_env *env_list, t_shell *mini,
 			fd = open(r->target, r->flag, 0644);
 		if (fd < 0)
 		{
-			check_permissions(r->target);
+			if (r->flag != R_HEREDOC)
+				check_permissions(r->target);
+			else
+				mini->last_status = 130;
 			return (free(carry), -1);
 		}
 		r->fd = fd;
@@ -90,7 +93,8 @@ int	handle_redirection_exec(t_command *cmd, t_env *env_list, t_shell *mini,
 
 int	handle_redirection_error_exec(t_exec_ctx *ctx)
 {
-	ctx->mini->last_status = 1;
+	if (ctx->mini->last_status != 130)
+		ctx->mini->last_status = 1;
 	if (ctx->current->next)
 	{
 		if (pipe(ctx->pipe_fd) < 0)

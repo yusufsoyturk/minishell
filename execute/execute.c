@@ -16,7 +16,7 @@ static int	check_builtin_and_pipe(t_exec_ctx *ctx)
 {
 	if (!ctx->current->redirs && !ctx->current->next
 		&& is_builtin(ctx->current->args) && !ctx->loop)
-		return (built(ctx->current, ctx->env_list, ctx->mini));
+		return (built(ctx->cmd, ctx->env_list, ctx->mini, ctx->current));
 	if (ctx->current->next && pipe(ctx->pipe_fd) < 0)
 		return (perror("pipe"), 1);
 	return (-2);

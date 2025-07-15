@@ -15,8 +15,8 @@
 void	heredoc_sigint_handler(int signo)
 {
 	(void)signo;
-	close(STDIN_FILENO);
 	g_sigint_received = 1;
+	close(STDIN_FILENO);
 }
 
 void	setup_heredoc_signals(void)

@@ -43,7 +43,14 @@ void	heredoc_child(t_carry *carry, int pfd[2], t_redir *redir,
 	while (1)
 	{
 		raw = readline("> ");
-		if (!raw || g_sigint_received)
+		if (g_sigint_received)
+		{
+			free_max(carry->mini, carry->env_list, free_cmd);
+			free(carry);
+			close(pfd[1]);
+			exit(130);
+		}
+		if (!raw)
 			break ;
 		if (ft_strcmp(raw, redir->target) == 0)
 		{

@@ -45,17 +45,17 @@ static int	check_exit_args(t_command *cmd, t_shell *mini)
 	return (0);
 }
 
-int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *mini)
+int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *mini, t_command *current)
 {
 	long long	code;
 
 	write(1, "exit\n", 5);
 	code = 0;
-	if (cmd->args[1])
+	if (current->args[1])
 	{
-		if (check_exit_args(cmd, mini))
+		if (check_exit_args(current, mini))
 			return (1);
-		code = ft_atoll(cmd->args[1]) % 256;
+		code = ft_atoll(current->args[1]) % 256;
 	}
 	free_max(mini, env_list, cmd);
 	exit(code);

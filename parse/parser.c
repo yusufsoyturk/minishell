@@ -16,6 +16,7 @@
 static int	handle_pipe_token(t_token **token, t_command **current,
 		t_shell *mini, t_command *head)
 {
+	(void)head;
 	(*current)->next = init_command();
 	if (!(*current)->next)
 		return (0);
@@ -26,14 +27,10 @@ static int	handle_pipe_token(t_token **token, t_command **current,
 		mini->last_status = 2;
 		ft_putendl_fd("minishell: syntax error near unexpected token `newline'",
 			2);
-		free_commands(head);
 		return (0);
 	}
 	if (token_check_pipe((*token)->value, mini))
-	{
-		free_commands(head);
 		return (0);
-	}
 	return (1);
 }
 
