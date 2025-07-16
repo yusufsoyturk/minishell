@@ -14,9 +14,11 @@
 
 void	handle_redirection_error_exit(t_exec_ctx *ctx, char **char_env)
 {
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(ctx->current->args[0], 2);
-	ft_putendl_fd(": command not found", 2);
+	char *msg1 = ft_strjoin("minishell: ", ctx->current->args[0]);
+	char *msg2 = ft_strjoin(msg1, ": command not found\n");
+	write(2, msg2, ft_strlen(msg2));
+	free(msg1);
+	free(msg2);
 	free_env_list(*(ctx->env_list));
 	free_struct(ctx->mini);
 	ft_free_tab(char_env);
@@ -54,7 +56,7 @@ void	handle_builtin_or_exec(t_exec_ctx *ctx)
 	exec_path = get_path(ctx->current->args[0], char_env);
 	if (!exec_path)
 	{
-		if (access(ctx->current->args[0], F_OK) == 0)
+		if (ft_strchr(ctx->current->args[0], '/') && access(ctx->current->args[0], F_OK) == 0)
 			exec_path = ft_strdup(ctx->current->args[0]);
 		else
 			handle_redirection_error_exit(ctx, char_env);
