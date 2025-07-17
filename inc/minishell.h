@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:40:38 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 18:18:47 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 11:42:35 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ void	free_redirections(t_redir *redir);
 void	ignore_signals(void);
 void	exit_error(char *arg, char *err_msg,
 			char *type);
+int		handle_fd_error(t_redir *r, t_shell *mini, t_carry *carry);
 int		array_len(char **args);
 int		built(t_command *cmd, t_env **env,
 			t_shell *minishell, t_command *current);

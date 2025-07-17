@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 21:37:05 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/12 21:51:59 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 11:30:54 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ static int	check_exit_args(t_command *cmd, t_shell *mini)
 	return (0);
 }
 
-int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *mini, t_command *current)
+int	builtin_exit(t_command *cmd, t_env *env_list, t_shell *mini,
+		t_command *current)
 {
 	long long	code;
 

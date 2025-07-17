@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 17:04:24 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 18:17:17 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 11:41:59 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,7 @@ int	handle_redirection_exec(t_command *cmd, t_env *env_list, t_shell *mini,
 		else
 			fd = open(r->target, r->flag, 0644);
 		if (fd < 0)
-		{
-			if (r->flag != R_HEREDOC)
-				check_permissions(r->target);
-			else
-				mini->last_status = 130;
-			return (free(carry), -1);
-		}
+			return (handle_fd_error(r, mini, carry));
 		r->fd = fd;
 		if (r->flag == O_RDONLY || r->flag == R_HEREDOC)
 			cmd->input = fd;

@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 21:31:06 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/12 21:33:11 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 11:48:54 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,28 @@ static void	set_redirection_flag(t_token *token, t_redir *redir)
 	}
 }
 
+static t_redir	*init_redirection(void)
+{
+	t_redir	*redir;
+
+	redir = malloc(sizeof(t_redir));
+	if (!redir)
+		return (NULL);
+	redir->next = NULL;
+	redir->here_flag = 0;
+	redir->fd = -1;
+	redir->target = NULL;
+	return (redir);
+}
+
 int	handle_redirection_parse(t_token **token, t_command *current, t_shell *mini)
 {
 	t_redir	*redir;
 	t_redir	*tmp;
 
-	redir = malloc(sizeof(t_redir));
+	redir = init_redirection();
 	if (!redir)
 		return (0);
-	redir->next = NULL;
-	redir->here_flag = 0;
-	redir->fd = -1;
 	set_redirection_flag(*token, redir);
 	*token = (*token)->next;
 	if (!(*token))

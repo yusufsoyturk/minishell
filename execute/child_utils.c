@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:21:42 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 16:26:19 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 11:41:45 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,11 @@
 
 void	handle_redirection_error_exit(t_exec_ctx *ctx, char **char_env)
 {
-	char *msg1 = ft_strjoin("minishell: ", ctx->current->args[0]);
-	char *msg2 = ft_strjoin(msg1, ": command not found\n");
+	char	*msg1;
+	char	*msg2;
+
+	msg1 = ft_strjoin("minishell: ", ctx->current->args[0]);
+	msg2 = ft_strjoin(msg1, ": command not found\n");
 	write(2, msg2, ft_strlen(msg2));
 	free(msg1);
 	free(msg2);
@@ -56,10 +59,21 @@ void	handle_builtin_or_exec(t_exec_ctx *ctx)
 	exec_path = get_path(ctx->current->args[0], char_env);
 	if (!exec_path)
 	{
-		if (ft_strchr(ctx->current->args[0], '/') && access(ctx->current->args[0], F_OK) == 0)
+		if (ft_strchr(ctx->current->args[0], '/')
+			&& access(ctx->current->args[0], F_OK) == 0)
 			exec_path = ft_strdup(ctx->current->args[0]);
 		else
 			handle_redirection_error_exit(ctx, char_env);
 	}
 	child_execve(ctx, char_env, exec_path);
+}
+
+int	handle_fd_error(t_redir *r, t_shell *mini, t_carry *carry)
+{
+	if (r->flag != R_HEREDOC)
+		check_permissions(r->target);
+	else
+		mini->last_status = 130;
+	free(carry);
+	return (-1);
 }

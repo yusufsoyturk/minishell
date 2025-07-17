@@ -6,7 +6,7 @@
 /*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:38:57 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 18:11:49 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 11:46:47 by ktoraman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,14 @@ static char	*heredoc_expand(t_redir *r, char *raw, t_env *env, t_shell *mini)
 	return (ft_strdup(raw));
 }
 
+static void	heredoc_child_exit(t_command *cmd, t_carry *carry, int pipefd[2])
+{
+	free_max(carry->mini, carry->env_list, cmd);
+	free(carry);
+	close(pipefd[1]);
+	exit(130);
+}
+
 void	heredoc_child(t_carry *carry, int pfd[2], t_redir *redir,
 		t_command *free_cmd)
 {
@@ -44,12 +52,7 @@ void	heredoc_child(t_carry *carry, int pfd[2], t_redir *redir,
 	{
 		raw = readline("> ");
 		if (g_sigint_received)
-		{
-			free_max(carry->mini, carry->env_list, free_cmd);
-			free(carry);
-			close(pfd[1]);
-			exit(130);
-		}
+			heredoc_child_exit(free_cmd, carry, pfd);
 		if (!raw)
 			break ;
 		if (ft_strcmp(raw, redir->target) == 0)
