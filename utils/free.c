@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:44:12 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/13 09:44:13 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:28:56 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	free_token(t_token *token)
 void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
 {
 	free_env(env);
-	free_double(minishell);
+	free_double(minishell->args);
 	free_token(minishell->token);
 	free(minishell->line);
 	free(minishell);
@@ -75,8 +75,14 @@ void	free_max(t_shell *minishell, t_env *env, t_command *cmd)
 
 void	free_less(t_shell *minishell, t_command *commands)
 {
-	free_double(minishell);
-	free_token(minishell->token);
-	free(minishell->line);
+	if (minishell->args)
+	{
+		free_double(minishell->args);
+		minishell->args = NULL;
+	}
+	if (minishell->token)
+		free_token(minishell->token);
+	if (minishell->line)
+		free(minishell->line);
 	free_commands(commands);
 }

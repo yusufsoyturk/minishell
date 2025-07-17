@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:40:38 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/17 14:04:35 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:22:53 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int		ft_token(t_shell *minishell);
 int		ft_atoll(const char *str);
 void	free_less(t_shell *minishell,
 			t_command *commands);
-void	free_double(t_shell *minishell);
+void	free_double(char **arr);
 void	free_struct(t_shell *minishell);
 void	free_env_list(t_env *env_list);
 void	free_commands(t_command *cmd);
@@ -185,6 +185,9 @@ int		dollar_control(t_token *token);
 int		quotes_controler(t_token *token);
 void	remove_quotes(t_token *token);
 char	*handle_dollar_question_quo(t_shell *mini, char **new_val, int *i);
-int	get_pre_len(t_token *token, t_shell *mini, int i);
+int		get_pre_len(t_token *token, t_shell *mini, int i);
+char	*handle_dollar(t_env *env_list, t_token *token, int *i);
+char	*handle_single_quote(t_env *env_list, t_token *token, int *i);
+char	*handle_normal_char(t_token *token, t_shell *mini, int *i);
 
 #endif

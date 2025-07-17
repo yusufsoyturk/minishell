@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:52:07 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/17 12:57:31 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 14:20:02 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,15 @@ int	quotes_controler(t_token *token)
 		i++;
 	}
 	return (0);
+}
+
+char	*handle_dollar_question_quo(t_shell *mini, char **new_val, int *i)
+{
+	char	*tmp2;
+
+	tmp2 = ft_itoa(mini->last_status);
+	*new_val = ft_strdup(tmp2);
+	free(tmp2);
+	*i += 2;
+	return (*new_val);
 }

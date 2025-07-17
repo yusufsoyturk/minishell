@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 17:17:20 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/12 19:06:28 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:22:28 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,15 @@ static void	cleanup_quotes_error(t_shell *minishell)
 {
 	printf("Missing Quotes\n");
 	if (minishell->args)
-		free_double(minishell);
+	{
+		free_double(minishell->args);
+		minishell->args = NULL;
+	}
 	if (minishell->line)
+	{
 		free(minishell->line);
+		minishell->line = NULL;
+	}
 }
 
 int	missing_quotes_double(t_shell *minishell)

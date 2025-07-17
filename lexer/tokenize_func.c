@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 17:16:18 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/12 18:52:14 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:39:15 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ t_token	*new_token(t_token *token, char *value)
 	new->type = find_type(value);
 	new->value = ft_strdup(value);
 	new->next = NULL;
+	new->here_flag = 0;
 	ft_tknadd_back(&token, new);
 	return (token);
 }

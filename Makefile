@@ -50,7 +50,8 @@ EXPANDER = 	expander/env_var.c \
 			expander/expand_pre.c \
 			expander/handle_dollar.c \
 			expander/handle_dollar_env.c \
-			expander/expand_quotes.c
+			expander/expand_quotes.c \
+			expander/expand_handle.c 
 
 SRCS =	$(BUILT_IN) \
 		$(PARSE) \

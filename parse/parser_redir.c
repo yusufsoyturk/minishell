@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_redir.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 21:31:06 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/17 11:48:54 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 14:29:59 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ static t_redir	*init_redirection(void)
 	redir->next = NULL;
 	redir->here_flag = 0;
 	redir->fd = -1;
+	redir->flag = -1;
 	redir->target = NULL;
 	return (redir);
 }
