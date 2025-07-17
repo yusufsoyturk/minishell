@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:03:23 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/17 14:04:00 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:16:18 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ int	get_pre_len(t_token *token, t_shell *mini, int i)
 	{
 		if (token->value[i + len] == 34 && mini->d_flag == 0)
 			mini->d_flag = 1;
+		else if (token->value[i + len] == 34 && mini->d_flag == 1)
+			mini->d_flag = 0;
+		else if (token->value[i + len] == 39 && mini->d_flag == 0)
+			break ;
 		len++;
 	}
 	return (len);

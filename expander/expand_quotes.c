@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:52:07 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/17 14:20:02 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:07:31 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,13 @@ char	*expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
 		else if (mini->token->value[*i] == '$')
 			handle_env_var(env_list, mini, &new_val, i);
 		else if (mini->token->value[*i] == 39 && mini->d_flag == 0)
+		{
 			handle_s_quote(env_list, mini, &new_val, i);
+		}
 		else
+		{
 			handle_normal(env_list, mini, &new_val, i);
+		}
 	}
 	return (new_val);
 }
