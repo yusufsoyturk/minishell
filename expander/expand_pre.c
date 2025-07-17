@@ -6,13 +6,13 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:03:23 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/12 17:01:19 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 14:04:00 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-static int	get_pre_len(t_token *token, t_shell *mini, int i)
+int	get_pre_len(t_token *token, t_shell *mini, int i)
 {
 	int	len;
 

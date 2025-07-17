@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:52:07 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/12 17:01:32 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 12:57:31 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*expand_with_quotes(t_env *env_list, t_shell *mini, int *i)
 
 	mini->d_flag = 0;
 	new_val = NULL;
-	while (mini->token->value[*i])
+	while (*i < (int)ft_strlen(mini->token->value) && mini->token->value[*i])
 	{
 		if (is_dollar_question(mini->token, *i))
 			handle_dollar_question(mini, &new_val, i);

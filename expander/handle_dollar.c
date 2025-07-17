@@ -6,7 +6,7 @@
 /*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:37:49 by ysoyturk          #+#    #+#             */
-/*   Updated: 2025/07/12 16:45:41 by ysoyturk         ###   ########.fr       */
+/*   Updated: 2025/07/17 13:22:43 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,15 @@ void	handle_dollar_question(t_shell *mini, char **new_val, int *i)
 	tmp2 = ft_itoa(mini->last_status);
 	append_and_free(new_val, tmp2);
 	*i += 2;
+}
+
+char *handle_dollar_question_quo(t_shell *mini, char **new_val, int *i)
+{
+	char	*tmp2;
+
+	tmp2 = ft_itoa(mini->last_status);
+	*new_val = ft_strdup(tmp2);
+	free(tmp2);
+	*i += 2;
+	return (*new_val);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ktoraman <ktoraman@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysoyturk <ysoyturk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 09:40:38 by ktoraman          #+#    #+#             */
-/*   Updated: 2025/07/17 11:42:35 by ktoraman         ###   ########.fr       */
+/*   Updated: 2025/07/17 14:04:35 by ysoyturk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,5 +184,7 @@ char	*expand_with_quotes(t_env *env_list,
 int		dollar_control(t_token *token);
 int		quotes_controler(t_token *token);
 void	remove_quotes(t_token *token);
+char	*handle_dollar_question_quo(t_shell *mini, char **new_val, int *i);
+int	get_pre_len(t_token *token, t_shell *mini, int i);
 
 #endif
